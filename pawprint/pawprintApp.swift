@@ -1,6 +1,6 @@
 //
-//  PawPrintApp.swift
-//  PawPrint
+//  pawprintApp.swift
+//  pawprint
 //
 //  Created by Natalie Michael on 20/10/2026.
 //
