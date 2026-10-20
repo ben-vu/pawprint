@@ -1,6 +1,6 @@
 //
-//  pawprintTests.swift
-//  pawprintTests
+//  PawPrintTests.swift
+//  PawPrintTests
 //
 //  Created by Natalie Michael on 20/10/2026.
 //
