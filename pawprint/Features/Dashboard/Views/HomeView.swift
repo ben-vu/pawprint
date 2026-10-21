@@ -130,6 +130,7 @@ struct HomeView: View {
                 PawprintCard {
                     PugEmptyState(
                         image: "PugLying",
+                        animation: "SleepyPug",
                         title: "Nothing scheduled yet",
                         message: "Add a walk or a meal in the Routines tab and it will show up here."
                     )

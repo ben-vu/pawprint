@@ -14,10 +14,10 @@ final class OnboardingViewModel {
     enum Step: Int, CaseIterable { case welcome, details, done }
 
     var step: Step = .welcome
-    var name = ""
+    var name = "" { didSet { errorMessage = nil } }          // typing clears the red message
     var breed = ""
     var ageYears = 1
-    var weightText = ""
+    var weightText = "" { didSet { errorMessage = nil } }
     var photoData: Data?
     var errorMessage: String?
     private(set) var savedDog: Dog?

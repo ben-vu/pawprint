@@ -65,17 +65,25 @@ struct ProgressRingView: View {
 
 /// Friendly empty state with a pug.
 struct PugEmptyState: View {
-    let image: String
+    let image: String                 // still pug, also the Reduce Motion fallback
+    var animation: String? = nil      // Lottie file name in Resources/Animations, plays on loop
     let title: String
     let message: String
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(spacing: 10) {
-            Image(image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 110)
-                .accessibilityHidden(true)
+            if let animation, !reduceMotion {
+                LottieView(name: animation)
+                    .frame(height: 150)
+            } else {
+                Image(image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 110)
+                    .accessibilityHidden(true)
+            }
             Text(title)
                 .font(PawprintTheme.font(.headline, weight: .semibold))
                 .foregroundStyle(PawprintTheme.textPrimary)
