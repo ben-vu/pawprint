@@ -22,9 +22,11 @@ final class SwiftDataHealthRepository: HealthRepository {
     }
 
     func fetchRecords(for dog: Dog) throws -> [HealthRecord] {
-        try context.fetch(FetchDescriptor<HealthRecord>(sortBy: [SortDescriptor(\.date, order: .reverse)]))
+        let allRecords = try context.fetch(FetchDescriptor<HealthRecord>(sortBy: [SortDescriptor(\.date, order: .reverse)]))
+        
+        return allRecords.filter { $0.dog?.persistentModelID == dog.persistentModelID }
     }
-
+    
     func save(_ record: HealthRecord) throws {
         context.insert(record)
         try context.save()
