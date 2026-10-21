@@ -14,7 +14,7 @@ protocol HealthRepository {
 }
 
 @MainActor
-final class SwiftDataHealthRepository: HealthRepository {
+class SwiftDataHealthRepository: HealthRepository {
     private let context: ModelContext
 
     init(context: ModelContext) {
