@@ -29,6 +29,9 @@ class HealthViewModel {
     }
     
     func addAHealthRecord(title: String, date: Date, nextDueDate: Date?, notes: String) {
-        
+        if date > Date() {
+            self.errorMessage = HealthError.dateInFuture.errorDescription
+            return
+        }
     }
 }
