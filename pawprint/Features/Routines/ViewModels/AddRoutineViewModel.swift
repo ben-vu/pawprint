@@ -2,7 +2,8 @@
 //  AddRoutineViewModel.swift
 //  Routines feature (Sana)
 //
-//  Form state for the Add routine sheet.
+//  Form state for the routine sheet. Creates a new routine, or edits an
+//  existing one when given a task.
 //
 
 import Foundation
@@ -18,18 +19,31 @@ final class AddRoutineViewModel {
     var notificationsDenied = false
     var errorMessage: String?
 
-    private let create: CreateRoutineUseCase
+    let editing: RoutineTask?
+    var isEditing: Bool { editing != nil }
+
+    private let repository: RoutineRepository
     private let notifications: NotificationService
     private let dog: Dog?
 
-    init(repository: RoutineRepository, notifications: NotificationService, dog: Dog?, now: Date = .now) {
-        self.create = CreateRoutineUseCase(repository: repository, notifications: notifications)
+    init(repository: RoutineRepository, notifications: NotificationService, dog: Dog?, editing: RoutineTask? = nil, now: Date = .now) {
+        self.repository = repository
         self.notifications = notifications
         self.dog = dog
-        // Default to the next whole hour, a sensible time for most routines.
-        let calendar = Calendar.current
-        let hourStart = calendar.dateInterval(of: .hour, for: now)?.start ?? now
-        self.dueDate = calendar.date(byAdding: .hour, value: 1, to: hourStart) ?? now
+        self.editing = editing
+
+        if let task = editing {
+            title = task.title
+            category = task.category
+            dueDate = task.dueDate
+            recurrence = task.recurrence
+            remindMe = task.remindMe
+        } else {
+            // Default to the next whole hour, a sensible time for most routines.
+            let calendar = Calendar.current
+            let hourStart = calendar.dateInterval(of: .hour, for: now)?.start ?? now
+            dueDate = calendar.date(byAdding: .hour, value: 1, to: hourStart) ?? now
+        }
     }
 
     /// Called when the reminder switch flips. Turning it on asks for permission.
@@ -42,15 +56,25 @@ final class AddRoutineViewModel {
 
     func save() -> Bool {
         do {
-            _ = try create.execute(
-                title: title,
-                category: category,
-                dueDate: dueDate,
-                recurrence: recurrence,
-                remindMe: remindMe,
-                dog: dog
-            )
+            if let task = editing {
+                try UpdateRoutineUseCase(repository: repository, notifications: notifications)
+                    .execute(task, title: title, category: category, dueDate: dueDate, recurrence: recurrence, remindMe: remindMe)
+            } else {
+                _ = try CreateRoutineUseCase(repository: repository, notifications: notifications)
+                    .execute(title: title, category: category, dueDate: dueDate, recurrence: recurrence, remindMe: remindMe, dog: dog)
+            }
             errorMessage = nil
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+
+    func delete() -> Bool {
+        guard let task = editing else { return false }
+        do {
+            try DeleteRoutineUseCase(repository: repository, notifications: notifications).execute(task)
             return true
         } catch {
             errorMessage = error.localizedDescription

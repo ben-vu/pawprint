@@ -2,17 +2,20 @@
 //  AddRoutineView.swift
 //  Routines feature (Sana)
 //
-//  Sheet for creating a routine: name, category, when, how often and
-//  whether to send a reminder.
+//  Sheet for creating or editing a routine: name, category, when, how
+//  often and whether to send a reminder. Pass a task to edit it.
 //
 
 import SwiftUI
 import SwiftData
 
 struct AddRoutineView: View {
+    var task: RoutineTask? = nil
+
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: AddRoutineViewModel?
+    @State private var confirmDelete = false
     @FocusState private var focusedField: Field?
 
     enum Field { case title }
@@ -25,7 +28,7 @@ struct AddRoutineView: View {
                     form(viewModel)
                 }
             }
-            .navigationTitle("New routine")
+            .navigationTitle(task == nil ? "New routine" : "Edit routine")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -39,6 +42,11 @@ struct AddRoutineView: View {
                     .fontWeight(.bold)
                 }
             }
+            .confirmationDialog("Delete this routine?", isPresented: $confirmDelete, titleVisibility: .visible) {
+                Button("Delete routine", role: .destructive) {
+                    if viewModel?.delete() == true { dismiss() }
+                }
+            }
         }
         .task {
             if viewModel == nil {
@@ -46,7 +54,8 @@ struct AddRoutineView: View {
                 viewModel = AddRoutineViewModel(
                     repository: SwiftDataRoutineRepository(context: context),
                     notifications: UserNotificationService.shared,
-                    dog: dog
+                    dog: dog,
+                    editing: task
                 )
             }
         }
@@ -103,6 +112,18 @@ struct AddRoutineView: View {
                         .foregroundStyle(PawprintTheme.danger)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .accessibilityLabel("Error: \(error)")
+                }
+
+                if vm.isEditing {
+                    Button(role: .destructive) {
+                        confirmDelete = true
+                    } label: {
+                        Text("Delete routine")
+                            .font(PawprintTheme.font(.subheadline, weight: .semibold))
+                            .frame(maxWidth: .infinity)
+                            .frame(minHeight: 48)
+                    }
+                    .foregroundStyle(PawprintTheme.danger)
                 }
             }
             .padding(20)

@@ -24,6 +24,7 @@ final class RoutineTask {
     var remindMe: Bool = false
     var completedAt: Date?
     var hasNextOccurrence: Bool = false          // stops a repeating task spawning its next one twice
+    var nextOccurrenceID: String?                // reminderID of that next task, so unticking can remove it
     var reminderID: String = UUID().uuidString   // identifies its pending notification
 
     init(

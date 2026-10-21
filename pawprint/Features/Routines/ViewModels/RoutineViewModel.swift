@@ -3,7 +3,7 @@
 //  Routines feature (Sana)
 //
 //  State for the Routines tab: tasks grouped into overdue, today and
-//  upcoming, plus completing and deleting them.
+//  upcoming, plus ticking, unticking and deleting them.
 //
 
 import Foundation
@@ -44,6 +44,15 @@ final class RoutineViewModel {
         do {
             try CompleteRoutineUseCase(repository: repository, notifications: notifications, nextOccurrence: NextOccurrenceUseCase(calendar: calendar))
                 .execute(task, now: .now)
+            load()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func uncomplete(_ task: RoutineTask) {
+        do {
+            try UncompleteRoutineUseCase(repository: repository, notifications: notifications).execute(task)
             load()
         } catch {
             errorMessage = error.localizedDescription

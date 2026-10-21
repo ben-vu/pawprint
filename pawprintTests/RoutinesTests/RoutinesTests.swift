@@ -262,4 +262,98 @@ struct RoutinesTests {
         #expect(!viewModel.remindMe)
         #expect(viewModel.notificationsDenied)
     }
+    // MARK: Unticking a task
+
+    @Test func untickingATaskMarksItNotDoneAndRestoresItsReminder() throws {
+        let repository = MockRoutineRepository()
+        let notifications = MockNotificationService()
+        let task = RoutineTask(title: "Vet", dueDate: .now.addingTimeInterval(3600), isCompleted: true, remindMe: true)
+        task.completedAt = .now
+        try repository.save(task)
+
+        try UncompleteRoutineUseCase(repository: repository, notifications: notifications).execute(task)
+
+        #expect(!task.isCompleted)
+        #expect(task.completedAt == nil)
+        #expect(notifications.scheduled == [task.reminderID])
+    }
+
+    @Test func untickingADailyTaskRemovesTheNextOneItCreated() throws {
+        let repository = MockRoutineRepository()
+        let notifications = MockNotificationService()
+        let task = RoutineTask(title: "Walk", dueDate: date(21, 8), recurrence: .daily, remindMe: true)
+        try repository.save(task)
+        let next = try #require(try CompleteRoutineUseCase(repository: repository, notifications: notifications, nextOccurrence: NextOccurrenceUseCase(calendar: calendar))
+            .execute(task, now: date(21, 8, 5)))
+
+        try UncompleteRoutineUseCase(repository: repository, notifications: notifications).execute(task)
+
+        #expect(repository.items.map(\.reminderID) == [task.reminderID])
+        #expect(notifications.cancelled.contains(next.reminderID))
+        #expect(!task.hasNextOccurrence)
+        #expect(task.nextOccurrenceID == nil)
+    }
+
+    @Test func untickingKeepsTheNextTaskIfItIsAlreadyDone() throws {
+        let repository = MockRoutineRepository()
+        let notifications = MockNotificationService()
+        let useCase = CompleteRoutineUseCase(repository: repository, notifications: notifications, nextOccurrence: NextOccurrenceUseCase(calendar: calendar))
+        let task = RoutineTask(title: "Walk", dueDate: date(21, 8), recurrence: .daily)
+        try repository.save(task)
+        let next = try #require(try useCase.execute(task, now: date(21, 8)))
+        try useCase.execute(next, now: date(22, 8))
+
+        try UncompleteRoutineUseCase(repository: repository, notifications: notifications).execute(task)
+
+        #expect(repository.items.contains { $0 === next })
+        #expect(task.hasNextOccurrence)
+    }
+
+    @Test func untickingATaskThatIsNotDoneThrows() {
+        let task = RoutineTask(title: "Walk", dueDate: .now)
+        #expect(throws: RoutineError.notCompleted) {
+            try UncompleteRoutineUseCase(repository: MockRoutineRepository(), notifications: MockNotificationService()).execute(task)
+        }
+    }
+
+    // MARK: Editing a task
+
+    @Test func editingARoutineUpdatesItAndMovesItsReminder() throws {
+        let repository = MockRoutineRepository()
+        let notifications = MockNotificationService()
+        let task = RoutineTask(title: "Walk", dueDate: date(21, 8), category: .walk, remindMe: true)
+        try repository.save(task)
+
+        try UpdateRoutineUseCase(repository: repository, notifications: notifications)
+            .execute(task, title: " Evening walk ", category: .play, dueDate: date(21, 18), recurrence: .weekly, remindMe: true)
+
+        #expect(task.title == "Evening walk")
+        #expect(task.category == .play)
+        #expect(task.dueDate == date(21, 18))
+        #expect(task.recurrence == .weekly)
+        #expect(repository.items.count == 1)
+        #expect(notifications.cancelled == [task.reminderID])
+        #expect(notifications.scheduled == [task.reminderID])
+    }
+
+    @Test func editingARoutineToABlankTitleThrowsAndKeepsTheOldTitle() {
+        let task = RoutineTask(title: "Walk", dueDate: .now)
+        #expect(throws: RoutineError.emptyTitle) {
+            try UpdateRoutineUseCase(repository: MockRoutineRepository(), notifications: MockNotificationService())
+                .execute(task, title: "  ", category: .walk, dueDate: .now, recurrence: .once, remindMe: false)
+        }
+        #expect(task.title == "Walk")
+    }
+
+    @Test func editFormStartsFilledInWithTheTask() {
+        let task = RoutineTask(title: "Dinner", dueDate: date(21, 18), category: .meal, recurrence: .weekly, remindMe: true)
+        let viewModel = AddRoutineViewModel(repository: MockRoutineRepository(), notifications: MockNotificationService(), dog: nil, editing: task)
+
+        #expect(viewModel.isEditing)
+        #expect(viewModel.title == "Dinner")
+        #expect(viewModel.category == .meal)
+        #expect(viewModel.dueDate == date(21, 18))
+        #expect(viewModel.recurrence == .weekly)
+        #expect(viewModel.remindMe)
+    }
 }

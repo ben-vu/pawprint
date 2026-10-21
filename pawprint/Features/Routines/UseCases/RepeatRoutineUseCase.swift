@@ -30,6 +30,7 @@ struct RepeatRoutineUseCase {
         )
         try repository.save(next)
         task.hasNextOccurrence = true
+        task.nextOccurrenceID = next.reminderID
         try repository.save(task)
         notifications.scheduleReminder(for: next)
         return next

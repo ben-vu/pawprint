@@ -3,7 +3,8 @@
 //  Routines feature (Sana)
 //
 //  Routines tab: overdue, today and upcoming tasks. Tap the circle to
-//  tick a task off, swipe left to delete, + to add a new routine.
+//  tick a task off (or untick it), tap the row to edit, swipe left to
+//  delete, + to add a new routine.
 //
 
 import SwiftUI
@@ -13,6 +14,7 @@ struct RoutineListView: View {
     @Environment(\.modelContext) private var context
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
+    @State private var editing: RoutineTask?
     @State private var completeFeedback = 0
 
     var body: some View {
@@ -40,6 +42,9 @@ struct RoutineListView: View {
             }
             .sheet(isPresented: $showAdd, onDismiss: { viewModel?.load() }) {
                 AddRoutineView()
+            }
+            .sheet(item: $editing, onDismiss: { viewModel?.load() }) { task in
+                AddRoutineView(task: task)
             }
         }
         .task {
@@ -95,9 +100,16 @@ struct RoutineListView: View {
             Section {
                 ForEach(tasks) { task in
                     RoutineRow(task: task, showsDate: showsDate, isOverdue: title == "Overdue") {
-                        vm.complete(task)
-                        completeFeedback += 1
+                        if task.isCompleted {
+                            vm.uncomplete(task)
+                        } else {
+                            vm.complete(task)
+                            completeFeedback += 1
+                        }
                     }
+                    .contentShape(Rectangle())
+                    .onTapGesture { editing = task }
+                    .accessibilityAction(named: "Edit") { editing = task }
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
                     .listRowInsets(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
@@ -123,12 +135,12 @@ private struct RoutineRow: View {
     let task: RoutineTask
     let showsDate: Bool
     let isOverdue: Bool
-    let onComplete: () -> Void
+    let onToggle: () -> Void
 
     var body: some View {
         PawprintCard {
             HStack(spacing: 14) {
-                Button(action: onComplete) {
+                Button(action: onToggle) {
                     Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                         .font(PawprintTheme.font(.title2))
                         .foregroundStyle(task.isCompleted ? PawprintTheme.success : PawprintTheme.border)
@@ -136,8 +148,7 @@ private struct RoutineRow: View {
                         .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .disabled(task.isCompleted)
-                .accessibilityLabel(task.isCompleted ? "Done" : "Mark \(task.title) as done")
+                .accessibilityLabel(task.isCompleted ? "Mark \(task.title) as not done" : "Mark \(task.title) as done")
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(task.title)

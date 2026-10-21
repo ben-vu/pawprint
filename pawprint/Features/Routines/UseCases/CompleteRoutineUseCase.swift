@@ -10,12 +10,14 @@ import Foundation
 
 nonisolated enum RoutineError: DomainError {
     case alreadyCompleted
+    case notCompleted
     case emptyTitle
     case titleTooLong
 
     var errorDescription: String? {
         switch self {
         case .alreadyCompleted: return "This task is already done."
+        case .notCompleted: return "This task isn't done yet."
         case .emptyTitle: return "Please give the routine a name."
         case .titleTooLong: return "Keep the name under 60 characters."
         }
