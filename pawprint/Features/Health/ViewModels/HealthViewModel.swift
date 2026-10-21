@@ -33,5 +33,13 @@ class HealthViewModel {
             self.errorMessage = HealthError.dateInFuture.errorDescription
             return
         }
+        
+        let newHealthRecord = HealthRecord(
+            title: title,
+            date: date,
+            nextDueDate: nextDueDate,
+            notes: notes,
+            dog: dog
+        )
     }
 }
