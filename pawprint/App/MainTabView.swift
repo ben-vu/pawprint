@@ -1,6 +1,6 @@
 //
 //  MainTabView.swift
-//  pawprint
+//  Pawprint
 //
 //  Created by Natalie Michael on 20/10/2026.
 //

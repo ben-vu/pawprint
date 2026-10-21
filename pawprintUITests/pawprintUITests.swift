@@ -1,13 +1,13 @@
 //
-//  pawprintUITests.swift
-//  pawprintUITests
+//  PawprintUITests.swift
+//  PawprintUITests
 //
 //  Created by Natalie Michael on 20/10/2026.
 //
 
 import XCTest
 
-final class pawprintUITests: XCTestCase {
+final class PawprintUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

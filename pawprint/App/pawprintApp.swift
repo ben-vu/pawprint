@@ -1,6 +1,6 @@
 //
-//  pawprintApp.swift
-//  pawprint
+//  PawprintApp.swift
+//  Pawprint
 //
 //  Created by Natalie Michael on 20/10/2026.
 //
@@ -13,7 +13,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct pawprintApp: App {
+struct PawprintApp: App {
     let container: ModelContainer
     private let widgetSync: WidgetSyncService
 

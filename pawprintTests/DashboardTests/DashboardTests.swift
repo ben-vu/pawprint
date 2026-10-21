@@ -1,6 +1,6 @@
 //
 //  DashboardTests.swift
-//  pawprintTests
+//  PawprintTests
 //
 //  Created by Natalie Michael on 21/10/2026.
 //
@@ -9,7 +9,7 @@
 
 import Foundation
 import Testing
-@testable import pawprint
+@testable import Pawprint
 
 @MainActor
 final class MockDogRepository: DogRepository {
