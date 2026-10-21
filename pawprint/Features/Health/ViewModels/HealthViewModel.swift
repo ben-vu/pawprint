@@ -28,7 +28,7 @@ class HealthViewModel {
         }
     }
     
-    func addAHealthRecord() {
+    func addAHealthRecord(title: String, date: Date, nextDueDate: Date?, notes: String) {
         
     }
 }
