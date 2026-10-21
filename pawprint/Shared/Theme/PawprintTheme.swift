@@ -1,6 +1,6 @@
 //
 //  PawprintTheme.swift
-//  pawprint
+//  Pawprint
 //
 //  Single source of truth for colours and fonts. Every colour has a light
 //  and a dark value so Dark Mode works without extra code in views.

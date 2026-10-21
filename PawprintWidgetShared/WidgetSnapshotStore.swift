@@ -1,6 +1,6 @@
 //
 //  WidgetSnapshotStore.swift
-//  pawprintWidgetShared
+//  PawprintWidgetShared
 //
 //  Created by Benjamin Vu on 21/10/2026.
 //

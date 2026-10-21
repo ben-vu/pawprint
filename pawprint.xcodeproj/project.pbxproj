@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		BE0000000000000000000003 /* pawprintWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE0000000000000000000002 /* pawprintWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE0000000000000000000002 /* PawprintWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -16,21 +16,21 @@
 			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = BE0000000000000000000001;
-			remoteInfo = pawprintWidgetExtension;
+			remoteInfo = PawprintWidgetExtension;
 		};
 		AA563802308732AD00BF05E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AA5637F3308732AC00BF05E2;
-			remoteInfo = pawprint;
+			remoteInfo = Pawprint;
 		};
 		AA56380C308732AD00BF05E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = AA5637F3308732AC00BF05E2;
-			remoteInfo = pawprint;
+			remoteInfo = Pawprint;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -41,7 +41,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				BE0000000000000000000003 /* pawprintWidgetExtension.appex in Embed Foundation Extensions */,
+				BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -49,29 +49,29 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		AA5637F4308732AC00BF05E2 /* pawprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pawprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA563801308732AD00BF05E2 /* pawprintTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pawprintTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA56380B308732AD00BF05E2 /* pawprintUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pawprintUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BE0000000000000000000002 /* pawprintWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = pawprintWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA5637F4308732AC00BF05E2 /* Pawprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pawprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA563801308732AD00BF05E2 /* PawprintTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawprintTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA56380B308732AD00BF05E2 /* PawprintUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawprintUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE0000000000000000000002 /* PawprintWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PawprintWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		BE0000000000000000000009 /* Exceptions for "pawprintWidget" folder in "pawprintWidgetExtension" target */ = {
+		BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = BE0000000000000000000001 /* pawprintWidgetExtension */;
+			target = BE0000000000000000000001 /* PawprintWidgetExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BE0000000000000000000007 /* pawprintWidget */ = {
+		BE0000000000000000000007 /* PawprintWidget */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				BE0000000000000000000009 /* Exceptions for "pawprintWidget" folder in "pawprintWidgetExtension" target */,
+				BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */,
 			);
-			path = pawprintWidget;
+			path = PawprintWidget;
 			sourceTree = "<group>";
 		};
 		BE0000000000000000000008 /* PawprintWidgetShared */ = {
@@ -79,19 +79,19 @@
 			path = PawprintWidgetShared;
 			sourceTree = "<group>";
 		};
-		AA5637F6308732AC00BF05E2 /* pawprint */ = {
+		AA5637F6308732AC00BF05E2 /* Pawprint */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = pawprint;
+			path = Pawprint;
 			sourceTree = "<group>";
 		};
-		AA563804308732AD00BF05E2 /* pawprintTests */ = {
+		AA563804308732AD00BF05E2 /* PawprintTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = pawprintTests;
+			path = PawprintTests;
 			sourceTree = "<group>";
 		};
-		AA56380E308732AD00BF05E2 /* pawprintUITests */ = {
+		AA56380E308732AD00BF05E2 /* PawprintUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = pawprintUITests;
+			path = PawprintUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -123,11 +123,11 @@
 		AA5637EB308732AC00BF05E2 = {
 			isa = PBXGroup;
 			children = (
-				AA5637F6308732AC00BF05E2 /* pawprint */,
+				AA5637F6308732AC00BF05E2 /* Pawprint */,
 				BE0000000000000000000008 /* PawprintWidgetShared */,
-				BE0000000000000000000007 /* pawprintWidget */,
-				AA563804308732AD00BF05E2 /* pawprintTests */,
-				AA56380E308732AD00BF05E2 /* pawprintUITests */,
+				BE0000000000000000000007 /* PawprintWidget */,
+				AA563804308732AD00BF05E2 /* PawprintTests */,
+				AA56380E308732AD00BF05E2 /* PawprintUITests */,
 				AA5637F5308732AC00BF05E2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -135,10 +135,10 @@
 		AA5637F5308732AC00BF05E2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA5637F4308732AC00BF05E2 /* pawprint.app */,
-				AA563801308732AD00BF05E2 /* pawprintTests.xctest */,
-				AA56380B308732AD00BF05E2 /* pawprintUITests.xctest */,
-				BE0000000000000000000002 /* pawprintWidgetExtension.appex */,
+				AA5637F4308732AC00BF05E2 /* Pawprint.app */,
+				AA563801308732AD00BF05E2 /* PawprintTests.xctest */,
+				AA56380B308732AD00BF05E2 /* PawprintUITests.xctest */,
+				BE0000000000000000000002 /* PawprintWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -146,9 +146,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		AA5637F3308732AC00BF05E2 /* pawprint */ = {
+		AA5637F3308732AC00BF05E2 /* Pawprint */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA563813308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "pawprint" */;
+			buildConfigurationList = AA563813308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "Pawprint" */;
 			buildPhases = (
 				AA5637F0308732AC00BF05E2 /* Sources */,
 				AA5637F1308732AC00BF05E2 /* Frameworks */,
@@ -161,17 +161,17 @@
 				BE0000000000000000000005 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AA5637F6308732AC00BF05E2 /* pawprint */,
+				AA5637F6308732AC00BF05E2 /* Pawprint */,
 				BE0000000000000000000008 /* PawprintWidgetShared */,
 			);
-			name = pawprint;
-			productName = pawprint;
-			productReference = AA5637F4308732AC00BF05E2 /* pawprint.app */;
+			name = Pawprint;
+			productName = Pawprint;
+			productReference = AA5637F4308732AC00BF05E2 /* Pawprint.app */;
 			productType = "com.apple.product-type.application";
 		};
-		AA563800308732AD00BF05E2 /* pawprintTests */ = {
+		AA563800308732AD00BF05E2 /* PawprintTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA563816308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "pawprintTests" */;
+			buildConfigurationList = AA563816308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintTests" */;
 			buildPhases = (
 				AA5637FD308732AD00BF05E2 /* Sources */,
 				AA5637FE308732AD00BF05E2 /* Frameworks */,
@@ -183,16 +183,16 @@
 				AA563803308732AD00BF05E2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AA563804308732AD00BF05E2 /* pawprintTests */,
+				AA563804308732AD00BF05E2 /* PawprintTests */,
 			);
-			name = pawprintTests;
-			productName = pawprintTests;
-			productReference = AA563801308732AD00BF05E2 /* pawprintTests.xctest */;
+			name = PawprintTests;
+			productName = PawprintTests;
+			productReference = AA563801308732AD00BF05E2 /* PawprintTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		AA56380A308732AD00BF05E2 /* pawprintUITests */ = {
+		AA56380A308732AD00BF05E2 /* PawprintUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = AA563819308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "pawprintUITests" */;
+			buildConfigurationList = AA563819308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintUITests" */;
 			buildPhases = (
 				AA563807308732AD00BF05E2 /* Sources */,
 				AA563808308732AD00BF05E2 /* Frameworks */,
@@ -204,16 +204,16 @@
 				AA56380D308732AD00BF05E2 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				AA56380E308732AD00BF05E2 /* pawprintUITests */,
+				AA56380E308732AD00BF05E2 /* PawprintUITests */,
 			);
-			name = pawprintUITests;
-			productName = pawprintUITests;
-			productReference = AA56380B308732AD00BF05E2 /* pawprintUITests.xctest */;
+			name = PawprintUITests;
+			productName = PawprintUITests;
+			productReference = AA56380B308732AD00BF05E2 /* PawprintUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		BE0000000000000000000001 /* pawprintWidgetExtension */ = {
+		BE0000000000000000000001 /* PawprintWidgetExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BE000000000000000000000F /* Build configuration list for PBXNativeTarget "pawprintWidgetExtension" */;
+			buildConfigurationList = BE000000000000000000000F /* Build configuration list for PBXNativeTarget "PawprintWidgetExtension" */;
 			buildPhases = (
 				BE000000000000000000000A /* Sources */,
 				BE000000000000000000000B /* Frameworks */,
@@ -224,14 +224,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BE0000000000000000000007 /* pawprintWidget */,
+				BE0000000000000000000007 /* PawprintWidget */,
 				BE0000000000000000000008 /* PawprintWidgetShared */,
 			);
-			name = pawprintWidgetExtension;
+			name = PawprintWidgetExtension;
 			packageProductDependencies = (
 			);
-			productName = pawprintWidgetExtension;
-			productReference = BE0000000000000000000002 /* pawprintWidgetExtension.appex */;
+			productName = PawprintWidgetExtension;
+			productReference = BE0000000000000000000002 /* PawprintWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -260,7 +260,7 @@
 					};
 				};
 			};
-			buildConfigurationList = AA5637EF308732AC00BF05E2 /* Build configuration list for PBXProject "pawprint" */;
+			buildConfigurationList = AA5637EF308732AC00BF05E2 /* Build configuration list for PBXProject "Pawprint" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -274,10 +274,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				AA5637F3308732AC00BF05E2 /* pawprint */,
-				AA563800308732AD00BF05E2 /* pawprintTests */,
-				AA56380A308732AD00BF05E2 /* pawprintUITests */,
-				BE0000000000000000000001 /* pawprintWidgetExtension */,
+				AA5637F3308732AC00BF05E2 /* Pawprint */,
+				AA563800308732AD00BF05E2 /* PawprintTests */,
+				AA56380A308732AD00BF05E2 /* PawprintUITests */,
+				BE0000000000000000000001 /* PawprintWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -331,23 +331,23 @@
 /* Begin PBXTargetDependency section */
 		AA563803308732AD00BF05E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AA5637F3308732AC00BF05E2 /* pawprint */;
+			target = AA5637F3308732AC00BF05E2 /* Pawprint */;
 			targetProxy = AA563802308732AD00BF05E2 /* PBXContainerItemProxy */;
 		};
 		AA56380D308732AD00BF05E2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = AA5637F3308732AC00BF05E2 /* pawprint */;
+			target = AA5637F3308732AC00BF05E2 /* Pawprint */;
 			targetProxy = AA56380C308732AD00BF05E2 /* PBXContainerItemProxy */;
 		};
 		BE0000000000000000000005 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BE0000000000000000000001 /* pawprintWidgetExtension */;
+			target = BE0000000000000000000001 /* PawprintWidgetExtension */;
 			targetProxy = BE0000000000000000000004 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		AA563811308732AD00BF05E2 /* Debug configuration for PBXProject "pawprint" */ = {
+		AA563811308732AD00BF05E2 /* Debug configuration for PBXProject "Pawprint" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -410,7 +410,7 @@
 			};
 			name = Debug;
 		};
-		AA563812308732AD00BF05E2 /* Release configuration for PBXProject "pawprint" */ = {
+		AA563812308732AD00BF05E2 /* Release configuration for PBXProject "Pawprint" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -466,12 +466,12 @@
 			};
 			name = Release;
 		};
-		AA563814308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "pawprint" */ = {
+		AA563814308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "Pawprint" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = pawprint/pawprint.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Pawprint/Pawprint.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -498,12 +498,12 @@
 			};
 			name = Debug;
 		};
-		AA563815308732AD00BF05E2 /* Release configuration for PBXNativeTarget "pawprint" */ = {
+		AA563815308732AD00BF05E2 /* Release configuration for PBXNativeTarget "Pawprint" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = pawprint/pawprint.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Pawprint/Pawprint.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -530,7 +530,7 @@
 			};
 			name = Release;
 		};
-		AA563817308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "pawprintTests" */ = {
+		AA563817308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -547,11 +547,11 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pawprint.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pawprint";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pawprint.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pawprint";
 			};
 			name = Debug;
 		};
-		AA563818308732AD00BF05E2 /* Release configuration for PBXNativeTarget "pawprintTests" */ = {
+		AA563818308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintTests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -568,11 +568,11 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pawprint.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/pawprint";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pawprint.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pawprint";
 			};
 			name = Release;
 		};
-		AA56381A308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "pawprintUITests" */ = {
+		AA56381A308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -587,11 +587,11 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = pawprint;
+				TEST_TARGET_NAME = Pawprint;
 			};
 			name = Debug;
 		};
-		AA56381B308732AD00BF05E2 /* Release configuration for PBXNativeTarget "pawprintUITests" */ = {
+		AA56381B308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintUITests" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -606,19 +606,19 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = pawprint;
+				TEST_TARGET_NAME = Pawprint;
 			};
 			name = Release;
 		};
-		BE000000000000000000000D /* Debug configuration for PBXNativeTarget "pawprintWidgetExtension" */ = {
+		BE000000000000000000000D /* Debug configuration for PBXNativeTarget "PawprintWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = pawprintWidget/pawprintWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = PawprintWidget/PawprintWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = pawprintWidget/Info.plist;
+				INFOPLIST_FILE = PawprintWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Pawprint;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -639,15 +639,15 @@
 			};
 			name = Debug;
 		};
-		BE000000000000000000000E /* Release configuration for PBXNativeTarget "pawprintWidgetExtension" */ = {
+		BE000000000000000000000E /* Release configuration for PBXNativeTarget "PawprintWidgetExtension" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = pawprintWidget/pawprintWidget.entitlements;
+				CODE_SIGN_ENTITLEMENTS = PawprintWidget/PawprintWidget.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = pawprintWidget/Info.plist;
+				INFOPLIST_FILE = PawprintWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Pawprint;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -671,43 +671,43 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		AA5637EF308732AC00BF05E2 /* Build configuration list for PBXProject "pawprint" */ = {
+		AA5637EF308732AC00BF05E2 /* Build configuration list for PBXProject "Pawprint" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA563811308732AD00BF05E2 /* Debug configuration for PBXProject "pawprint" */,
-				AA563812308732AD00BF05E2 /* Release configuration for PBXProject "pawprint" */,
+				AA563811308732AD00BF05E2 /* Debug configuration for PBXProject "Pawprint" */,
+				AA563812308732AD00BF05E2 /* Release configuration for PBXProject "Pawprint" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		AA563813308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "pawprint" */ = {
+		AA563813308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "Pawprint" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA563814308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "pawprint" */,
-				AA563815308732AD00BF05E2 /* Release configuration for PBXNativeTarget "pawprint" */,
+				AA563814308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "Pawprint" */,
+				AA563815308732AD00BF05E2 /* Release configuration for PBXNativeTarget "Pawprint" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		AA563816308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "pawprintTests" */ = {
+		AA563816308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA563817308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "pawprintTests" */,
-				AA563818308732AD00BF05E2 /* Release configuration for PBXNativeTarget "pawprintTests" */,
+				AA563817308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintTests" */,
+				AA563818308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintTests" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		AA563819308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "pawprintUITests" */ = {
+		AA563819308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AA56381A308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "pawprintUITests" */,
-				AA56381B308732AD00BF05E2 /* Release configuration for PBXNativeTarget "pawprintUITests" */,
+				AA56381A308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintUITests" */,
+				AA56381B308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintUITests" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		BE000000000000000000000F /* Build configuration list for PBXNativeTarget "pawprintWidgetExtension" */ = {
+		BE000000000000000000000F /* Build configuration list for PBXNativeTarget "PawprintWidgetExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BE000000000000000000000D /* Debug configuration for PBXNativeTarget "pawprintWidgetExtension" */,
-				BE000000000000000000000E /* Release configuration for PBXNativeTarget "pawprintWidgetExtension" */,
+				BE000000000000000000000D /* Debug configuration for PBXNativeTarget "PawprintWidgetExtension" */,
+				BE000000000000000000000E /* Release configuration for PBXNativeTarget "PawprintWidgetExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};

@@ -1,6 +1,6 @@
 //
 //  LearnTests.swift
-//  pawprintTests
+//  PawprintTests
 //
 //  Created by Benjamin Vu on 21/10/2026.
 //
@@ -10,7 +10,7 @@
 
 import Foundation
 import Testing
-@testable import pawprint
+@testable import Pawprint
 
 @MainActor
 final class MockTipRepository: TipRepository {

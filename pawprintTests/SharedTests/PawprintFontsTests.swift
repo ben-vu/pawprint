@@ -1,6 +1,6 @@
 //
 //  PawprintFontsTests.swift
-//  pawprintTests
+//  PawprintTests
 //
 //  Created by Natalie Michael on 20/10/2026.
 //
@@ -8,7 +8,7 @@
 import Testing
 import UIKit
 import SwiftUI
-@testable import pawprint
+@testable import Pawprint
 
 @MainActor
 struct PawprintFontsTests {

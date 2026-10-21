@@ -1,6 +1,6 @@
 //
 //  PawprintFonts.swift
-//  pawprint
+//  Pawprint
 //
 //  Loads the bundled Nunito font (SIL Open Font Licence, see Resources/Fonts)
 //  and maps SwiftUI text styles and weights onto it. Registering at launch

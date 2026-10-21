@@ -1,6 +1,6 @@
 //
 //  BuildWidgetSnapshotUseCase.swift
-//  pawprint
+//  Pawprint
 //
 //  Created by Benjamin Vu on 21/10/2026.
 //

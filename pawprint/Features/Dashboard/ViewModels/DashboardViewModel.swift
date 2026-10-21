@@ -1,6 +1,6 @@
 //
 //  DashboardViewModel.swift
-//  pawprint
+//  Pawprint
 //
 //  Created by Natalie Michael on 21/10/2026.
 //
