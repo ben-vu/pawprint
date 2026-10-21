@@ -9,6 +9,7 @@
 import Foundation
 import Testing
 @testable import pawprint
+import SwiftData
 
 @MainActor
 class MockHealthRepository: HealthRepository {
@@ -17,9 +18,9 @@ class MockHealthRepository: HealthRepository {
 
     struct MockFailure: Error {}
 
-    func fetchAll() throws -> [HealthRecord] {
+    func fetchRecords(for dog: Dog) throws -> [HealthRecord] {
         if shouldFail { throw MockFailure() }
-        return items
+        return items.filter { $0.dog?.persistentModelID == dog.persistentModelID }
     }
 
     func save(_ record: HealthRecord) throws {
