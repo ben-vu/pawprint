@@ -40,7 +40,7 @@ struct HealthTests {
         let repository = MockHealthRepository()
         try repository.save(HealthRecord(title: "Flea treatment", date: .now))
 
-        let viewModel = HealthViewModel(repository: repository)
+        let viewModel = HealthViewModel(repository: repository, dog: <#Dog#>)
         viewModel.load()
 
         #expect(viewModel.records.count == 1)
@@ -51,7 +51,7 @@ struct HealthTests {
         let repository = MockHealthRepository()
         repository.shouldFail = true
 
-        let viewModel = HealthViewModel(repository: repository)
+        let viewModel = HealthViewModel(repository: repository, dog: <#Dog#>)
         viewModel.load()
 
         #expect(viewModel.errorMessage != nil)
