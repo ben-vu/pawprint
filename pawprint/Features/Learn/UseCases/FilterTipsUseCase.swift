@@ -2,7 +2,7 @@
 //  FilterTipsUseCase.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Browse by category or saved tips, then narrow by what was typed into the
 //  search bar. Every typed word must appear somewhere in the guide (title,

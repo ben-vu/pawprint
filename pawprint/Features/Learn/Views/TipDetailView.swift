@@ -2,7 +2,7 @@
 //  TipDetailView.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  A full beginner guide: key points first, then the explanation.
 //

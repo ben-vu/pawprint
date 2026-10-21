@@ -2,7 +2,7 @@
 //  LearnError.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Repository errors are mapped to these in the use cases, so the UI only
 //  ever shows plain-language messages and never a storage error.

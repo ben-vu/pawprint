@@ -1,6 +1,8 @@
 //
 //  CreateDogUseCase.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Example use case. One struct per business operation, validation inside,
 //  errors as a DomainError enum. Copy this pattern for your own use cases.

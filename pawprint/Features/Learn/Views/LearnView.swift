@@ -2,7 +2,7 @@
 //  LearnView.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Entry view for the Learn tab: search, category chips and a list of
 //  beginner guides. All logic lives in LearnViewModel.

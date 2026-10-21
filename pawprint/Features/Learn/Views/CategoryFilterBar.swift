@@ -2,7 +2,7 @@
 //  CategoryFilterBar.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Horizontally scrolling chips: All, Saved, then one per category.
 //  Every chip is at least 44pt tall.

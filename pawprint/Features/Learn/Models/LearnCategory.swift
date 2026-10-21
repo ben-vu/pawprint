@@ -2,7 +2,7 @@
 //  LearnCategory.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  The topics tips are organised under. A closed enum means a tip can never
 //  end up in a category that does not exist.

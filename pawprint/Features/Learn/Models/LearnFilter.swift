@@ -2,7 +2,7 @@
 //  LearnFilter.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  What the person is currently browsing: everything, their saved tips,
 //  or a single category.

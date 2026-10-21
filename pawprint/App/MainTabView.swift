@@ -2,6 +2,8 @@
 //  MainTabView.swift
 //  pawprint
 //
+//  Created by Natalie Michael on 20/10/2026.
+//
 //  Root navigation. One tab per feature, each pointing at that feature's
 //  entry view. Feature owners replace the entry view in their own folder,
 //  not here.

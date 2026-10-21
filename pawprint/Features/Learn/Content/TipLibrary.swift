@@ -2,7 +2,7 @@
 //  TipLibrary.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  The beginner guides that ship with Pawprint. Writing the content as plain
 //  Swift values keeps it version controlled, reviewable in pull requests and

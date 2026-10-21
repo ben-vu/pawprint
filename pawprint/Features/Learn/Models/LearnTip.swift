@@ -2,7 +2,7 @@
 //  LearnTip.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  One beginner guide. `contentID` is the stable identity of the bundled
 //  content, so updating the text in a later app version never loses a

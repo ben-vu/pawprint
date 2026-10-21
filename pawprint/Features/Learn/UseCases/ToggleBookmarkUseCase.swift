@@ -2,7 +2,7 @@
 //  ToggleBookmarkUseCase.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Saves or un-saves a tip. If the save fails the in-memory change is put
 //  back, so the bookmark icon never shows something that was not stored.

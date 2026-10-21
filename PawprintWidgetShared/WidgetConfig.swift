@@ -2,7 +2,7 @@
 //  WidgetConfig.swift
 //  pawprintWidgetShared
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  The values the two targets must agree on. The App Group ID has to match
 //  the entitlements files of both targets exactly, otherwise each one gets

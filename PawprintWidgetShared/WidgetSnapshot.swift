@@ -2,7 +2,7 @@
 //  WidgetSnapshot.swift
 //  pawprintWidgetShared
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Everything the widget needs to draw itself, written by the app and read
 //  by the widget. Tasks are sorted by due date, so overdue tasks come first.

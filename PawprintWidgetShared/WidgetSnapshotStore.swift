@@ -2,7 +2,7 @@
 //  WidgetSnapshotStore.swift
 //  pawprintWidgetShared
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Reads and writes the snapshot in the App Group container, the one piece
 //  of storage the app and the widget can both open.

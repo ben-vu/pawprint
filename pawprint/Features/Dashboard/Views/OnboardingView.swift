@@ -1,6 +1,8 @@
 //
 //  OnboardingView.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Three steps: welcome, dog details, done. The details step saves through
 //  the view model, which uses CreateDogUseCase for validation.

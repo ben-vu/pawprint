@@ -2,7 +2,7 @@
 //  SeedTipsUseCase.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Copies the bundled guides into the database. Safe to run on every launch:
 //  new guides are added, changed guides are updated, unchanged guides are

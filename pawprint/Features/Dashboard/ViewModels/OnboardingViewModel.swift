@@ -1,6 +1,8 @@
 //
 //  OnboardingViewModel.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Holds the form while the user walks through onboarding, then saves
 //  through CreateDogUseCase so validation lives in one place.

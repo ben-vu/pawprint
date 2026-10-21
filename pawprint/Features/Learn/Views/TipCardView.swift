@@ -2,7 +2,7 @@
 //  TipCardView.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  One row in the Learn list. Tapping the card opens the guide; the
 //  bookmark button sits on top as its own 44x44pt control.

@@ -1,6 +1,8 @@
 //
 //  LaunchView.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Opening animation. The pug rises from below the wordmark, the letters
 //  stamp in one at a time, then the whole thing hands over to RootView.

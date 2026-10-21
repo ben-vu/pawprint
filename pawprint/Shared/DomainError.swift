@@ -2,6 +2,8 @@
 //  DomainError.swift
 //  pawprint
 //
+//  Created by Natalie Michael on 21/10/2026.
+//
 //  Every feature's error enum adopts this so views can show errors the
 //  same way everywhere. Example:
 //

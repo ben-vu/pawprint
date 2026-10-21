@@ -1,6 +1,8 @@
 //
 //  DeleteDogUseCase.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 
 import Foundation

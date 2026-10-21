@@ -1,6 +1,8 @@
 //
 //  DashboardTests.swift
-//  Dashboard feature tests (Natalie)
+//  pawprintTests
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  All tests run against mock repositories, never SwiftData.
 //

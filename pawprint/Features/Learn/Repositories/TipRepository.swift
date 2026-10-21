@@ -2,7 +2,7 @@
 //  TipRepository.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Use cases and view models only ever see the protocol, so tests can swap
 //  in an in-memory mock and nothing above this file imports SwiftData.

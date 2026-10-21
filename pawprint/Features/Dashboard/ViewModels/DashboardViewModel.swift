@@ -1,6 +1,8 @@
 //
 //  DashboardViewModel.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  State for the Home screen: the dog, today's tasks and progress.
 //

@@ -2,7 +2,7 @@
 //  UpcomingTask.swift
 //  pawprintWidgetShared
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  A small, plain copy of a routine task that is safe to store in the App
 //  Group and show in a widget. The widget never touches SwiftData.

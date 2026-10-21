@@ -1,6 +1,8 @@
 //
 //  DashboardComponents.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Small reusable pieces used by the Home, Onboarding and Profile screens.
 //

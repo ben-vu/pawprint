@@ -2,7 +2,7 @@
 //  LearnViewModel.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  Single source of truth for the Learn tab. Views read `tips` and call the
 //  methods below; all rules live in the use cases.

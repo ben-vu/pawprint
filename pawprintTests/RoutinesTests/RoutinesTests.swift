@@ -1,6 +1,8 @@
 //
 //  RoutinesTests.swift
-//  Routines feature tests (Sana)
+//  pawprintTests
+//
+//  Created by Natalie Michael on 20/10/2026.
 //
 //  Pattern: a mock repository that stores items in an array, then tests
 //  that drive the ViewModel or use case through the protocol only.

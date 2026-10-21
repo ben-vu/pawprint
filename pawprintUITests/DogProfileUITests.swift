@@ -2,6 +2,8 @@
 //  DogProfileUITests.swift
 //  pawprintUITests
 //
+//  Created by Natalie Michael on 21/10/2026.
+//
 //  Walks the real app: onboarding if needed, then opens the dog profile
 //  sheet from Home, edits a field and saves. Catches hangs and crashes
 //  that unit tests cannot see.

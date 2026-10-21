@@ -1,6 +1,8 @@
 //
 //  PawprintCard.swift
-//  Shared component
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Wrap any content in the standard cream card. Add more shared
 //  components to this folder, anything used by two or more features.

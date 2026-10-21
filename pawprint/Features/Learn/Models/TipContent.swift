@@ -2,7 +2,7 @@
 //  TipContent.swift
 //  pawprint
 //
-//  Created by Benjamin Vu on 21/10/2026
+//  Created by Benjamin Vu on 21/10/2026.
 //
 //  A plain value describing one bundled guide. TipLibrary holds these and
 //  SeedTipsUseCase turns them into persisted LearnTip models.
