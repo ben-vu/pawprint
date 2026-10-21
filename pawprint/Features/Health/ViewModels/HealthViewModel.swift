@@ -11,11 +11,13 @@ import Observation
 class HealthViewModel {
     private(set) var records: [HealthRecord] = []
     var errorMessage: String?
+    let dog: Dog
 
     private let repository: HealthRepository
 
-    init(repository: HealthRepository) {
+    init(repository: HealthRepository, dog: Dog) {
         self.repository = repository
+        self.dog = dog
     }
 
     func load() {
