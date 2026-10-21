@@ -22,10 +22,11 @@ nonisolated enum HealthError: DomainError {
 struct OverdueTreatmentsUseCase {
     let repository: HealthRepository
 
-    func execute(asOf today: Date = .now) throws -> [HealthRecord] {
-        try repository.fetchAll().filter { record in
-            guard let due = record.nextDueDate else { return false }
-            return due < today
+    func execute(for dog: Dog, asOf today: Date = .now) throws -> [HealthRecord] {
+        let records = try repository.fetchRecords(for: dog)
+        return records.filter { record in
+                    guard let due = record.nextDueDate else { return false }
+                    return due < today
         }
     }
 }
