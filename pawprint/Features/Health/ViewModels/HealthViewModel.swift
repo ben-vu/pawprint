@@ -27,4 +27,8 @@ class HealthViewModel {
             errorMessage = error.localizedDescription
         }
     }
+    
+    func addAHealthRecord() {
+        
+    }
 }
