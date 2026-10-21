@@ -7,17 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AAA10004308988A800F1B167 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = AAA10003308988A800F1B167 /* Lottie */; };
 		BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE0000000000000000000002 /* PawprintWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		BE0000000000000000000004 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE0000000000000000000001;
-			remoteInfo = PawprintWidgetExtension;
-		};
 		AA563802308732AD00BF05E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
@@ -32,19 +26,24 @@
 			remoteGlobalIDString = AA5637F3308732AC00BF05E2;
 			remoteInfo = Pawprint;
 		};
+		BE0000000000000000000004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE0000000000000000000001;
+			remoteInfo = PawprintWidgetExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		BE0000000000000000000006 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 13;
+			dstSubfolder = PlugIns;
 			files = (
 				BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -66,19 +65,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BE0000000000000000000007 /* PawprintWidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */,
-			);
-			path = PawprintWidget;
-			sourceTree = "<group>";
-		};
-		BE0000000000000000000008 /* PawprintWidgetShared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PawprintWidgetShared;
-			sourceTree = "<group>";
-		};
 		AA5637F6308732AC00BF05E2 /* Pawprint */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Pawprint;
@@ -94,12 +80,26 @@
 			path = PawprintUITests;
 			sourceTree = "<group>";
 		};
+		BE0000000000000000000007 /* PawprintWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */,
+			);
+			path = PawprintWidget;
+			sourceTree = "<group>";
+		};
+		BE0000000000000000000008 /* PawprintWidgetShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PawprintWidgetShared;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		AA5637F1308732AC00BF05E2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				AAA10004308988A800F1B167 /* Lottie in Frameworks */,
 			);
 		};
 		AA5637FE308732AD00BF05E2 /* Frameworks */ = {
@@ -165,6 +165,9 @@
 				BE0000000000000000000008 /* PawprintWidgetShared */,
 			);
 			name = Pawprint;
+			packageProductDependencies = (
+				AAA10003308988A800F1B167 /* Lottie */,
+			);
 			productName = Pawprint;
 			productReference = AA5637F4308732AC00BF05E2 /* Pawprint.app */;
 			productType = "com.apple.product-type.application";
@@ -221,15 +224,11 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				BE0000000000000000000007 /* PawprintWidget */,
 				BE0000000000000000000008 /* PawprintWidgetShared */,
 			);
 			name = PawprintWidgetExtension;
-			packageProductDependencies = (
-			);
 			productName = PawprintWidgetExtension;
 			productReference = BE0000000000000000000002 /* PawprintWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -247,9 +246,6 @@
 					AA5637F3308732AC00BF05E2 = {
 						CreatedOnToolsVersion = 27.1;
 					};
-					BE0000000000000000000001 = {
-						CreatedOnToolsVersion = 27.1;
-					};
 					AA563800308732AD00BF05E2 = {
 						CreatedOnToolsVersion = 27.1;
 						TestTargetID = AA5637F3308732AC00BF05E2;
@@ -257,6 +253,9 @@
 					AA56380A308732AD00BF05E2 = {
 						CreatedOnToolsVersion = 27.1;
 						TestTargetID = AA5637F3308732AC00BF05E2;
+					};
+					BE0000000000000000000001 = {
+						CreatedOnToolsVersion = 27.1;
 					};
 				};
 			};
@@ -269,6 +268,9 @@
 			);
 			mainGroup = AA5637EB308732AC00BF05E2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AAA10002308988A800F1B167 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AA5637F5308732AC00BF05E2 /* Products */;
 			projectDirPath = "";
@@ -712,6 +714,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AAA10002308988A800F1B167 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AAA10003308988A800F1B167 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AAA10002308988A800F1B167 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AA5637EC308732AC00BF05E2 /* Project object */;
 	validationLevel = 1;
