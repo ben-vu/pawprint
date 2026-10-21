@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class HealthRecord {
+class HealthRecord {
     var title: String
     var date: Date
     var nextDueDate: Date?
