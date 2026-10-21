@@ -15,6 +15,9 @@ struct pawprintApp: App {
     let container: ModelContainer
 
     init() {
+        PawprintFonts.registerAll()       // load Nunito before any view draws
+        PawprintFonts.applyAppearance()   // nav titles and tab labels use it too
+
         let schema = Schema([
             Dog.self,           // Dashboard (Natalie)
             RoutineTask.self,   // Routines (Sana)
@@ -30,7 +33,8 @@ struct pawprintApp: App {
 
     var body: some Scene {
         WindowGroup {
-            MainTabView()
+            RootView()
+                .environment(\.font, PawprintTheme.font(.body))   // default for any Text without its own font
         }
         .modelContainer(container)
     }

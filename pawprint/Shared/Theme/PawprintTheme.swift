@@ -31,14 +31,25 @@ enum PawprintTheme {
     static let danger  = Color(light: "#B5544A", dark: "#E08A80")
 
     /// Heavy condensed heading font. Scales with Dynamic Type.
+    // MARK: Typography (Nunito, scales with Dynamic Type)
+
+    /// Headline font: Nunito Black. Used for the app name, screen titles and the dog's name.
     static func displayFont(_ style: Font.TextStyle = .largeTitle) -> Font {
-        .system(style, design: .default, weight: .black).width(.condensed)
+        font(style, weight: .black)
+    }
+
+    /// Body font: Nunito at any weight. Use this instead of `.font(.body)` so the whole app matches.
+    static func font(_ style: Font.TextStyle, weight: Font.Weight = .regular) -> Font {
+        .custom(PawprintFonts.name(for: weight), size: PawprintFonts.baseSize(for: style), relativeTo: style)
     }
 }
 
 extension Color {
     /// A colour that switches automatically between Light and Dark Mode.
-    init(light: String, dark: String) {
+    /// `nonisolated` matters: SwiftUI resolves this closure on a background
+    /// render thread during sheet and tab transitions, and a main-actor
+    /// closure would crash there.
+    nonisolated init(light: String, dark: String) {
         self.init(uiColor: UIColor { traits in
             traits.userInterfaceStyle == .dark ? UIColor(hex: dark) : UIColor(hex: light)
         })
@@ -46,7 +57,7 @@ extension Color {
 }
 
 extension UIColor {
-    convenience init(hex: String) {
+    nonisolated convenience init(hex: String) {
         var value: UInt64 = 0
         Scanner(string: hex.trimmingCharacters(in: CharacterSet(charactersIn: "#"))).scanHexInt64(&value)
         self.init(
