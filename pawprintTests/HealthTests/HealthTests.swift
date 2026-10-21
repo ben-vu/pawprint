@@ -11,7 +11,7 @@ import Testing
 @testable import pawprint
 
 @MainActor
-final class MockHealthRepository: HealthRepository {
+class MockHealthRepository: HealthRepository {
     var items: [HealthRecord] = []
     var shouldFail = false
 
