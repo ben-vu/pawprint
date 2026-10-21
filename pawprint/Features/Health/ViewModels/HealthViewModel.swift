@@ -22,7 +22,7 @@ class HealthViewModel {
 
     func load() {
         do {
-            records = try repository.fetchAll()
+            records = try repository.fetchRecords(for: dog)
         } catch {
             errorMessage = error.localizedDescription
         }
