@@ -2,8 +2,9 @@
 //  HealthView.swift
 //  Health feature (Alik)
 //
-//  Placeholder entry view. Replace the body, keep the name.
-//
+//  Placeholder entry view. Replace the
+// body, keep the name.
+
 
 import SwiftUI
 import SwiftData
