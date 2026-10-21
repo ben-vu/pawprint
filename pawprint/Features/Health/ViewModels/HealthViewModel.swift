@@ -8,7 +8,7 @@ import Observation
 
 @MainActor
 @Observable
-final class HealthViewModel {
+class HealthViewModel {
     private(set) var records: [HealthRecord] = []
     var errorMessage: String?
 
