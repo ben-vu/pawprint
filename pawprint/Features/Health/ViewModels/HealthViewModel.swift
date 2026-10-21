@@ -41,5 +41,12 @@ class HealthViewModel {
             notes: notes,
             dog: dog
         )
+        
+        do {
+            try repository.save(newHealthRecord)
+            load()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }
