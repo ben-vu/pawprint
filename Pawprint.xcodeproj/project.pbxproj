@@ -1,0 +1,718 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 110;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE0000000000000000000002 /* PawprintWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BE0000000000000000000004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE0000000000000000000001;
+			remoteInfo = PawprintWidgetExtension;
+		};
+		AA563802308732AD00BF05E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA5637F3308732AC00BF05E2;
+			remoteInfo = Pawprint;
+		};
+		AA56380C308732AD00BF05E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA5637F3308732AC00BF05E2;
+			remoteInfo = Pawprint;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BE0000000000000000000006 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		AA5637F4308732AC00BF05E2 /* Pawprint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pawprint.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA563801308732AD00BF05E2 /* PawprintTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawprintTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA56380B308732AD00BF05E2 /* PawprintUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PawprintUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE0000000000000000000002 /* PawprintWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PawprintWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BE0000000000000000000001 /* PawprintWidgetExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		BE0000000000000000000007 /* PawprintWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */,
+			);
+			path = PawprintWidget;
+			sourceTree = "<group>";
+		};
+		BE0000000000000000000008 /* PawprintWidgetShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PawprintWidgetShared;
+			sourceTree = "<group>";
+		};
+		AA5637F6308732AC00BF05E2 /* Pawprint */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Pawprint;
+			sourceTree = "<group>";
+		};
+		AA563804308732AD00BF05E2 /* PawprintTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PawprintTests;
+			sourceTree = "<group>";
+		};
+		AA56380E308732AD00BF05E2 /* PawprintUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PawprintUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA5637F1308732AC00BF05E2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		AA5637FE308732AD00BF05E2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		AA563808308732AD00BF05E2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		BE000000000000000000000B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA5637EB308732AC00BF05E2 = {
+			isa = PBXGroup;
+			children = (
+				AA5637F6308732AC00BF05E2 /* Pawprint */,
+				BE0000000000000000000008 /* PawprintWidgetShared */,
+				BE0000000000000000000007 /* PawprintWidget */,
+				AA563804308732AD00BF05E2 /* PawprintTests */,
+				AA56380E308732AD00BF05E2 /* PawprintUITests */,
+				AA5637F5308732AC00BF05E2 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA5637F5308732AC00BF05E2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA5637F4308732AC00BF05E2 /* Pawprint.app */,
+				AA563801308732AD00BF05E2 /* PawprintTests.xctest */,
+				AA56380B308732AD00BF05E2 /* PawprintUITests.xctest */,
+				BE0000000000000000000002 /* PawprintWidgetExtension.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA5637F3308732AC00BF05E2 /* Pawprint */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA563813308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "Pawprint" */;
+			buildPhases = (
+				AA5637F0308732AC00BF05E2 /* Sources */,
+				AA5637F1308732AC00BF05E2 /* Frameworks */,
+				AA5637F2308732AC00BF05E2 /* Resources */,
+				BE0000000000000000000006 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				BE0000000000000000000005 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA5637F6308732AC00BF05E2 /* Pawprint */,
+				BE0000000000000000000008 /* PawprintWidgetShared */,
+			);
+			name = Pawprint;
+			productName = Pawprint;
+			productReference = AA5637F4308732AC00BF05E2 /* Pawprint.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA563800308732AD00BF05E2 /* PawprintTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA563816308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintTests" */;
+			buildPhases = (
+				AA5637FD308732AD00BF05E2 /* Sources */,
+				AA5637FE308732AD00BF05E2 /* Frameworks */,
+				AA5637FF308732AD00BF05E2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA563803308732AD00BF05E2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA563804308732AD00BF05E2 /* PawprintTests */,
+			);
+			name = PawprintTests;
+			productName = PawprintTests;
+			productReference = AA563801308732AD00BF05E2 /* PawprintTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		AA56380A308732AD00BF05E2 /* PawprintUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA563819308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintUITests" */;
+			buildPhases = (
+				AA563807308732AD00BF05E2 /* Sources */,
+				AA563808308732AD00BF05E2 /* Frameworks */,
+				AA563809308732AD00BF05E2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA56380D308732AD00BF05E2 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				AA56380E308732AD00BF05E2 /* PawprintUITests */,
+			);
+			name = PawprintUITests;
+			productName = PawprintUITests;
+			productReference = AA56380B308732AD00BF05E2 /* PawprintUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		BE0000000000000000000001 /* PawprintWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BE000000000000000000000F /* Build configuration list for PBXNativeTarget "PawprintWidgetExtension" */;
+			buildPhases = (
+				BE000000000000000000000A /* Sources */,
+				BE000000000000000000000B /* Frameworks */,
+				BE000000000000000000000C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BE0000000000000000000007 /* PawprintWidget */,
+				BE0000000000000000000008 /* PawprintWidgetShared */,
+			);
+			name = PawprintWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = PawprintWidgetExtension;
+			productReference = BE0000000000000000000002 /* PawprintWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA5637EC308732AC00BF05E2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2710;
+				LastUpgradeCheck = 2710;
+				TargetAttributes = {
+					AA5637F3308732AC00BF05E2 = {
+						CreatedOnToolsVersion = 27.1;
+					};
+					BE0000000000000000000001 = {
+						CreatedOnToolsVersion = 27.1;
+					};
+					AA563800308732AD00BF05E2 = {
+						CreatedOnToolsVersion = 27.1;
+						TestTargetID = AA5637F3308732AC00BF05E2;
+					};
+					AA56380A308732AD00BF05E2 = {
+						CreatedOnToolsVersion = 27.1;
+						TestTargetID = AA5637F3308732AC00BF05E2;
+					};
+				};
+			};
+			buildConfigurationList = AA5637EF308732AC00BF05E2 /* Build configuration list for PBXProject "Pawprint" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA5637EB308732AC00BF05E2;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = AA5637F5308732AC00BF05E2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA5637F3308732AC00BF05E2 /* Pawprint */,
+				AA563800308732AD00BF05E2 /* PawprintTests */,
+				AA56380A308732AD00BF05E2 /* PawprintUITests */,
+				BE0000000000000000000001 /* PawprintWidgetExtension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA5637F2308732AC00BF05E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		AA5637FF308732AD00BF05E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		AA563809308732AD00BF05E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		BE000000000000000000000C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA5637F0308732AC00BF05E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		AA5637FD308732AD00BF05E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		AA563807308732AD00BF05E2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+		BE000000000000000000000A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA563803308732AD00BF05E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA5637F3308732AC00BF05E2 /* Pawprint */;
+			targetProxy = AA563802308732AD00BF05E2 /* PBXContainerItemProxy */;
+		};
+		AA56380D308732AD00BF05E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA5637F3308732AC00BF05E2 /* Pawprint */;
+			targetProxy = AA56380C308732AD00BF05E2 /* PBXContainerItemProxy */;
+		};
+		BE0000000000000000000005 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BE0000000000000000000001 /* PawprintWidgetExtension */;
+			targetProxy = BE0000000000000000000004 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AA563811308732AD00BF05E2 /* Debug configuration for PBXProject "Pawprint" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA563812308732AD00BF05E2 /* Release configuration for PBXProject "Pawprint" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA563814308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "Pawprint" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pawprint/Pawprint.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprint;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA563815308732AD00BF05E2 /* Release configuration for PBXNativeTarget "Pawprint" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Pawprint/Pawprint.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprint;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA563817308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprintTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pawprint.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pawprint";
+			};
+			name = Debug;
+		};
+		AA563818308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintTests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprintTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Pawprint.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Pawprint";
+			};
+			name = Release;
+		};
+		AA56381A308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprintUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Pawprint;
+			};
+			name = Debug;
+		};
+		AA56381B308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprintUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Pawprint;
+			};
+			name = Release;
+		};
+		BE000000000000000000000D /* Debug configuration for PBXNativeTarget "PawprintWidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PawprintWidget/PawprintWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PawprintWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pawprint;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprint.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BE000000000000000000000E /* Release configuration for PBXNativeTarget "PawprintWidgetExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PawprintWidget/PawprintWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PawprintWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Pawprint;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nootnoot.pawprint.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA5637EF308732AC00BF05E2 /* Build configuration list for PBXProject "Pawprint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA563811308732AD00BF05E2 /* Debug configuration for PBXProject "Pawprint" */,
+				AA563812308732AD00BF05E2 /* Release configuration for PBXProject "Pawprint" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		AA563813308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "Pawprint" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA563814308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "Pawprint" */,
+				AA563815308732AD00BF05E2 /* Release configuration for PBXNativeTarget "Pawprint" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		AA563816308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA563817308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintTests" */,
+				AA563818308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		AA563819308732AD00BF05E2 /* Build configuration list for PBXNativeTarget "PawprintUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA56381A308732AD00BF05E2 /* Debug configuration for PBXNativeTarget "PawprintUITests" */,
+				AA56381B308732AD00BF05E2 /* Release configuration for PBXNativeTarget "PawprintUITests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		BE000000000000000000000F /* Build configuration list for PBXNativeTarget "PawprintWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE000000000000000000000D /* Debug configuration for PBXNativeTarget "PawprintWidgetExtension" */,
+				BE000000000000000000000E /* Release configuration for PBXNativeTarget "PawprintWidgetExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA5637EC308732AC00BF05E2 /* Project object */;
+	validationLevel = 1;
+}
