@@ -11,6 +11,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BE0000000000000000000004 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BE0000000000000000000001;
+			remoteInfo = PawprintWidgetExtension;
+		};
 		AA563802308732AD00BF05E2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
@@ -25,24 +32,19 @@
 			remoteGlobalIDString = AA5637F3308732AC00BF05E2;
 			remoteInfo = Pawprint;
 		};
-		BE0000000000000000000004 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA5637EC308732AC00BF05E2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BE0000000000000000000001;
-			remoteInfo = PawprintWidgetExtension;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		BE0000000000000000000006 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = PlugIns;
+			dstSubfolderSpec = 13;
 			files = (
 				BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -64,6 +66,19 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		BE0000000000000000000007 /* PawprintWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */,
+			);
+			path = PawprintWidget;
+			sourceTree = "<group>";
+		};
+		BE0000000000000000000008 /* PawprintWidgetShared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PawprintWidgetShared;
+			sourceTree = "<group>";
+		};
 		AA5637F6308732AC00BF05E2 /* Pawprint */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Pawprint;
@@ -77,19 +92,6 @@
 		AA56380E308732AD00BF05E2 /* PawprintUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = PawprintUITests;
-			sourceTree = "<group>";
-		};
-		BE0000000000000000000007 /* PawprintWidget */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				BE0000000000000000000009 /* Exceptions for "PawprintWidget" folder in "PawprintWidgetExtension" target */,
-			);
-			path = PawprintWidget;
-			sourceTree = "<group>";
-		};
-		BE0000000000000000000008 /* PawprintWidgetShared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = PawprintWidgetShared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -219,11 +221,15 @@
 			);
 			buildRules = (
 			);
+			dependencies = (
+			);
 			fileSystemSynchronizedGroups = (
 				BE0000000000000000000007 /* PawprintWidget */,
 				BE0000000000000000000008 /* PawprintWidgetShared */,
 			);
 			name = PawprintWidgetExtension;
+			packageProductDependencies = (
+			);
 			productName = PawprintWidgetExtension;
 			productReference = BE0000000000000000000002 /* PawprintWidgetExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -241,6 +247,9 @@
 					AA5637F3308732AC00BF05E2 = {
 						CreatedOnToolsVersion = 27.1;
 					};
+					BE0000000000000000000001 = {
+						CreatedOnToolsVersion = 27.1;
+					};
 					AA563800308732AD00BF05E2 = {
 						CreatedOnToolsVersion = 27.1;
 						TestTargetID = AA5637F3308732AC00BF05E2;
@@ -248,9 +257,6 @@
 					AA56380A308732AD00BF05E2 = {
 						CreatedOnToolsVersion = 27.1;
 						TestTargetID = AA5637F3308732AC00BF05E2;
-					};
-					BE0000000000000000000001 = {
-						CreatedOnToolsVersion = 27.1;
 					};
 				};
 			};
