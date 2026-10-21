@@ -8,7 +8,7 @@ import SwiftData
 
 @MainActor
 protocol HealthRepository {
-    func fetchAll() throws -> [HealthRecord]
+    func fetchRecords(for dog: Dog) throws -> [HealthRecord]
     func save(_ record: HealthRecord) throws
     func delete(_ record: HealthRecord) throws
 }
@@ -21,7 +21,7 @@ final class SwiftDataHealthRepository: HealthRepository {
         self.context = context
     }
 
-    func fetchAll() throws -> [HealthRecord] {
+    func fetchRecords(for dog: Dog) throws -> [HealthRecord] {
         try context.fetch(FetchDescriptor<HealthRecord>(sortBy: [SortDescriptor(\.date, order: .reverse)]))
     }
 
