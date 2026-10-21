@@ -1,9 +1,11 @@
 //
 //  LearnView.swift
-//  Learn feature (Ben)
+//  pawprint
 //
-//  Placeholder entry view. Replace the body, keep the name.
-//  The widget lives in its own target, add it with File > New > Target.
+//  Created by Benjamin Vu on 21/10/2026
+//
+//  Entry view for the Learn tab: search, category chips and a list of
+//  beginner guides. All logic lives in LearnViewModel.
 //
 
 import SwiftUI
@@ -11,17 +13,89 @@ import SwiftData
 
 struct LearnView: View {
     @Environment(\.modelContext) private var context
+    @State private var viewModel: LearnViewModel?
 
     var body: some View {
         NavigationStack {
             ZStack {
                 PawprintTheme.background.ignoresSafeArea()
-                Text("Learn")
-                    .font(PawprintTheme.displayFont())
-                    .foregroundStyle(PawprintTheme.accentDeep)
+                if let viewModel {
+                    LearnContentView(viewModel: viewModel)
+                } else {
+                    ProgressView()
+                }
             }
             .navigationTitle("Learn")
+            .navigationDestination(for: LearnTip.self) { tip in
+                if let viewModel {
+                    TipDetailView(tip: tip, viewModel: viewModel)
+                }
+            }
         }
+        .task {
+            guard viewModel == nil else { return }
+            let model = LearnViewModel(repository: SwiftDataTipRepository(context: context))
+            model.load()
+            viewModel = model
+        }
+    }
+}
+
+private struct LearnContentView: View {
+    @Bindable var viewModel: LearnViewModel
+
+    var body: some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 14) {
+                CategoryFilterBar(selection: $viewModel.selectedFilter)
+
+                if viewModel.tips.isEmpty {
+                    emptyState
+                } else {
+                    ForEach(viewModel.tips) { tip in
+                        TipCardView(tip: tip) {
+                            viewModel.toggleBookmark(tip)
+                        }
+                    }
+                }
+            }
+            .padding(.bottom, 24)
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .searchable(text: $viewModel.searchText, prompt: "Search tips and guides")
+        .onChange(of: viewModel.searchText) { viewModel.refresh() }
+        .onChange(of: viewModel.selectedFilter) { viewModel.refresh() }
+        .alert("Something went wrong", isPresented: errorIsShowing) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
+    }
+
+    @ViewBuilder
+    private var emptyState: some View {
+        if !viewModel.searchText.isEmpty {
+            ContentUnavailableView.search(text: viewModel.searchText)
+        } else if viewModel.selectedFilter == .bookmarked {
+            ContentUnavailableView(
+                "No saved tips yet",
+                systemImage: "bookmark",
+                description: Text("Tap the bookmark on any guide to keep it here for later.")
+            )
+        } else {
+            ContentUnavailableView(
+                "No tips here yet",
+                systemImage: "book.closed",
+                description: Text("Check back soon for new guides.")
+            )
+        }
+    }
+
+    private var errorIsShowing: Binding<Bool> {
+        Binding(
+            get: { viewModel.errorMessage != nil },
+            set: { if !$0 { viewModel.errorMessage = nil } }
+        )
     }
 }
 
