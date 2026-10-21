@@ -11,7 +11,6 @@ import SwiftUI
 import _SwiftData_SwiftUI
 
 struct MainTabView: View {
-    @Query private var dogs: [Dog]
     var body: some View {
         TabView {
             Tab("Home", systemImage: "house.fill") {
