@@ -1,6 +1,8 @@
 //
 //  DogRepository.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Protocol first, SwiftData second. ViewModels and use cases only ever
 //  see the protocol, so tests can swap in a mock.

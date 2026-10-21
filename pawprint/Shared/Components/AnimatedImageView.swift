@@ -2,6 +2,8 @@
 //  AnimatedImageView.swift
 //  pawprint
 //
+//  Created by Natalie Michael on 21/10/2026.
+//
 //  Plays an animated GIF stored as a data set in the asset catalogue.
 //  SwiftUI's Image only shows the first frame of a GIF, so this wraps
 //  a UIImageView, which animates GIFs natively. When Reduce Motion is

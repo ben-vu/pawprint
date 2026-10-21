@@ -2,6 +2,8 @@
 //  pawprintApp.swift
 //  pawprint
 //
+//  Created by Natalie Michael on 20/10/2026.
+//
 //  App entry point. Owns the SwiftData container shared by every feature.
 //  Add new @Model types to the schema list below. This is the only shared
 //  file each feature owner may need to touch.
@@ -13,6 +15,7 @@ import SwiftData
 @main
 struct pawprintApp: App {
     let container: ModelContainer
+    private let widgetSync: WidgetSyncService
 
     init() {
         PawprintFonts.registerAll()       // load Nunito before any view draws
@@ -29,6 +32,8 @@ struct pawprintApp: App {
         } catch {
             fatalError("Could not create the SwiftData container: \(error)")
         }
+        widgetSync = WidgetSyncService(container: container)
+        widgetSync.start()
     }
 
     var body: some Scene {

@@ -1,6 +1,8 @@
 //
 //  TodayProgressUseCase.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Works out how many of today's routine tasks are done. Reads Sana's
 //  RoutineTask through her repository protocol, never directly.

@@ -2,6 +2,8 @@
 //  RootView.swift
 //  pawprint
 //
+//  Created by Natalie Michael on 20/10/2026.
+//
 //  Decides what the user sees first: the launch animation, then either
 //  onboarding (first run) or the main tab bar.
 //

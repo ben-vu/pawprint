@@ -1,6 +1,8 @@
 //
 //  DogProfileView.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  View and edit the dog. Deleting resets onboarding so the app starts
 //  fresh next time.

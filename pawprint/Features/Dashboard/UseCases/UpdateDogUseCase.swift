@@ -1,6 +1,8 @@
 //
 //  UpdateDogUseCase.swift
-//  Dashboard feature (Natalie)
+//  pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
 //
 //  Edits an existing dog with the same rules as creating one.
 //
