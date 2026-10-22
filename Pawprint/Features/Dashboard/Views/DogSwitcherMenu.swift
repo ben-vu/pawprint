@@ -5,7 +5,7 @@
 //  Created by Benjamin Vu on 22/10/2026.
 //
 //  The dog's photo in the navigation bar. Tap it to switch dog, edit the
-//  current profile or add another dog.
+//  current profile, share the dog's care sheet with a sitter or add another dog.
 //
 
 import SwiftUI
@@ -17,6 +17,8 @@ struct DogSwitcherMenu: View {
     @State private var viewModel: DogSwitcherViewModel?
     @State private var showAddDog = false
     @State private var profileDog: Dog?
+    @State private var shareDog: Dog?
+    @State private var editAfterShare = false
 
     var body: some View {
         Menu {
@@ -37,6 +39,7 @@ struct DogSwitcherMenu: View {
                 Section {
                     if let active = viewModel.activeDog {
                         Button("Edit profile", systemImage: "pencil") { profileDog = active }
+                        Button("Share with a sitter", systemImage: "square.and.arrow.up") { shareDog = active }
                     }
                     Button("Add another dog", systemImage: "plus") { showAddDog = true }
                 }
@@ -47,7 +50,7 @@ struct DogSwitcherMenu: View {
         }
         .accessibilityLabel("Dog profile")
         .accessibilityValue(viewModel?.activeDog?.name ?? "")
-        .accessibilityHint("Switch dog, edit the profile or add another dog")
+        .accessibilityHint("Switch dog, edit the profile, share with a sitter or add another dog")
         .task {
             if viewModel == nil {
                 viewModel = DogSwitcherViewModel(repository: SwiftDataDogRepository(context: context))
@@ -60,6 +63,15 @@ struct DogSwitcherMenu: View {
         }
         .sheet(item: $profileDog, onDismiss: { viewModel?.load() }) { dog in
             DogProfileView(dog: dog)
+        }
+        .sheet(item: $shareDog, onDismiss: {
+            // "Add care details" closes the share sheet first, then opens the profile.
+            if editAfterShare {
+                editAfterShare = false
+                profileDog = viewModel?.activeDog
+            }
+        }) { dog in
+            ShareDogView(dog: dog, onEditDetails: { editAfterShare = true })
         }
     }
 }
