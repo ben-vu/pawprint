@@ -40,15 +40,19 @@ class MockHealthRepository: HealthRepository {
 struct HealthTests {
 
     @Test func savingThenLoadingReturnsTheItem() throws {
-        let repository = MockHealthRepository()
-        try repository.save(HealthRecord(title: "Flea treatment", date: .now))
+            let repository = MockHealthRepository()
+            
+            let testDog = Dog(name: "Buddy", breed: "Labrador", ageYears: 3, weightKg: 25.0)
 
-        let viewModel = HealthViewModel(repository: repository, dog: <#Dog#>)
-        viewModel.load()
-
-        #expect(viewModel.records.count == 1)
-        #expect(viewModel.errorMessage == nil)
-    }
+            let record = HealthRecord(title: "Flea treatment", date: .now)
+            record.dog = testDog
+            try repository.save(record)
+  
+            let viewModel = HealthViewModel(repository: repository, dog: testDog)
+            viewModel.load()
+            #expect(viewModel.records.count == 1)
+            #expect(viewModel.errorMessage == nil)
+        }
 
     @Test func repositoryFailureSurfacesAnErrorMessage() {
         let repository = MockHealthRepository()
