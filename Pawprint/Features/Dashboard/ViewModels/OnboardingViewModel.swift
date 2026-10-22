@@ -1,0 +1,58 @@
+//
+//  OnboardingViewModel.swift
+//  Pawprint
+//
+//  Created by Natalie Michael on 21/10/2026.
+//
+//  Holds the form while the user walks through onboarding, then saves
+//  through CreateDogUseCase so validation lives in one place.
+//
+
+import Foundation
+import Observation
+
+@Observable
+final class OnboardingViewModel {
+    enum Step: Int, CaseIterable { case welcome, details, done }
+
+    var step: Step = .welcome
+    var name = ""
+    var breed = ""
+    var ageYears = 1
+    var weightText = ""
+    var photoData: Data?
+    var errorMessage: String?
+    private(set) var savedDog: Dog?
+
+    private let createDog: CreateDogUseCase
+
+    init(repository: DogRepository) {
+        self.createDog = CreateDogUseCase(repository: repository)
+    }
+
+    var weightKg: Double {
+        Double(weightText.replacingOccurrences(of: ",", with: ".")) ?? 0
+    }
+
+    func next() {
+        guard let following = Step(rawValue: step.rawValue + 1) else { return }
+        step = following
+    }
+
+    func back() {
+        guard let previous = Step(rawValue: step.rawValue - 1) else { return }
+        step = previous
+    }
+
+    /// Returns true when the dog saved and we can move on.
+    func saveDog() -> Bool {
+        do {
+            savedDog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData)
+            errorMessage = nil
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
+    }
+}
