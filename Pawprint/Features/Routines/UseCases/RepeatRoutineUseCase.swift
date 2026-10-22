@@ -1,6 +1,8 @@
 //
 //  RepeatRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Creates the next task in a repeating routine. Runs when a task is
 //  completed, and when the list loads for tasks that were missed.

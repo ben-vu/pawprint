@@ -1,6 +1,8 @@
 //
 //  RoutineListView.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Routines tab: overdue, today and upcoming tasks. Tap the circle to
 //  tick a task off (or untick it), tap the row to edit, swipe left to
@@ -12,6 +14,7 @@ import SwiftData
 
 struct RoutineListView: View {
     @Environment(\.modelContext) private var context
+    @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
     @State private var editing: RoutineTask?
@@ -31,6 +34,9 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    DogSwitcherMenu()
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showAdd = true
@@ -56,6 +62,7 @@ struct RoutineListView: View {
             }
             viewModel?.load()
         }
+        .onChange(of: selectedDogID) { viewModel?.load() }
         .sensoryFeedback(.success, trigger: completeFeedback)
         .tint(PawprintTheme.accent)
     }

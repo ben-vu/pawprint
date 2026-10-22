@@ -13,8 +13,8 @@ import SwiftData
 
 struct HomeView: View {
     @Environment(\.modelContext) private var context
+    @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: DashboardViewModel?
-    @State private var showProfile = false
 
     var body: some View {
         NavigationStack {
@@ -35,21 +35,11 @@ struct HomeView: View {
             }
             .navigationTitle("Home")
             .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showProfile = true
-                    } label: {
-                        DogAvatarView(photoData: viewModel?.dog?.photoData, size: 34)
-                    }
-                    .accessibilityLabel("Dog profile")
-                    .disabled(viewModel?.dog == nil)
+                ToolbarItem(placement: .topBarLeading) {
+                    DogSwitcherMenu()
                 }
             }
-            .sheet(isPresented: $showProfile, onDismiss: { viewModel?.load() }) {
-                if let dog = viewModel?.dog {
-                    DogProfileView(dog: dog)
-                }
-            }
+            .onChange(of: selectedDogID) { viewModel?.load() }
         }
         .task {
             if viewModel == nil {

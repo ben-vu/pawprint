@@ -1,6 +1,8 @@
 //
 //  UpdateRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Saves changes to an existing routine and moves its reminder to match.
 //

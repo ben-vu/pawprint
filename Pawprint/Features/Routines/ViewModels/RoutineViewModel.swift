@@ -1,6 +1,8 @@
 //
 //  RoutineViewModel.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  State for the Routines tab: tasks grouped into overdue, today and
 //  upcoming, plus ticking, unticking and deleting them.
@@ -18,11 +20,18 @@ final class RoutineViewModel {
     private let repository: RoutineRepository
     private let notifications: NotificationService
     private let calendar: Calendar
+    private let selectedDogID: () -> UUID?
 
-    init(repository: RoutineRepository, notifications: NotificationService, calendar: Calendar = .current) {
+    init(
+        repository: RoutineRepository,
+        notifications: NotificationService,
+        calendar: Calendar = .current,
+        selectedDogID: @escaping () -> UUID? = { ActiveDogSelection.storedID }
+    ) {
         self.repository = repository
         self.notifications = notifications
         self.calendar = calendar
+        self.selectedDogID = selectedDogID
     }
 
     func load(now: Date = .now) {
@@ -33,7 +42,11 @@ final class RoutineViewModel {
             for task in try repository.fetchAll() where !task.isCompleted && task.dueDate < startOfToday {
                 try repeater.execute(task, today: now)
             }
-            tasks = try repository.fetchAll().sorted { $0.dueDate < $1.dueDate }
+            // Only show the active dog's routines (routines with no dog show for everyone).
+            let activeID = selectedDogID()
+            tasks = try repository.fetchAll()
+                .filter { ActiveDogUseCase.shows(taskDogID: $0.dog?.id, activeDogID: activeID) }
+                .sorted { $0.dueDate < $1.dueDate }
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription

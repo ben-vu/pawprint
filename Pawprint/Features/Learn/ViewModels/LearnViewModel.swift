@@ -50,6 +50,12 @@ final class LearnViewModel {
         }
     }
 
+    /// Finds a guide by its content ID, ignoring the current filter and search.
+    /// Used when a widget or the Health tab links straight to a guide.
+    func tip(withContentID contentID: String) -> LearnTip? {
+        (try? filterTipsUseCase.execute(filter: .all))?.first { $0.contentID == contentID }
+    }
+
     func toggleBookmark(_ tip: LearnTip) {
         do {
             try toggleBookmarkUseCase.execute(tip)

@@ -1,6 +1,8 @@
 //
 //  RoutineTask.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  One occurrence of a routine. A repeating routine is a chain of tasks:
 //  when one is done (or missed), the next one is created with the same
