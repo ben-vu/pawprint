@@ -15,6 +15,7 @@ import SwiftData
 struct RoutineListView: View {
     @Environment(\.modelContext) private var context
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
+    @Query(sort: \Dog.createdAt) private var dogs: [Dog]
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
     @State private var editing: RoutineTask?
@@ -35,10 +36,8 @@ struct RoutineListView: View {
                 }
             }
             .navigationTitle("Routines")
+            .navigationSubtitle(activeDogName)   // switch dogs from the Home tab
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    DogSwitcherMenu()
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showAdd = true
@@ -81,6 +80,10 @@ struct RoutineListView: View {
         .onChange(of: selectedDogID) { viewModel?.load() }
         .sensoryFeedback(.success, trigger: completeFeedback)
         .tint(PawprintTheme.accent)
+    }
+
+    private var activeDogName: String {
+        ActiveDogUseCase().activeDog(in: dogs, selectedID: UUID(uuidString: selectedDogID))?.name ?? ""
     }
 
     private var emptyState: some View {

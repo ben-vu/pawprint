@@ -4,8 +4,9 @@
 //
 //  Created by Benjamin Vu on 22/10/2026.
 //
-//  The dog's photo in the navigation bar. Tap it to switch dog, edit the
-//  current profile, share the dog's care sheet with a sitter or add another dog.
+//  The dog's photo in the Home tab's navigation bar, the one place to switch
+//  dog. Tap it to switch dog, edit the current profile, share the dog's care
+//  sheet with a sitter or add another dog. The other tabs follow the choice.
 //
 
 import SwiftUI

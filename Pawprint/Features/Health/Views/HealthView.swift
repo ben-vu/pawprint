@@ -37,9 +37,6 @@ struct HealthView: View {
         .navigationTitle("Health")
         .navigationSubtitle(dog.name)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                DogSwitcherMenu()
-            }
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     showingAddSheet = true
