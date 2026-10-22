@@ -46,9 +46,10 @@ struct DogSwitcherMenu: View {
                 }
             }
         } label: {
-            DogAvatarView(photoData: viewModel?.activeDog?.photoData, size: 34)
-                .frame(minWidth: 44, minHeight: 44)
+            DogAvatarView(photoData: viewModel?.activeDog?.photoData, size: 44)
         }
+        .menuStyle(.button)
+        .buttonStyle(.plain)   // no glass bubble, the photo is the button
         .accessibilityLabel("Dog profile")
         .accessibilityValue(viewModel?.activeDog?.name ?? "")
         .accessibilityHint("Switch dog, edit the profile, share with a sitter or add another dog")

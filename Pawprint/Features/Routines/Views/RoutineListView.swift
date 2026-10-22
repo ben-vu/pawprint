@@ -36,16 +36,12 @@ struct RoutineListView: View {
                 }
             }
             .navigationTitle("Routines")
-            .navigationSubtitle(activeDogName)   // switch dogs from the Home tab
+            .toolbarTitleDisplayMode(.inlineLarge)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showAdd = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .accessibilityLabel("Add routine")
+                    ToolbarCircleButton(systemImage: "plus", label: "Add routine") { showAdd = true }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .sheet(isPresented: $showAdd, onDismiss: {
                 viewModel?.load()
@@ -82,6 +78,7 @@ struct RoutineListView: View {
         .tint(PawprintTheme.accent)
     }
 
+    /// Which dog's routines these are, for the empty state. Switch dogs from the Home tab.
     private var activeDogName: String {
         ActiveDogUseCase().activeDog(in: dogs, selectedID: UUID(uuidString: selectedDogID))?.name ?? ""
     }
@@ -92,7 +89,7 @@ struct RoutineListView: View {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugLying",
-                        title: "No routines yet",
+                        title: activeDogName.isEmpty ? "No routines yet" : "\(activeDogName) has no routines yet",
                         message: "Add walks, meals and medication so nothing gets forgotten."
                     )
                     PrimaryButton(title: "Add a routine") { showAdd = true }

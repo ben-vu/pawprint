@@ -15,6 +15,8 @@ import SwiftData
 struct AddHealthRecordView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: HealthViewModel
+    /// Called after a record is saved, so the list can celebrate once the sheet has gone.
+    var onAdded: () -> Void = {}
 
     @State private var kind: HealthRecordKind = .vaccination
     @State private var title = HealthRecordKind.vaccination.name
@@ -54,6 +56,7 @@ struct AddHealthRecordView: View {
                         )
                         if saved {
                             saveFeedback += 1
+                            onAdded()
                             dismiss()
                         }
                     }

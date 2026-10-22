@@ -17,6 +17,8 @@ struct HealthView: View {
     @Environment(AppRouter.self) private var router: AppRouter?
     @State private var viewModel: HealthViewModel?
     @State private var showingAddSheet = false
+    @State private var justAdded = false          // set by the add sheet, read when it closes
+    @State private var showCelebration = false
 
     let dog: Dog
 
@@ -35,17 +37,12 @@ struct HealthView: View {
             }
         }
         .navigationTitle("Health")
-        .navigationSubtitle(dog.name)
+        .toolbarTitleDisplayMode(.inlineLarge)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showingAddSheet = true
-                } label: {
-                    Image(systemName: "plus")
-                        .frame(minWidth: 44, minHeight: 44)
-                }
-                .accessibilityLabel("Add health record")
+                ToolbarCircleButton(systemImage: "plus", label: "Add health record") { showingAddSheet = true }
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .task {
             if viewModel == nil {
@@ -53,9 +50,22 @@ struct HealthView: View {
             }
             viewModel?.load()
         }
-        .sheet(isPresented: $showingAddSheet) {
+        .sheet(isPresented: $showingAddSheet, onDismiss: {
+            if justAdded {
+                justAdded = false
+                withAnimation { showCelebration = true }   // after the sheet has gone, so it isn't hidden
+            }
+        }) {
             if let viewModel {
-                AddHealthRecordView(viewModel: viewModel)
+                AddHealthRecordView(viewModel: viewModel, onAdded: { justAdded = true })
+            }
+        }
+        .overlay {
+            if showCelebration {
+                HealthRecordAddedCelebration {
+                    withAnimation { showCelebration = false }
+                }
+                .transition(.opacity)
             }
         }
         .alert("Something went wrong", isPresented: errorIsShowing) {
@@ -72,7 +82,7 @@ struct HealthView: View {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugSick",
-                        title: "No health records yet",
+                        title: "\(dog.name) has no health records yet",
                         message: "Record \(dog.name)'s vaccinations, flea and worming treatments and vet visits, and Pawprint will keep track of what is due."
                     )
                     PrimaryButton(title: "Add a record") { showingAddSheet = true }

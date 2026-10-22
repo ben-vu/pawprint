@@ -34,10 +34,12 @@ struct HomeView: View {
                 }
             }
             .navigationTitle("Home")
+            .toolbarTitleDisplayMode(.inlineLarge)   // title level with the toolbar, no empty band above it
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     DogSwitcherMenu()
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .onChange(of: selectedDogID) { viewModel?.load() }
         }

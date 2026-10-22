@@ -167,6 +167,27 @@ struct MixedBreedToggle: View {
     }
 }
 
+/// Round toolbar button drawn exactly like the dog avatar circle (44pt,
+/// same border) so Home, Routines and Health all have the same button.
+struct ToolbarCircleButton: View {
+    let systemImage: String
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(PawprintTheme.font(.title3, weight: .semibold))
+                .foregroundStyle(PawprintTheme.accentDeep)
+                .frame(width: 44, height: 44)
+                .background(PawprintTheme.surfaceRaised, in: Circle())
+                .overlay(Circle().stroke(PawprintTheme.border.opacity(0.6), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+}
+
 /// Brown pill button used for primary actions.
 struct PrimaryButton: View {
     let title: String

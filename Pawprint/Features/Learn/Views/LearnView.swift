@@ -28,6 +28,7 @@ struct LearnView: View {
                 }
             }
             .navigationTitle("Learn")
+            .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: LearnTip.self) { tip in
                 if let viewModel {
                     TipDetailView(tip: tip, viewModel: viewModel)
