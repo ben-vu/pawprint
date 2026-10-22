@@ -65,7 +65,10 @@ private struct LearnContentView: View {
         PugAtBottom { pugInList in
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 14) {
-                    CategoryFilterBar(selection: $viewModel.selectedFilter)
+                    TitlePugRow(image: "PugLearning") {
+                        CategoryFilterBar(selection: $viewModel.selectedFilter)
+                    }
+                    .padding(.leading, 16)
 
                     if viewModel.tips.isEmpty {
                         emptyState

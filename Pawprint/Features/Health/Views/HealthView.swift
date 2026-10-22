@@ -78,6 +78,8 @@ struct HealthView: View {
 
     private var emptyState: some View {
         ScrollView {
+            TitlePugRow(image: "PugHealth")
+                .padding(.leading, 20)   // lines up with the card
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
@@ -99,19 +101,21 @@ struct HealthView: View {
         @Bindable var vm = vm
         return PugAtBottom { pugInList in
             List {
-                if vm.availableKinds.count > 1 {
-                    // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
-                    Section {
-                        FilterChipBar(
-                            items: [nil] + vm.availableKinds.map { Optional($0) },
-                            selection: $vm.kindFilter,
-                            title: { $0?.name ?? "All" },
-                            systemImage: { $0?.systemImage ?? "list.bullet" }
-                        )
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
+                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                Section {
+                    TitlePugRow(image: "PugHealth") {
+                        if vm.availableKinds.count > 1 {
+                            FilterChipBar(
+                                items: [nil] + vm.availableKinds.map { Optional($0) },
+                                selection: $vm.kindFilter,
+                                title: { $0?.name ?? "All" },
+                                systemImage: { $0?.systemImage ?? "list.bullet" }
+                            )
+                        }
                     }
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
                 }
                 Section {
                 ForEach(vm.shownRecords) { record in
