@@ -28,7 +28,7 @@ struct AddHealthRecordView: View {
                     Toggle("Schedule a follow-up appointment?", isOn: $hasDueDate)
                         .tint(PawprintTheme.accent)
                     if hasDueDate {
-                        DatePicker("Next Due", selection: $nextDueDate, in: ...Date(), displayedComponents: .date)
+                        DatePicker("Next Due", selection: $nextDueDate, in: Date()..., displayedComponents: .date)
                     }
                 }
                 
