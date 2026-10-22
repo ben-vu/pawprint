@@ -491,4 +491,26 @@ struct RoutinesTests {
 
         #expect(next.dog === bella)
     }
+
+    // MARK: Category filter
+
+    @Test func categoryFilterNarrowsEverySectionButNotTheEmptyCheck() throws {
+        let repository = MockRoutineRepository()
+        try repository.save(RoutineTask(title: "Morning walk", dueDate: .now, category: .walk))
+        try repository.save(RoutineTask(title: "Dinner", dueDate: .now, category: .meal))
+        try repository.save(RoutineTask(title: "Weekend groom", dueDate: .now.addingTimeInterval(3 * 86400), category: .grooming))
+
+        let viewModel = RoutineViewModel(repository: repository, notifications: MockNotificationService())
+        viewModel.load()
+
+        #expect(viewModel.availableCategories == [.walk, .meal, .grooming])   // only categories in use, in the usual order
+
+        viewModel.categoryFilter = .walk
+        #expect(viewModel.todays.map(\.title) == ["Morning walk"])
+        #expect(viewModel.upcoming.isEmpty)
+        #expect(viewModel.isEmpty == false)   // the filter never triggers the "no routines" screen
+
+        viewModel.categoryFilter = nil
+        #expect(viewModel.todays.count == 2)
+    }
 }

@@ -132,4 +132,26 @@ struct HealthTests {
         }
         #expect(ids.contains(TipOfTheDayUseCase.vetGuideID))
     }
+
+    // MARK: Kind filter
+
+    @Test func kindFilterNarrowsTheListToOneKind() throws {
+        let repository = MockHealthRepository()
+        let dog = Dog(name: "Buddy", breed: "Labrador", ageYears: 3, weightKg: 25)
+        try repository.save(HealthRecord(title: "Rabies", date: .now, dog: dog, kind: .vaccination))
+        try repository.save(HealthRecord(title: "Spot on", date: .now, dog: dog, kind: .flea))
+        try repository.save(HealthRecord(title: "Booster", date: .now, dog: dog, kind: .vaccination))
+
+        let viewModel = HealthViewModel(repository: repository, dog: dog)
+        viewModel.load()
+
+        #expect(viewModel.availableKinds == [.vaccination, .flea])   // only kinds in use, in the usual order
+        #expect(viewModel.shownRecords.count == 3)
+
+        viewModel.kindFilter = .flea
+        #expect(viewModel.shownRecords.map(\.title) == ["Spot on"])
+
+        viewModel.kindFilter = nil
+        #expect(viewModel.shownRecords.count == 3)
+    }
 }

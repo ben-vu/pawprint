@@ -69,6 +69,8 @@ struct ProgressRingView: View {
 struct PugEmptyState: View {
     let image: String                 // still pug, also the Reduce Motion fallback
     var animation: String? = nil      // Lottie file name in Resources/Animations, plays on loop
+    var animationHeight: CGFloat = 150
+    var animationOffsetX: CGFloat = 0 // nudge sideways when the drawing's centre is off
     let title: String
     let message: String
 
@@ -78,7 +80,8 @@ struct PugEmptyState: View {
         VStack(spacing: 10) {
             if let animation, !reduceMotion {
                 LottieView(name: animation)
-                    .frame(height: 150)
+                    .frame(height: animationHeight)
+                    .offset(x: animationOffsetX)
             } else {
                 Image(image)
                     .resizable()
@@ -164,6 +167,71 @@ struct MixedBreedToggle: View {
         }
         .tint(PawprintTheme.accent)
         .frame(minHeight: 44)
+    }
+}
+
+/// Round toolbar button drawn exactly like the dog avatar circle (44pt,
+/// same border) so Home, Routines and Health all have the same button.
+struct ToolbarCircleButton: View {
+    let systemImage: String
+    let label: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Image(systemName: systemImage)
+                .font(PawprintTheme.font(.title3, weight: .semibold))
+                .foregroundStyle(PawprintTheme.accentDeep)
+                .frame(width: 44, height: 44)
+                .background(PawprintTheme.surfaceRaised, in: Circle())
+                .overlay(Circle().stroke(PawprintTheme.border.opacity(0.6), lineWidth: 1))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+}
+
+/// Pug rocking at the bottom of every tab, centred. A still pug with Reduce Motion on.
+struct BottomPug: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        Group {
+            if reduceMotion {
+                Image("PugHappy")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 110)
+            } else {
+                LottieView(name: "PugRock")
+                    .frame(height: 140)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 8)
+        .padding(.bottom, 24)   // breathing room above the tab bar when pinned
+        .accessibilityHidden(true)
+    }
+}
+
+/// Wraps a tab's List or ScrollView. While the content is shorter than the
+/// screen the pug is pinned just above the tab bar; once it is longer the pug
+/// becomes the last item and scrolls with it. The closure gets `pugInList`
+/// and should add `BottomPug()` at the end of the content when it is true.
+struct PugAtBottom<Content: View>: View {
+    @ViewBuilder let content: (_ pugInList: Bool) -> Content
+    @State private var contentFits = true
+
+    var body: some View {
+        content(!contentFits)
+            .onScrollGeometryChange(for: Bool.self) { geometry in
+                geometry.contentSize.height <= geometry.containerSize.height - geometry.contentInsets.top - geometry.contentInsets.bottom
+            } action: { _, fits in
+                contentFits = fits
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if contentFits { BottomPug() }
+            }
     }
 }
 

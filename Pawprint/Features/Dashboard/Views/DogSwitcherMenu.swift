@@ -4,8 +4,9 @@
 //
 //  Created by Benjamin Vu on 22/10/2026.
 //
-//  The dog's photo in the navigation bar. Tap it to switch dog, edit the
-//  current profile, share the dog's care sheet with a sitter or add another dog.
+//  The dog's photo in the Home tab's navigation bar, the one place to switch
+//  dog. Tap it to switch dog, edit the current profile, share the dog's care
+//  sheet with a sitter or add another dog. The other tabs follow the choice.
 //
 
 import SwiftUI
@@ -45,9 +46,10 @@ struct DogSwitcherMenu: View {
                 }
             }
         } label: {
-            DogAvatarView(photoData: viewModel?.activeDog?.photoData, size: 34)
-                .frame(minWidth: 44, minHeight: 44)
+            DogAvatarView(photoData: viewModel?.activeDog?.photoData, size: 44)
         }
+        .menuStyle(.button)
+        .buttonStyle(.plain)   // no glass bubble, the photo is the button
         .accessibilityLabel("Dog profile")
         .accessibilityValue(viewModel?.activeDog?.name ?? "")
         .accessibilityHint("Switch dog, edit the profile, share with a sitter or add another dog")

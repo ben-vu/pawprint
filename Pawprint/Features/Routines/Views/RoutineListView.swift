@@ -15,13 +15,13 @@ import SwiftData
 struct RoutineListView: View {
     @Environment(\.modelContext) private var context
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
+    @Query(sort: \Dog.createdAt) private var dogs: [Dog]
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
     @State private var editing: RoutineTask?
     @State private var completeFeedback = 0
     @State private var justAdded = false          // set by the add sheet, read when it closes
     @State private var showCelebration = false
-    @State private var listScrollOffset: CGFloat = 0
 
     var body: some View {
         NavigationStack {
@@ -36,18 +36,12 @@ struct RoutineListView: View {
                 }
             }
             .navigationTitle("Routines")
+            .toolbarTitleDisplayMode(.inlineLarge)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    DogSwitcherMenu()
-                }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showAdd = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .accessibilityLabel("Add routine")
+                    ToolbarCircleButton(systemImage: "plus", label: "Add routine") { showAdd = true }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .sheet(isPresented: $showAdd, onDismiss: {
                 viewModel?.load()
@@ -84,15 +78,19 @@ struct RoutineListView: View {
         .tint(PawprintTheme.accent)
     }
 
+    /// Which dog's routines these are, for the empty state. Switch dogs from the Home tab.
+    private var activeDogName: String {
+        ActiveDogUseCase().activeDog(in: dogs, selectedID: UUID(uuidString: selectedDogID))?.name ?? ""
+    }
+
     private var emptyState: some View {
         ScrollView {
-            titlePug
-                .padding(.horizontal, 20)
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugLying",
-                        title: "No routines yet",
+                        animation: "SleepyPug",
+                        title: activeDogName.isEmpty ? "No routines yet" : "\(activeDogName) has no routines yet",
                         message: "Add walks, meals and medication so nothing gets forgotten."
                     )
                     PrimaryButton(title: "Add a routine") { showAdd = true }
@@ -103,43 +101,43 @@ struct RoutineListView: View {
     }
 
     private func list(_ vm: RoutineViewModel) -> some View {
-        List {
-            if let error = vm.errorMessage {
-                Label(error, systemImage: "exclamationmark.circle.fill")
-                    .font(PawprintTheme.font(.footnote, weight: .semibold))
-                    .foregroundStyle(PawprintTheme.danger)
+        @Bindable var vm = vm
+        return PugAtBottom { pugInList in
+            List {
+                if vm.availableCategories.count > 1 {
+                    // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                    FilterChipBar(
+                        items: [nil] + vm.availableCategories.map { Optional($0) },
+                        selection: $vm.categoryFilter,
+                        title: { $0?.name ?? "All" },
+                        systemImage: { $0?.systemImage ?? "list.bullet" }
+                    )
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0))   // 14 = Learn's gap to its first card
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
+                }
+                if let error = vm.errorMessage {
+                    Label(error, systemImage: "exclamationmark.circle.fill")
+                        .font(PawprintTheme.font(.footnote, weight: .semibold))
+                        .foregroundStyle(PawprintTheme.danger)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
+                section("Overdue", tasks: vm.overdue, showsDate: true, vm: vm)
+                section("Today", tasks: vm.todays, showsDate: false, vm: vm)
+                section("Upcoming", tasks: vm.upcoming, showsDate: true, vm: vm)
+                if pugInList {
+                    BottomPug()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
             }
-            section("Overdue", tasks: vm.overdue, showsDate: true, vm: vm)
-            section("Today", tasks: vm.todays, showsDate: false, vm: vm)
-            section("Upcoming", tasks: vm.upcoming, showsDate: true, vm: vm)
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .contentMargins(.top, 0, for: .scrollContent)   // list starts right under the chips, like Learn
+            .refreshable { vm.load() }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .refreshable { vm.load() }
-        // List rows clip their content, so the pug floats over the list and follows the scroll instead.
-        .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in
-            listScrollOffset = y
-        }
-        .overlay(alignment: .topTrailing) {
-            titlePug
-                .padding(.trailing, 20)
-                .offset(y: 12 - listScrollOffset)
-                .allowsHitTesting(false)
-        }
-    }
-
-    /// Sits beside the large "Routines" title and scrolls away with the content.
-    private var titlePug: some View {
-        Image("PugRoutine")
-            .resizable()
-            .scaledToFit()
-            .frame(height: 80)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.top, -76)
-            .padding(.bottom, -14)
-            .accessibilityHidden(true)
     }
 
     @ViewBuilder
@@ -160,7 +158,7 @@ struct RoutineListView: View {
                     .accessibilityAction(named: "Edit") { editing = task }
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))   // same side inset as Learn's cards
                     .swipeActions {
                         Button(role: .destructive) {
                             vm.delete(task)

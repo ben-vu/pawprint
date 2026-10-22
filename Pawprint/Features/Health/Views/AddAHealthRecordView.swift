@@ -15,6 +15,8 @@ import SwiftData
 struct AddHealthRecordView: View {
     @Environment(\.dismiss) private var dismiss
     @Bindable var viewModel: HealthViewModel
+    /// Called after a record is saved, so the list can celebrate once the sheet has gone.
+    var onAdded: () -> Void = {}
 
     @State private var kind: HealthRecordKind = .vaccination
     @State private var title = HealthRecordKind.vaccination.name
@@ -23,50 +25,16 @@ struct AddHealthRecordView: View {
     @State private var nextDueDate = Date()
     @State private var notes = ""
     @State private var saveFeedback = 0
+    @FocusState private var focusedField: Field?
+
+    enum Field { case title, notes }
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Type of care") {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(HealthRecordKind.allCases) { option in
-                                kindChip(option)
-                            }
-                        }
-                        .padding(.vertical, 2)
-                    }
-                    .listRowInsets(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
-                }
-
-                Section("What happened?") {
-                    TextField("e.g. Rabies vaccine", text: $title)
-                        .accessibilityLabel("What was done")
-                    DatePicker("Date given", selection: $date, in: ...Date(), displayedComponents: .date)
-                }
-
-                Section("Next due") {
-                    Toggle("Plan a follow-up", isOn: $hasDueDate)
-                        .tint(PawprintTheme.accent)
-                    if hasDueDate {
-                        DatePicker("Next due", selection: $nextDueDate, in: date..., displayedComponents: .date)
-                    }
-                }
-
-                Section("Notes") {
-                    TextField("Any extra details", text: $notes, axis: .vertical)
-                }
-
-                if let error = viewModel.errorMessage {
-                    Section {
-                        Label(error, systemImage: "exclamationmark.circle.fill")
-                            .font(PawprintTheme.font(.footnote, weight: .semibold))
-                            .foregroundStyle(PawprintTheme.danger)
-                            .accessibilityLabel("Error: \(error)")
-                    }
-                }
+            ZStack {
+                PawprintTheme.background.ignoresSafeArea()
+                form
             }
-            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Add health record")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -78,6 +46,7 @@ struct AddHealthRecordView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        focusedField = nil
                         let saved = viewModel.addAHealthRecord(
                             title: title,
                             date: date,
@@ -87,6 +56,7 @@ struct AddHealthRecordView: View {
                         )
                         if saved {
                             saveFeedback += 1
+                            onAdded()
                             dismiss()
                         }
                     }
@@ -99,6 +69,78 @@ struct AddHealthRecordView: View {
             .sensoryFeedback(.success, trigger: saveFeedback)
         }
         .tint(PawprintTheme.accent)
+    }
+
+    // Same card layout as the routine and dog forms so every sheet looks the same.
+    private var form: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                PawprintCard {
+                    VStack(alignment: .leading, spacing: 16) {
+                        fieldLabel("Type of care")
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(HealthRecordKind.allCases) { option in
+                                    kindChip(option)
+                                }
+                            }
+                        }
+                        DogFormField(label: "What happened?", placeholder: "e.g. Rabies vaccine", text: $title, focus: $focusedField, field: .title)
+                        DatePicker("Date given", selection: $date, in: ...Date(), displayedComponents: .date)
+                            .frame(minHeight: 44)
+                    }
+                    .foregroundStyle(PawprintTheme.textPrimary)
+                }
+
+                PawprintCard {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle(isOn: $hasDueDate) {
+                            Label("Plan a follow-up", systemImage: "calendar.badge.clock")
+                                .font(PawprintTheme.font(.subheadline, weight: .semibold))
+                        }
+                        .tint(PawprintTheme.accent)
+                        .frame(minHeight: 44)
+                        if hasDueDate {
+                            DatePicker("Next due", selection: $nextDueDate, in: date..., displayedComponents: .date)
+                                .frame(minHeight: 44)
+                        }
+                    }
+                    .foregroundStyle(PawprintTheme.textPrimary)
+                }
+
+                PawprintCard {
+                    VStack(alignment: .leading, spacing: 6) {
+                        fieldLabel("Notes")
+                        TextField("Any extra details", text: $notes, axis: .vertical)
+                            .lineLimit(3...6)
+                            .focused($focusedField, equals: .notes)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 12)
+                            .frame(minHeight: 48)
+                            .background(PawprintTheme.surfaceRaised, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                            .foregroundStyle(PawprintTheme.textPrimary)
+                            .accessibilityLabel("Notes")
+                    }
+                }
+
+                if let error = viewModel.errorMessage {
+                    Label(error, systemImage: "exclamationmark.circle.fill")
+                        .font(PawprintTheme.font(.footnote, weight: .semibold))
+                        .foregroundStyle(PawprintTheme.danger)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityLabel("Error: \(error)")
+                }
+            }
+            .padding(20)
+        }
+        .scrollDismissesKeyboard(.interactively)
+    }
+
+    private func fieldLabel(_ text: String) -> some View {
+        Text(text)
+            .font(PawprintTheme.font(.caption, weight: .bold))
+            .foregroundStyle(PawprintTheme.textSecondary)
+            .textCase(.uppercase)
     }
 
     private func kindChip(_ option: HealthRecordKind) -> some View {

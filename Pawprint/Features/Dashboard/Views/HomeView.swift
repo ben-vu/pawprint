@@ -21,23 +21,28 @@ struct HomeView: View {
             ZStack {
                 PawprintTheme.background.ignoresSafeArea()
                 if let viewModel {
-                    ScrollView {
-                        VStack(spacing: 18) {
-                            heroCard(viewModel)
-                            progressCard(viewModel)
-                            todaySection(viewModel)
+                    PugAtBottom { pugInList in
+                        ScrollView {
+                            VStack(spacing: 18) {
+                                heroCard(viewModel)
+                                progressCard(viewModel)
+                                todaySection(viewModel)
+                                if pugInList { BottomPug() }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                        .refreshable { viewModel.load() }
                     }
-                    .refreshable { viewModel.load() }
                 }
             }
             .navigationTitle("Home")
+            .toolbarTitleDisplayMode(.inlineLarge)   // title level with the toolbar, no empty band above it
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     DogSwitcherMenu()
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .onChange(of: selectedDogID) { viewModel?.load() }
         }

@@ -16,6 +16,7 @@ final class RoutineViewModel {
     private(set) var tasks: [RoutineTask] = []
     private(set) var today: Date = .now
     var errorMessage: String?
+    var categoryFilter: RoutineCategory? = nil   // nil shows every category
 
     private let repository: RoutineRepository
     private let notifications: NotificationService
@@ -86,18 +87,39 @@ final class RoutineViewModel {
     /// Unfinished one-off tasks from before today. Missed repeats are left out
     /// because their next occurrence already shows under Today or Upcoming.
     var overdue: [RoutineTask] {
-        tasks.filter { !$0.isCompleted && !$0.hasNextOccurrence && $0.dueDate < startOfToday }
+        shown.filter { !$0.isCompleted && !$0.hasNextOccurrence && $0.dueDate < startOfToday }
     }
 
     var todays: [RoutineTask] {
-        tasks.filter { calendar.isDate($0.dueDate, inSameDayAs: today) }
+        shown.filter { calendar.isDate($0.dueDate, inSameDayAs: today) }
     }
 
     var upcoming: [RoutineTask] {
-        tasks.filter { !$0.isCompleted && $0.dueDate >= startOfTomorrow }
+        shown.filter { !$0.isCompleted && $0.dueDate >= startOfTomorrow }
     }
 
-    var isEmpty: Bool { overdue.isEmpty && todays.isEmpty && upcoming.isEmpty }
+    /// True when there are no tasks at all, whatever the filter.
+    var isEmpty: Bool {
+        let all = tasks
+        return !all.contains { !$0.isCompleted && !$0.hasNextOccurrence && $0.dueDate < startOfToday }
+            && !all.contains { calendar.isDate($0.dueDate, inSameDayAs: today) }
+            && !all.contains { !$0.isCompleted && $0.dueDate >= startOfTomorrow }
+    }
+
+    // MARK: Category filter
+
+    /// Categories that have at least one task, in the usual order. The filter
+    /// bar only shows when there is more than one.
+    var availableCategories: [RoutineCategory] {
+        let used = Set(tasks.map(\.category))
+        return RoutineCategory.allCases.filter { used.contains($0) }
+    }
+
+    private var shown: [RoutineTask] {
+        // A filter for a category with no tasks left falls back to showing everything.
+        guard let categoryFilter, availableCategories.contains(categoryFilter) else { return tasks }
+        return tasks.filter { $0.category == categoryFilter }
+    }
 
     private var startOfToday: Date { calendar.startOfDay(for: today) }
     private var startOfTomorrow: Date { calendar.date(byAdding: .day, value: 1, to: startOfToday) ?? startOfToday }

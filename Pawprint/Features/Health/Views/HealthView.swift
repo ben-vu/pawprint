@@ -17,7 +17,8 @@ struct HealthView: View {
     @Environment(AppRouter.self) private var router: AppRouter?
     @State private var viewModel: HealthViewModel?
     @State private var showingAddSheet = false
-    @State private var listScrollOffset: CGFloat = 0
+    @State private var justAdded = false          // set by the add sheet, read when it closes
+    @State private var showCelebration = false
 
     let dog: Dog
 
@@ -36,20 +37,12 @@ struct HealthView: View {
             }
         }
         .navigationTitle("Health")
-        .navigationSubtitle(dog.name)
+        .toolbarTitleDisplayMode(.inlineLarge)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                DogSwitcherMenu()
-            }
             ToolbarItem(placement: .primaryAction) {
-                Button {
-                    showingAddSheet = true
-                } label: {
-                    Image(systemName: "plus")
-                        .frame(minWidth: 44, minHeight: 44)
-                }
-                .accessibilityLabel("Add health record")
+                ToolbarCircleButton(systemImage: "plus", label: "Add health record") { showingAddSheet = true }
             }
+            .sharedBackgroundVisibility(.hidden)
         }
         .task {
             if viewModel == nil {
@@ -57,9 +50,22 @@ struct HealthView: View {
             }
             viewModel?.load()
         }
-        .sheet(isPresented: $showingAddSheet) {
+        .sheet(isPresented: $showingAddSheet, onDismiss: {
+            if justAdded {
+                justAdded = false
+                withAnimation { showCelebration = true }   // after the sheet has gone, so it isn't hidden
+            }
+        }) {
             if let viewModel {
-                AddHealthRecordView(viewModel: viewModel)
+                AddHealthRecordView(viewModel: viewModel, onAdded: { justAdded = true })
+            }
+        }
+        .overlay {
+            if showCelebration {
+                HealthRecordAddedCelebration {
+                    withAnimation { showCelebration = false }
+                }
+                .transition(.opacity)
             }
         }
         .alert("Something went wrong", isPresented: errorIsShowing) {
@@ -72,13 +78,14 @@ struct HealthView: View {
 
     private var emptyState: some View {
         ScrollView {
-            titlePug
-                .padding(.horizontal, 20)
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugSick",
-                        title: "No health records yet",
+                        animation: "PugToiletPaper",
+                        animationHeight: 190,
+                        animationOffsetX: 16,
+                        title: "\(dog.name) has no health records yet",
                         message: "Record \(dog.name)'s vaccinations, flea and worming treatments and vet visits, and Pawprint will keep track of what is due."
                     )
                     PrimaryButton(title: "Add a record") { showingAddSheet = true }
@@ -88,42 +95,50 @@ struct HealthView: View {
         }
     }
 
-    /// Sits beside the large "Health" title and scrolls away with the content.
-    private var titlePug: some View {
-        Image("PugHealth")
-            .resizable()
-            .scaledToFit()
-            .frame(height: 80)
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.top, -76)
-            .padding(.bottom, -14)
-            .accessibilityHidden(true)
-    }
-
     private func list(_ vm: HealthViewModel) -> some View {
-        List {
-            ForEach(vm.records) { record in
-                row(record)
-                    .listRowBackground(PawprintTheme.surface)
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            vm.delete(record)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
+        @Bindable var vm = vm
+        return PugAtBottom { pugInList in
+            List {
+                if vm.availableKinds.count > 1 {
+                    // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                    Section {
+                        FilterChipBar(
+                            items: [nil] + vm.availableKinds.map { Optional($0) },
+                            selection: $vm.kindFilter,
+                            title: { $0?.name ?? "All" },
+                            systemImage: { $0?.systemImage ?? "list.bullet" }
+                        )
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
                     }
+                }
+                Section {
+                ForEach(vm.shownRecords) { record in
+                    row(record)
+                        .listRowBackground(PawprintTheme.surface)
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                vm.delete(record)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
+                }
+                if pugInList {
+                    Section {
+                        BottomPug()
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                }
             }
-        }
-        .scrollContentBackground(.hidden)
-        // List rows clip their content, so the pug floats over the list and follows the scroll instead.
-        .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in
-            listScrollOffset = y
-        }
-        .overlay(alignment: .topTrailing) {
-            titlePug
-                .padding(.trailing, 20)
-                .offset(y: -4 - listScrollOffset)
-                .allowsHitTesting(false)
+            .listSectionSpacing(14)                                // 14 = Learn's gap to its first card
+            .scrollContentBackground(.hidden)
+            .contentMargins(.top, 0, for: .scrollContent)          // list starts right under the title bar, like Learn
+            .contentMargins(.horizontal, 16, for: .scrollContent)  // same side inset as Learn's cards
         }
     }
 

@@ -28,6 +28,7 @@ struct LearnView: View {
                 }
             }
             .navigationTitle("Learn")
+            .toolbarTitleDisplayMode(.inlineLarge)
             .navigationDestination(for: LearnTip.self) { tip in
                 if let viewModel {
                     TipDetailView(tip: tip, viewModel: viewModel)
@@ -61,41 +62,33 @@ private struct LearnContentView: View {
     @Bindable var viewModel: LearnViewModel
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 14) {
-                // Sits beside the large "Learn" title and scrolls away with the list.
-                Image("PugLearning")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 88)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing, 20)
-                    .padding(.top, -76)
-                    .padding(.bottom, -14)
-                    .accessibilityHidden(true)
+        PugAtBottom { pugInList in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 14) {
+                    CategoryFilterBar(selection: $viewModel.selectedFilter)
 
-                CategoryFilterBar(selection: $viewModel.selectedFilter)
-
-                if viewModel.tips.isEmpty {
-                    emptyState
-                } else {
-                    ForEach(viewModel.tips) { tip in
-                        TipCardView(tip: tip) {
-                            viewModel.toggleBookmark(tip)
+                    if viewModel.tips.isEmpty {
+                        emptyState
+                    } else {
+                        ForEach(viewModel.tips) { tip in
+                            TipCardView(tip: tip) {
+                                viewModel.toggleBookmark(tip)
+                            }
                         }
                     }
+                    if pugInList { BottomPug() }
                 }
+                .padding(.bottom, 24)
             }
-            .padding(.bottom, 24)
-        }
-        .scrollDismissesKeyboard(.interactively)
-        .searchable(text: $viewModel.searchText, prompt: "Search tips and guides")
-        .onChange(of: viewModel.searchText) { viewModel.refresh() }
-        .onChange(of: viewModel.selectedFilter) { viewModel.refresh() }
-        .alert("Something went wrong", isPresented: errorIsShowing) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(viewModel.errorMessage ?? "")
+            .scrollDismissesKeyboard(.interactively)
+            .searchable(text: $viewModel.searchText, prompt: "Search tips and guides")
+            .onChange(of: viewModel.searchText) { viewModel.refresh() }
+            .onChange(of: viewModel.selectedFilter) { viewModel.refresh() }
+            .alert("Something went wrong", isPresented: errorIsShowing) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
         }
     }
 
