@@ -62,30 +62,33 @@ private struct LearnContentView: View {
     @Bindable var viewModel: LearnViewModel
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 14) {
-                CategoryFilterBar(selection: $viewModel.selectedFilter)
+        PugAtBottom { pugInList in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 14) {
+                    CategoryFilterBar(selection: $viewModel.selectedFilter)
 
-                if viewModel.tips.isEmpty {
-                    emptyState
-                } else {
-                    ForEach(viewModel.tips) { tip in
-                        TipCardView(tip: tip) {
-                            viewModel.toggleBookmark(tip)
+                    if viewModel.tips.isEmpty {
+                        emptyState
+                    } else {
+                        ForEach(viewModel.tips) { tip in
+                            TipCardView(tip: tip) {
+                                viewModel.toggleBookmark(tip)
+                            }
                         }
                     }
+                    if pugInList { BottomPug() }
                 }
+                .padding(.bottom, 24)
             }
-            .padding(.bottom, 24)
-        }
-        .scrollDismissesKeyboard(.interactively)
-        .searchable(text: $viewModel.searchText, prompt: "Search tips and guides")
-        .onChange(of: viewModel.searchText) { viewModel.refresh() }
-        .onChange(of: viewModel.selectedFilter) { viewModel.refresh() }
-        .alert("Something went wrong", isPresented: errorIsShowing) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(viewModel.errorMessage ?? "")
+            .scrollDismissesKeyboard(.interactively)
+            .searchable(text: $viewModel.searchText, prompt: "Search tips and guides")
+            .onChange(of: viewModel.searchText) { viewModel.refresh() }
+            .onChange(of: viewModel.selectedFilter) { viewModel.refresh() }
+            .alert("Something went wrong", isPresented: errorIsShowing) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(viewModel.errorMessage ?? "")
+            }
         }
     }
 

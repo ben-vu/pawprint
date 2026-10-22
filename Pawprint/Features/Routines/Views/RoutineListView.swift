@@ -89,6 +89,7 @@ struct RoutineListView: View {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugLying",
+                        animation: "SleepyPug",
                         title: activeDogName.isEmpty ? "No routines yet" : "\(activeDogName) has no routines yet",
                         message: "Add walks, meals and medication so nothing gets forgotten."
                     )
@@ -101,34 +102,42 @@ struct RoutineListView: View {
 
     private func list(_ vm: RoutineViewModel) -> some View {
         @Bindable var vm = vm
-        return List {
-            if vm.availableCategories.count > 1 {
-                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
-                FilterChipBar(
-                    items: [nil] + vm.availableCategories.map { Optional($0) },
-                    selection: $vm.categoryFilter,
-                    title: { $0?.name ?? "All" },
-                    systemImage: { $0?.systemImage ?? "list.bullet" }
-                )
-                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0))   // 14 = Learn's gap to its first card
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-            }
-            if let error = vm.errorMessage {
-                Label(error, systemImage: "exclamationmark.circle.fill")
-                    .font(PawprintTheme.font(.footnote, weight: .semibold))
-                    .foregroundStyle(PawprintTheme.danger)
+        return PugAtBottom { pugInList in
+            List {
+                if vm.availableCategories.count > 1 {
+                    // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                    FilterChipBar(
+                        items: [nil] + vm.availableCategories.map { Optional($0) },
+                        selection: $vm.categoryFilter,
+                        title: { $0?.name ?? "All" },
+                        systemImage: { $0?.systemImage ?? "list.bullet" }
+                    )
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0))   // 14 = Learn's gap to its first card
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
+                }
+                if let error = vm.errorMessage {
+                    Label(error, systemImage: "exclamationmark.circle.fill")
+                        .font(PawprintTheme.font(.footnote, weight: .semibold))
+                        .foregroundStyle(PawprintTheme.danger)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
+                section("Overdue", tasks: vm.overdue, showsDate: true, vm: vm)
+                section("Today", tasks: vm.todays, showsDate: false, vm: vm)
+                section("Upcoming", tasks: vm.upcoming, showsDate: true, vm: vm)
+                if pugInList {
+                    BottomPug()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
             }
-            section("Overdue", tasks: vm.overdue, showsDate: true, vm: vm)
-            section("Today", tasks: vm.todays, showsDate: false, vm: vm)
-            section("Upcoming", tasks: vm.upcoming, showsDate: true, vm: vm)
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .contentMargins(.top, 0, for: .scrollContent)   // list starts right under the chips, like Learn
+            .refreshable { vm.load() }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .contentMargins(.top, 0, for: .scrollContent)   // list starts right under the chips, like Learn
-        .refreshable { vm.load() }
     }
 
     @ViewBuilder

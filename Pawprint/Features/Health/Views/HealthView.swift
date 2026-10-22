@@ -82,6 +82,9 @@ struct HealthView: View {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugSick",
+                        animation: "PugToiletPaper",
+                        animationHeight: 190,
+                        animationOffsetX: 16,
                         title: "\(dog.name) has no health records yet",
                         message: "Record \(dog.name)'s vaccinations, flea and worming treatments and vet visits, and Pawprint will keep track of what is due."
                     )
@@ -94,39 +97,49 @@ struct HealthView: View {
 
     private func list(_ vm: HealthViewModel) -> some View {
         @Bindable var vm = vm
-        return List {
-            if vm.availableKinds.count > 1 {
-                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+        return PugAtBottom { pugInList in
+            List {
+                if vm.availableKinds.count > 1 {
+                    // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                    Section {
+                        FilterChipBar(
+                            items: [nil] + vm.availableKinds.map { Optional($0) },
+                            selection: $vm.kindFilter,
+                            title: { $0?.name ?? "All" },
+                            systemImage: { $0?.systemImage ?? "list.bullet" }
+                        )
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                    }
+                }
                 Section {
-                    FilterChipBar(
-                        items: [nil] + vm.availableKinds.map { Optional($0) },
-                        selection: $vm.kindFilter,
-                        title: { $0?.name ?? "All" },
-                        systemImage: { $0?.systemImage ?? "list.bullet" }
-                    )
-                    .listRowInsets(EdgeInsets())
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+                ForEach(vm.shownRecords) { record in
+                    row(record)
+                        .listRowBackground(PawprintTheme.surface)
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                vm.delete(record)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                }
+                }
+                if pugInList {
+                    Section {
+                        BottomPug()
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
                 }
             }
-            Section {
-            ForEach(vm.shownRecords) { record in
-                row(record)
-                    .listRowBackground(PawprintTheme.surface)
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            vm.delete(record)
-                        } label: {
-                            Label("Delete", systemImage: "trash")
-                        }
-                    }
-            }
-            }
+            .listSectionSpacing(14)                                // 14 = Learn's gap to its first card
+            .scrollContentBackground(.hidden)
+            .contentMargins(.top, 0, for: .scrollContent)          // list starts right under the title bar, like Learn
+            .contentMargins(.horizontal, 16, for: .scrollContent)  // same side inset as Learn's cards
         }
-        .listSectionSpacing(14)                                // 14 = Learn's gap to its first card
-        .scrollContentBackground(.hidden)
-        .contentMargins(.top, 0, for: .scrollContent)          // list starts right under the title bar, like Learn
-        .contentMargins(.horizontal, 16, for: .scrollContent)  // same side inset as Learn's cards
     }
 
     private func row(_ record: HealthRecord) -> some View {

@@ -21,16 +21,19 @@ struct HomeView: View {
             ZStack {
                 PawprintTheme.background.ignoresSafeArea()
                 if let viewModel {
-                    ScrollView {
-                        VStack(spacing: 18) {
-                            heroCard(viewModel)
-                            progressCard(viewModel)
-                            todaySection(viewModel)
+                    PugAtBottom { pugInList in
+                        ScrollView {
+                            VStack(spacing: 18) {
+                                heroCard(viewModel)
+                                progressCard(viewModel)
+                                todaySection(viewModel)
+                                if pugInList { BottomPug() }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                        .refreshable { viewModel.load() }
                     }
-                    .refreshable { viewModel.load() }
                 }
             }
             .navigationTitle("Home")
