@@ -7,18 +7,23 @@ Built for **40005 Assignment 4** with SwiftUI and SwiftData.
 ## Features
 
 **Home**
+
 A greeting card for the active dog, a progress ring for today's activities and today's routine tasks. Tap the dog's photo in the navigation bar to switch dog, edit the profile, share with a sitter or add another dog. Several dogs are supported, and the chosen dog is shared across every tab.
 
 **Routines**
+
 Walks, meals, medication, grooming, teeth and play. Routines can repeat (daily, twice a day, weekly, certain days or every few weeks) and can send a local reminder. When a repeating routine is completed or missed, the next one is created automatically.
 
 **Health**
+
 Vaccinations, flea and worming treatments, vet check-ups and grooming, each with an optional follow-up date. Overdue and soon-due records are flagged, and each kind links to the matching guide in Learn.
 
 **Learn**
+
 A library of beginner dog care guides in six categories (Getting started, Feeding, Exercise, Training, Grooming, Health). Filter by category, bookmark guides and see a tip of the day.
 
 **Share with a sitter**
+
 Store your contact details, the vet, the microchip number and feeding, medical and behaviour notes for each dog (in *Edit profile*, under **For sitters**), then send a sitter a care sheet from the dog menu. You pick which sections go in (your contact details, vet, feeding, medical, behaviour, daily routine, vaccines and treatments), check a live preview and send it through the system share sheet (Messages, Mail, AirDrop and so on). Nothing leaves the phone until you tap Share, and the private notes on health records are never included.
 
 **Widgets**
