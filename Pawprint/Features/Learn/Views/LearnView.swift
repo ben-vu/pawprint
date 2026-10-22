@@ -63,6 +63,17 @@ private struct LearnContentView: View {
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 14) {
+                // Sits beside the large "Learn" title and scrolls away with the list.
+                Image("PugLearning")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 88)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    .padding(.trailing, 20)
+                    .padding(.top, -76)
+                    .padding(.bottom, -14)
+                    .accessibilityHidden(true)
+
                 CategoryFilterBar(selection: $viewModel.selectedFilter)
 
                 if viewModel.tips.isEmpty {
