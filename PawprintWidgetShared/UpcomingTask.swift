@@ -20,6 +20,9 @@ nonisolated struct UpcomingTask: Codable, Hashable, Identifiable, Sendable {
     let title: String
     let dueDate: Date
     let dogName: String?
+    /// The routine's category raw value ("walk", "meal", ...), used to pick
+    /// its icon. Optional so snapshots saved before it existed still decode.
+    var category: String? = nil
 
     var id: String { "\(title)|\(dueDate.timeIntervalSince1970)" }
 

@@ -71,7 +71,11 @@ struct UpcomingTasksWidgetView: View {
         if let next = entry.tasks.first {
             let status = next.status(at: entry.date)
             VStack(alignment: .leading, spacing: 4) {
-                header
+                HStack(alignment: .top) {
+                    header
+                    Spacer(minLength: 0)
+                    TaskIcon(category: next.category, size: 44)
+                }
 
                 Text(next.dueLabel(at: entry.date))
                     .font(.caption.weight(.semibold))
@@ -154,9 +158,7 @@ struct UpcomingTasksWidgetView: View {
     private func row(_ task: UpcomingTask) -> some View {
         let isOverdue = task.status(at: entry.date) == .overdue
         return HStack(spacing: 6) {
-            Image(systemName: isOverdue ? "exclamationmark.circle.fill" : "circle")
-                .font(.caption)
-                .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
+            TaskIcon(category: task.category, size: 26)
             Text(task.title)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(WidgetPalette.textPrimary)
@@ -182,5 +184,37 @@ struct UpcomingTasksWidgetView: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// The pug illustration for a routine's category, e.g. "TaskWalk" in the
+/// widget's asset catalog. Falls back to a paw print for "other" or when
+/// the image hasn't been added yet.
+struct TaskIcon: View {
+    let category: String?
+    let size: CGFloat
+
+    private var imageName: String? {
+        guard let category, category != "other" else { return nil }
+        let name = "Task" + category.capitalized
+        return UIImage(named: name) == nil ? nil : name
+    }
+
+    var body: some View {
+        Group {
+            if let imageName {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image(systemName: "pawprint.fill")
+                    .resizable()
+                    .scaledToFit()
+                    .padding(size * 0.2)
+                    .foregroundStyle(WidgetPalette.accent)
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
     }
 }

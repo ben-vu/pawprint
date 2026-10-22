@@ -10,6 +10,7 @@
 
 import Foundation
 import Testing
+import SwiftData
 @testable import Pawprint
 
 @MainActor
@@ -102,6 +103,47 @@ struct WidgetTests {
     @Test func dueLabelNamesOverdueAndTomorrow() {
         #expect(task("a", hoursFromNow: -1).dueLabel(at: now, calendar: calendar) == "Overdue")
         #expect(task("b", hoursFromNow: 24).dueLabel(at: now, calendar: calendar) == "Tomorrow")
+    }
+
+    // MARK: Category
+
+    @Test func snapshotSavedBeforeCategoriesStillDecodes() throws {
+        let oldJSON = #"{"generatedAt":0,"tasks":[{"title":"Walk","dueDate":0,"dogName":"Biscuit"}]}"#
+
+        let snapshot = try JSONDecoder().decode(WidgetSnapshot.self, from: Data(oldJSON.utf8))
+
+        #expect(snapshot.tasks.first?.title == "Walk")
+        #expect(snapshot.tasks.first?.category == nil)
+    }
+
+    @Test func categoryRoundTripsThroughTheSnapshot() throws {
+        let original = WidgetSnapshot(
+            generatedAt: now,
+            tasks: [UpcomingTask(title: "Walk", dueDate: now, dogName: "Biscuit", category: "walk")]
+        )
+
+        let decoded = try JSONDecoder().decode(WidgetSnapshot.self, from: JSONEncoder().encode(original))
+
+        #expect(decoded.tasks.first?.category == "walk")
+    }
+
+    @Test func missedRepeatIsLeftOutOnceItsNextOccurrenceExists() throws {
+        let container = try ModelContainer(
+            for: RoutineTask.self, Dog.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let context = container.mainContext
+        let missed = RoutineTask(title: "Dinner", dueDate: now.addingTimeInterval(-18 * 3600), category: .meal, recurrence: .daily)
+        missed.hasNextOccurrence = true
+        let next = RoutineTask(title: "Dinner", dueDate: now.addingTimeInterval(6 * 3600), category: .meal, recurrence: .daily)
+        context.insert(missed)
+        context.insert(next)
+        try context.save()
+
+        let tasks = try SwiftDataUpcomingTaskRepository(context: context).fetchIncompleteTasks()
+
+        #expect(tasks.map(\.dueDate) == [next.dueDate])
+        #expect(tasks.first?.category == "meal")
     }
 
     // MARK: Refreshing

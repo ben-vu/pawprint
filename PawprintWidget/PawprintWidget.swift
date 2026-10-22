@@ -49,10 +49,10 @@ struct UpcomingTasksEntry: TimelineEntry {
             snapshot: WidgetSnapshot(
                 generatedAt: now,
                 tasks: [
-                    UpcomingTask(title: "Brush coat", dueDate: now.addingTimeInterval(-60 * 60), dogName: "Biscuit"),
-                    UpcomingTask(title: "Evening walk", dueDate: now.addingTimeInterval(45 * 60), dogName: "Biscuit"),
-                    UpcomingTask(title: "Dinner", dueDate: now.addingTimeInterval(3 * 60 * 60), dogName: "Biscuit"),
-                    UpcomingTask(title: "Flea treatment", dueDate: now.addingTimeInterval(26 * 60 * 60), dogName: "Biscuit")
+                    UpcomingTask(title: "Brush coat", dueDate: now.addingTimeInterval(-60 * 60), dogName: "Biscuit", category: "grooming"),
+                    UpcomingTask(title: "Evening walk", dueDate: now.addingTimeInterval(45 * 60), dogName: "Biscuit", category: "walk"),
+                    UpcomingTask(title: "Dinner", dueDate: now.addingTimeInterval(3 * 60 * 60), dogName: "Biscuit", category: "meal"),
+                    UpcomingTask(title: "Flea treatment", dueDate: now.addingTimeInterval(26 * 60 * 60), dogName: "Biscuit", category: "medication")
                 ]
             )
         )

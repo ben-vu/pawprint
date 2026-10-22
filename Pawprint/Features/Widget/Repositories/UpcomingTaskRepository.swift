@@ -25,12 +25,14 @@ final class SwiftDataUpcomingTaskRepository: UpcomingTaskRepository {
     }
 
     func fetchIncompleteTasks() throws -> [UpcomingTask] {
+        // A missed repeat already has its next occurrence lined up, so it is
+        // skipped here just like the Routines tab skips it.
         let descriptor = FetchDescriptor<RoutineTask>(
-            predicate: #Predicate<RoutineTask> { !$0.isCompleted },
+            predicate: #Predicate<RoutineTask> { !$0.isCompleted && !$0.hasNextOccurrence },
             sortBy: [SortDescriptor(\.dueDate)]
         )
         return try context.fetch(descriptor).map { task in
-            UpcomingTask(title: task.title, dueDate: task.dueDate, dogName: task.dog?.name)
+            UpcomingTask(title: task.title, dueDate: task.dueDate, dogName: task.dog?.name, category: task.categoryRaw)
         }
     }
 }
