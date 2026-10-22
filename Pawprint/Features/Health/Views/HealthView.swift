@@ -17,6 +17,7 @@ struct HealthView: View {
     @Environment(AppRouter.self) private var router: AppRouter?
     @State private var viewModel: HealthViewModel?
     @State private var showingAddSheet = false
+    @State private var listScrollOffset: CGFloat = 0
 
     let dog: Dog
 
@@ -71,6 +72,8 @@ struct HealthView: View {
 
     private var emptyState: some View {
         ScrollView {
+            titlePug
+                .padding(.horizontal, 20)
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
@@ -83,6 +86,18 @@ struct HealthView: View {
             }
             .padding(20)
         }
+    }
+
+    /// Sits beside the large "Health" title and scrolls away with the content.
+    private var titlePug: some View {
+        Image("PugHealth")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 80)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.top, -76)
+            .padding(.bottom, -14)
+            .accessibilityHidden(true)
     }
 
     private func list(_ vm: HealthViewModel) -> some View {
@@ -100,6 +115,16 @@ struct HealthView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        // List rows clip their content, so the pug floats over the list and follows the scroll instead.
+        .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in
+            listScrollOffset = y
+        }
+        .overlay(alignment: .topTrailing) {
+            titlePug
+                .padding(.trailing, 20)
+                .offset(y: -4 - listScrollOffset)
+                .allowsHitTesting(false)
+        }
     }
 
     private func row(_ record: HealthRecord) -> some View {
