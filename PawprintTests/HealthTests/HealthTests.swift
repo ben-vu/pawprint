@@ -57,8 +57,10 @@ struct HealthTests {
     @Test func repositoryFailureSurfacesAnErrorMessage() {
         let repository = MockHealthRepository()
         repository.shouldFail = true
+        
+        let testDog = Dog(name: "General Peewee", breed: "Lab", ageYears: 3, weightKg: 20.0)
 
-        let viewModel = HealthViewModel(repository: repository, dog: <#Dog#>)
+        let viewModel = HealthViewModel(repository: repository, dog: testDog)
         viewModel.load()
 
         #expect(viewModel.errorMessage != nil)
