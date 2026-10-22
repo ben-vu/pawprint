@@ -46,6 +46,13 @@ final class AddRoutineViewModel {
         }
     }
 
+    /// Looks up which dog new routines belong to. There is only one dog for
+    /// now; this is the place to use the selected dog once there are several.
+    convenience init(repository: RoutineRepository, notifications: NotificationService, dogs: DogRepository, editing: RoutineTask? = nil) {
+        let dog = try? dogs.fetchAll().first
+        self.init(repository: repository, notifications: notifications, dog: dog, editing: editing)
+    }
+
     /// Called when the reminder switch flips. Turning it on asks for permission.
     func reminderToggled() async {
         guard remindMe else { return }
