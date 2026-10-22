@@ -94,6 +94,16 @@ struct WidgetTests {
         LearnTip(contentID: id, title: id, category: .health, summary: "s", body: "b", sortOrder: order)
     }
 
+    }
+
+    private func healthItem(_ title: String, given: Date, due: Date?, dogID: UUID? = nil) -> HealthDueItem {
+        HealthDueItem(title: title, recordDate: given, nextDueDate: due, dogName: "Biscuit", dogID: dogID)
+    }
+
+    private func guide(_ id: String, order: Int) -> LearnTip {
+        LearnTip(contentID: id, title: id, category: .health, summary: "s", body: "b", sortOrder: order)
+    }
+
     // MARK: Routine rules
 
     @Test func snapshotSortsSoonestFirstWithOverdueAtTheTop() {
@@ -310,15 +320,18 @@ struct WidgetTests {
     @Test func completingTheLastTaskClearsTheWidget() throws {
         let data = MockWidgetDataRepository()
         data.tasks = [task("Walk", hoursFromNow: 1)]
+    @Test func addingAHealthRecordChangesTheWidget() throws {
+        let data = MockWidgetDataRepository()
         let store = InMemoryWidgetSnapshotStore()
         let reloader = MockWidgetReloader()
         let useCase = makeUseCase(data, store, reloader)
         try useCase.execute(now: now)
 
         data.tasks = []
+        data.healthItems = [healthItem("Rabies vaccine", given: days(-300), due: days(3))]
         try useCase.execute(now: now)
 
-        #expect(store.snapshot.tasks.isEmpty)
+        #expect(store.snapshot.tasks.first?.kind == .health)
         #expect(reloader.reloadCount == 2)
     }
 

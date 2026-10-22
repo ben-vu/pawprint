@@ -78,6 +78,25 @@ nonisolated struct UpcomingTask: Codable, Hashable, Identifiable, Sendable {
         }
     }
 
+    let kind: UpcomingTaskKind
+
+    init(title: String, dueDate: Date, dogName: String? = nil, kind: UpcomingTaskKind = .routine) {
+        self.title = title
+        self.dueDate = dueDate
+        self.dogName = dogName
+        self.kind = kind
+    }
+
+    var id: String { "\(kind.rawValue)|\(title)|\(dogName ?? "")|\(dueDate.timeIntervalSince1970)" }
+
+    /// Where tapping this in the widget should go.
+    var deepLink: PawprintDeepLink {
+        switch kind {
+        case .routine: return .routines
+        case .health: return .health
+        }
+    }
+
     /// Where this sits relative to `now`.
     func status(at now: Date, calendar: Calendar = .current) -> UpcomingTaskStatus {
         if dueDate < now { return .overdue }

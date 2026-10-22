@@ -43,6 +43,12 @@ final class SwiftDataWidgetDataRepository: WidgetDataRepository {
                 category: task.categoryRaw,
                 kind: .routine
             )
+        let descriptor = FetchDescriptor<RoutineTask>(
+            predicate: #Predicate<RoutineTask> { !$0.isCompleted },
+            sortBy: [SortDescriptor(\.dueDate)]
+        )
+        return try context.fetch(descriptor).map { task in
+            UpcomingTask(title: task.title, dueDate: task.dueDate, dogName: task.dog?.name, kind: .routine)
         }
     }
 
@@ -64,5 +70,6 @@ final class SwiftDataWidgetDataRepository: WidgetDataRepository {
 
     func fetchDogCount() throws -> Int {
         try context.fetch(FetchDescriptor<Dog>()).count
+        try context.fetchCount(FetchDescriptor<Dog>())
     }
 }

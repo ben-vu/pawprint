@@ -83,7 +83,7 @@ struct UpcomingTasksWidgetView: View {
                     TaskIcon(task: next, size: 44)
                 }
 
-                Text(next.dueLabel(at: entry.date))
+                Label(next.dueLabel(at: entry.date), systemImage: next.kind.systemImage)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(status == .overdue ? WidgetPalette.danger : WidgetPalette.textSecondary)
 
@@ -213,6 +213,9 @@ struct UpcomingTasksWidgetView: View {
         return Link(destination: task.deepLink.url) {
             HStack(spacing: 6) {
                 TaskIcon(task: task, size: 26)
+                Image(systemName: isOverdue ? "exclamationmark.circle.fill" : task.kind.systemImage)
+                    .font(.caption)
+                    .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
                 VStack(alignment: .leading, spacing: 0) {
                     Text(task.title)
                         .font(.caption.weight(.semibold))

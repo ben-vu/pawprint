@@ -1,6 +1,8 @@
 //
 //  RepeatRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Creates the next task in a repeating routine. Runs when a task is
 //  completed, and when the list loads for tasks that were missed.
@@ -17,7 +19,13 @@ struct RepeatRoutineUseCase {
     @discardableResult
     func execute(_ task: RoutineTask, today: Date = .now) throws -> RoutineTask? {
         guard !task.hasNextOccurrence,
-              let nextDate = nextOccurrence.execute(after: task.dueDate, recurrence: task.recurrence, today: today)
+              let nextDate = nextOccurrence.execute(
+                after: task.dueDate,
+                recurrence: task.recurrence,
+                weekdays: task.repeatWeekdays,
+                everyWeeks: task.repeatEveryWeeks,
+                today: today
+              )
         else { return nil }
 
         let next = RoutineTask(
@@ -28,6 +36,8 @@ struct RepeatRoutineUseCase {
             recurrence: task.recurrence,
             remindMe: task.remindMe
         )
+        next.repeatWeekdays = task.repeatWeekdays
+        next.repeatEveryWeeks = task.repeatEveryWeeks
         try repository.save(next)
         task.hasNextOccurrence = true
         task.nextOccurrenceID = next.reminderID

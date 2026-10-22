@@ -1,6 +1,8 @@
 //
 //  RoutineTask.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  One occurrence of a routine. A repeating routine is a chain of tasks:
 //  when one is done (or missed), the next one is created with the same
@@ -26,6 +28,8 @@ final class RoutineTask {
     var hasNextOccurrence: Bool = false          // stops a repeating task spawning its next one twice
     var nextOccurrenceID: String?                // reminderID of that next task, so unticking can remove it
     var reminderID: String = UUID().uuidString   // identifies its pending notification
+    var repeatWeekdaysRaw: String = ""           // Calendar weekdays (1 = Sunday) for .weekdays, e.g. "2,4,6"
+    var repeatEveryWeeks: Int = 2                // gap in weeks for .everyFewWeeks
 
     init(
         title: String,
@@ -53,6 +57,27 @@ final class RoutineTask {
     var recurrence: RoutineRecurrence {
         get { RoutineRecurrence(rawValue: recurrenceRaw) ?? .once }
         set { recurrenceRaw = newValue.rawValue }
+    }
+
+    var repeatWeekdays: Set<Int> {
+        get { Set(repeatWeekdaysRaw.split(separator: ",").compactMap { Int($0) }) }
+        set { repeatWeekdaysRaw = newValue.sorted().map(String.init).joined(separator: ",") }
+    }
+
+    /// Short description for the list, e.g. "Daily", "Mon, Wed, Fri" or "Every 4 weeks".
+    var repeatSummary: String {
+        switch recurrence {
+        case .weekdays:
+            let symbols = Calendar.current.shortWeekdaySymbols
+            return RoutineRecurrence.weekdayOrder
+                .filter { repeatWeekdays.contains($0) }
+                .map { symbols[$0 - 1] }
+                .joined(separator: ", ")
+        case .everyFewWeeks:
+            return "Every \(repeatEveryWeeks) weeks"
+        default:
+            return recurrence.name
+        }
     }
 }
 
@@ -100,7 +125,7 @@ nonisolated enum RoutineCategory: String, CaseIterable, Identifiable {
 }
 
 nonisolated enum RoutineRecurrence: String, CaseIterable, Identifiable {
-    case once, daily, weekly
+    case once, daily, twiceDaily, weekly, weekdays, everyFewWeeks
 
     var id: String { rawValue }
 
@@ -108,16 +133,16 @@ nonisolated enum RoutineRecurrence: String, CaseIterable, Identifiable {
         switch self {
         case .once: return "Once"
         case .daily: return "Daily"
+        case .twiceDaily: return "Twice a day"
         case .weekly: return "Weekly"
+        case .weekdays: return "Certain days"
+        case .everyFewWeeks: return "Every few weeks"
         }
     }
 
-    /// Days between occurrences, or nil for a one-off task.
-    var dayInterval: Int? {
-        switch self {
-        case .once: return nil
-        case .daily: return 1
-        case .weekly: return 7
-        }
-    }
+    /// Calendar weekday numbers starting from Monday, for showing days in order.
+    static let weekdayOrder = [2, 3, 4, 5, 6, 7, 1]
+
+    /// Allowed gap for .everyFewWeeks.
+    static let everyWeeksRange = 2...12
 }
