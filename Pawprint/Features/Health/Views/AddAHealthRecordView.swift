@@ -21,14 +21,14 @@ struct AddHealthRecordView: View {
             Form {
                 Section("What happened?") {
                     TextField("e.g. rabies vaccine, canine distemper shot", text: $title)
-                    DatePicker("Date Given", selection: $date, displayedComponents: .date)
+                    DatePicker("Date Given", selection: $date, in: ...Date(), displayedComponents: .date)
                 }
                 
                 Section("Next Due Date") {
                     Toggle("Schedule a follow-up appointment?", isOn: $hasDueDate)
                         .tint(PawprintTheme.accent)
                     if hasDueDate {
-                        DatePicker("Next Due", selection: $nextDueDate, displayedComponents: .date)
+                        DatePicker("Next Due", selection: $nextDueDate, in: Date()..., displayedComponents: .date)
                     }
                 }
                 
@@ -36,7 +36,7 @@ struct AddHealthRecordView: View {
                     TextField("Any extra details", text: $notes, axis: .vertical)
                 }
             }
-            .navigationTitle("Add Health Record ")
+            .navigationTitle("Add Health Record")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
