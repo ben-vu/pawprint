@@ -286,4 +286,28 @@ struct DashboardTests {
         #expect(Set(vm.todaysTasks.map(\.title)) == ["Milo dinner", "Shared task"])
         #expect(vm.progress.total == 2)
     }
+
+    // MARK: Add another dog
+
+    @Test func addDogSavesTheMixedBreedFlag() throws {
+        let repo = MockDogRepository()
+        let vm = AddDogViewModel(repository: repo)
+        vm.name = "Milo"
+        vm.breed = "Kelpie"
+        vm.isMixedBreed = true
+        vm.weightText = "14"
+
+        let dog = try #require(vm.save())
+
+        #expect(dog.isMixedBreed)
+        #expect(dog.breedDescription == "Kelpie mix")
+        #expect(repo.items.count == 1)
+    }
+
+    @Test func addDogOffersBreedSuggestionsLikeOnboarding() {
+        let vm = AddDogViewModel(repository: MockDogRepository())
+        vm.breed = "kel"
+
+        #expect(vm.breedSuggestions.contains("Kelpie"))
+    }
 }
