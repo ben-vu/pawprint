@@ -11,6 +11,7 @@
 
 import SwiftUI
 import SwiftData
+import UserNotifications
 
 @main
 struct PawprintApp: App {
@@ -20,6 +21,7 @@ struct PawprintApp: App {
     init() {
         PawprintFonts.registerAll()       // load Nunito before any view draws
         PawprintFonts.applyAppearance()   // nav titles and tab labels use it too
+        UNUserNotificationCenter.current().delegate = UserNotificationService.shared   // routine reminders show while the app is open
 
         let schema = Schema([
             Dog.self,           // Dashboard (Natalie)
