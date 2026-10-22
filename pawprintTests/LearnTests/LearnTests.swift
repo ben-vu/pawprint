@@ -2,7 +2,7 @@
 //  LearnTests.swift
 //  PawprintTests
 //
-//  Created by Benjamin Vu on 21/10/2026.
+//  Created by Natalie Michael on 20/10/2026.
 //
 //  Every test drives a use case or the view model through the repository
 //  protocol using an in-memory mock, so nothing touches a real database.
@@ -271,5 +271,41 @@ struct LearnTests {
         viewModel.load()
 
         #expect(viewModel.errorMessage == LearnError.loadFailed.errorDescription)
+    }
+
+    // MARK: Opening a guide from a link
+
+    @Test func viewModelFindsAGuideByIDEvenWhenFiltered() {
+        let viewModel = LearnViewModel(repository: MockTipRepository())
+        viewModel.load()
+        viewModel.selectedFilter = .category(.grooming)
+        viewModel.refresh()
+
+        let tip = viewModel.tip(withContentID: "fleas-ticks-and-worms")
+
+        #expect(tip?.learnCategory == .health)
+        #expect(viewModel.tip(withContentID: "no-such-guide") == nil)
+    }
+
+    @Test func widgetLinkSelectsTheLearnTabAndQueuesTheGuide() {
+        let router = AppRouter()
+
+        router.handle(url: PawprintDeepLink.learn(tipID: "fleas-ticks-and-worms").url)
+
+        #expect(router.selectedTab == .learn)
+        #expect(router.pendingTipID == "fleas-ticks-and-worms")
+    }
+
+    @Test func widgetLinksSelectTheRightTab() {
+        let router = AppRouter()
+
+        router.handle(url: PawprintDeepLink.health.url)
+        #expect(router.selectedTab == .health)
+
+        router.handle(url: PawprintDeepLink.routines.url)
+        #expect(router.selectedTab == .routines)
+
+        router.handle(url: URL(string: "https://example.com")!)
+        #expect(router.selectedTab == .routines)
     }
 }

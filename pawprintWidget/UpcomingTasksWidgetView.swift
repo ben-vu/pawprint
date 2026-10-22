@@ -4,6 +4,9 @@
 //
 //  Created by Benjamin Vu on 21/10/2026.
 //
+//  Layouts for each size of the Upcoming widget. The same entry drives
+//  every size.
+//
 
 import WidgetKit
 import SwiftUI
@@ -11,7 +14,7 @@ import SwiftUI
 struct UpcomingTasksWidgetView: View {
     @Environment(\.widgetFamily) private var family
 
-    let entry: UpcomingTasksEntry
+    let entry: PawprintEntry
 
     var body: some View {
         switch family {
@@ -21,6 +24,8 @@ struct UpcomingTasksWidgetView: View {
             rectangular
         case .systemMedium:
             medium
+        case .systemLarge:
+            large
         default:
             small
         }
@@ -40,7 +45,7 @@ struct UpcomingTasksWidgetView: View {
     @ViewBuilder
     private var rectangular: some View {
         VStack(alignment: .leading, spacing: 1) {
-            Text("NEXT TASK")
+            Text("NEXT UP")
                 .font(.caption2)
                 .bold()
                 .widgetAccentable()
@@ -50,7 +55,7 @@ struct UpcomingTasksWidgetView: View {
                     .lineLimit(1)
                 Text(next.dueLabel(at: entry.date))
                     .font(.caption)
-                if let dogName = next.dogName {
+                if entry.showsDogNames, let dogName = next.dogName {
                     Text(dogName)
                         .font(.caption2)
                 }
@@ -73,7 +78,7 @@ struct UpcomingTasksWidgetView: View {
             VStack(alignment: .leading, spacing: 4) {
                 header
 
-                Text(next.dueLabel(at: entry.date))
+                Label(next.dueLabel(at: entry.date), systemImage: next.kind.systemImage)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(status == .overdue ? WidgetPalette.danger : WidgetPalette.textSecondary)
 
@@ -93,6 +98,7 @@ struct UpcomingTasksWidgetView: View {
                 footer
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .widgetURL(next.deepLink.url)
         } else {
             allCaughtUp
         }
@@ -104,15 +110,7 @@ struct UpcomingTasksWidgetView: View {
             allCaughtUp
         } else {
             VStack(alignment: .leading, spacing: 6) {
-                HStack {
-                    header
-                    Spacer()
-                    if entry.overdueCount > 0 {
-                        Text("\(entry.overdueCount) overdue")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(WidgetPalette.danger)
-                    }
-                }
+                headerWithOverdue
 
                 ForEach(entry.tasks.prefix(3)) { task in
                     row(task)
@@ -130,12 +128,66 @@ struct UpcomingTasksWidgetView: View {
         }
     }
 
+    @ViewBuilder
+    private var large: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            headerWithOverdue
+
+            if entry.tasks.isEmpty {
+                Text("All caught up")
+                    .font(.headline)
+                    .foregroundStyle(WidgetPalette.textPrimary)
+                Text("No tasks or vet visits due soon.")
+                    .font(.caption)
+                    .foregroundStyle(WidgetPalette.textSecondary)
+            } else {
+                ForEach(entry.tasks.prefix(5)) { task in
+                    row(task)
+                }
+            }
+
+            Spacer(minLength: 0)
+
+            if let tip = entry.tip {
+                Link(destination: tip.deepLink.url) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Label("TIP OF THE DAY", systemImage: tip.categoryImage)
+                            .font(.caption2.weight(.bold))
+                            .foregroundStyle(WidgetPalette.accent)
+                        Text(tip.title)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(WidgetPalette.textPrimary)
+                            .lineLimit(2)
+                        Text(tip.summary)
+                            .font(.caption)
+                            .foregroundStyle(WidgetPalette.textSecondary)
+                            .lineLimit(2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
     // MARK: Pieces
 
     private var header: some View {
         Label("PAWPRINT", systemImage: "pawprint.fill")
             .font(.caption2.weight(.bold))
             .foregroundStyle(WidgetPalette.accent)
+    }
+
+    private var headerWithOverdue: some View {
+        HStack {
+            header
+            Spacer()
+            if entry.overdueCount > 0 {
+                Text("\(entry.overdueCount) overdue")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(WidgetPalette.danger)
+            }
+        }
     }
 
     @ViewBuilder
@@ -153,18 +205,28 @@ struct UpcomingTasksWidgetView: View {
 
     private func row(_ task: UpcomingTask) -> some View {
         let isOverdue = task.status(at: entry.date) == .overdue
-        return HStack(spacing: 6) {
-            Image(systemName: isOverdue ? "exclamationmark.circle.fill" : "circle")
-                .font(.caption)
-                .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
-            Text(task.title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(WidgetPalette.textPrimary)
-                .lineLimit(1)
-            Spacer(minLength: 4)
-            Text(task.dueLabel(at: entry.date))
-                .font(.caption2)
-                .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.textSecondary)
+        return Link(destination: task.deepLink.url) {
+            HStack(spacing: 6) {
+                Image(systemName: isOverdue ? "exclamationmark.circle.fill" : task.kind.systemImage)
+                    .font(.caption)
+                    .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(task.title)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(WidgetPalette.textPrimary)
+                        .lineLimit(1)
+                    if entry.showsDogNames, let dogName = task.dogName {
+                        Text(dogName)
+                            .font(.caption2)
+                            .foregroundStyle(WidgetPalette.textSecondary)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer(minLength: 4)
+                Text(task.dueLabel(at: entry.date))
+                    .font(.caption2)
+                    .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.textSecondary)
+            }
         }
     }
 
@@ -176,7 +238,7 @@ struct UpcomingTasksWidgetView: View {
             Text("All caught up")
                 .font(.headline)
                 .foregroundStyle(WidgetPalette.textPrimary)
-            Text("No tasks due soon. Open Pawprint to add a routine.")
+            Text("Nothing due soon. Open Pawprint to add a routine or health record.")
                 .font(.caption)
                 .foregroundStyle(WidgetPalette.textSecondary)
             Spacer(minLength: 0)

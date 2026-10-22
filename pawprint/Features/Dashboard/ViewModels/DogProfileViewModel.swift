@@ -21,6 +21,7 @@ final class DogProfileViewModel {
 
     private let update: UpdateDogUseCase
     private let remove: DeleteDogUseCase
+    private let dogs: DogRepository
 
     init(dog: Dog, repository: DogRepository) {
         self.dog = dog
@@ -31,6 +32,7 @@ final class DogProfileViewModel {
         self.photoData = dog.photoData
         self.update = UpdateDogUseCase(repository: repository)
         self.remove = DeleteDogUseCase(repository: repository)
+        self.dogs = repository
     }
 
     var weightKg: Double {
@@ -47,6 +49,11 @@ final class DogProfileViewModel {
             errorMessage = error.localizedDescription
             return false
         }
+    }
+
+    /// True when no dog profiles remain, so the app should return to onboarding.
+    var hasNoDogsLeft: Bool {
+        ((try? dogs.fetchAll().count) ?? 0) == 0
     }
 
     func delete() -> Bool {

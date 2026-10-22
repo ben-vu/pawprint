@@ -13,12 +13,18 @@ import SwiftData
 
 @Model
 final class Dog {
+    /// Stable identity, so the selected dog can be remembered between launches.
+    var id: UUID = UUID()
     var name: String
     var breed: String
     var ageYears: Int
     var weightKg: Double
     @Attribute(.externalStorage) var photoData: Data?
     var createdAt: Date
+
+    /// Removing a dog removes its routines and health records too, so nothing is left orphaned.
+    @Relationship(deleteRule: .cascade, inverse: \RoutineTask.dog) var routineTasks: [RoutineTask] = []
+    @Relationship(deleteRule: .cascade, inverse: \HealthRecord.dog) var healthRecords: [HealthRecord] = []
 
     init(name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data? = nil) {
         self.name = name
