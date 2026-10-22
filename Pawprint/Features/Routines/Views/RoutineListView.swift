@@ -19,6 +19,8 @@ struct RoutineListView: View {
     @State private var showAdd = false
     @State private var editing: RoutineTask?
     @State private var completeFeedback = 0
+    @State private var justAdded = false          // set by the add sheet, read when it closes
+    @State private var showCelebration = false
 
     var body: some View {
         NavigationStack {
@@ -46,11 +48,25 @@ struct RoutineListView: View {
                     .accessibilityLabel("Add routine")
                 }
             }
-            .sheet(isPresented: $showAdd, onDismiss: { viewModel?.load() }) {
-                AddRoutineView()
+            .sheet(isPresented: $showAdd, onDismiss: {
+                viewModel?.load()
+                if justAdded {
+                    justAdded = false
+                    withAnimation { showCelebration = true }   // after the sheet has gone, so it isn't hidden
+                }
+            }) {
+                AddRoutineView(onAdded: { justAdded = true })
             }
             .sheet(item: $editing, onDismiss: { viewModel?.load() }) { task in
                 AddRoutineView(task: task)
+            }
+        }
+        .overlay {
+            if showCelebration {
+                RoutineAddedCelebration {
+                    withAnimation { showCelebration = false }
+                }
+                .transition(.opacity)
             }
         }
         .task {

@@ -13,6 +13,8 @@ import SwiftData
 
 struct AddRoutineView: View {
     var task: RoutineTask? = nil
+    /// Called after a new routine (not an edit) is saved.
+    var onAdded: () -> Void = {}
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
@@ -40,7 +42,10 @@ struct AddRoutineView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         focusedField = nil
-                        if viewModel?.save() == true { dismiss() }
+                        if viewModel?.save() == true {
+                            if task == nil { onAdded() }
+                            dismiss()
+                        }
                     }
                     .fontWeight(.bold)
                 }
