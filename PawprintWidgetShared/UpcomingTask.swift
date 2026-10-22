@@ -33,6 +33,51 @@ nonisolated struct UpcomingTask: Codable, Hashable, Identifiable, Sendable {
     let title: String
     let dueDate: Date
     let dogName: String?
+    /// The routine's category raw value ("walk", "meal", ...), used to pick
+    /// its icon. Nil for health follow-ups and for snapshots saved before
+    /// it existed.
+    let category: String?
+    let kind: UpcomingTaskKind
+
+    init(
+        title: String,
+        dueDate: Date,
+        dogName: String? = nil,
+        category: String? = nil,
+        kind: UpcomingTaskKind = .routine
+    ) {
+        self.title = title
+        self.dueDate = dueDate
+        self.dogName = dogName
+        self.category = category
+        self.kind = kind
+    }
+
+    // Snapshots saved by older versions have no `category` or `kind`, so
+    // both fall back to defaults instead of failing to decode.
+    private enum CodingKeys: String, CodingKey {
+        case title, dueDate, dogName, category, kind
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        title = try container.decode(String.self, forKey: .title)
+        dueDate = try container.decode(Date.self, forKey: .dueDate)
+        dogName = try container.decodeIfPresent(String.self, forKey: .dogName)
+        category = try container.decodeIfPresent(String.self, forKey: .category)
+        kind = try container.decodeIfPresent(UpcomingTaskKind.self, forKey: .kind) ?? .routine
+    }
+
+    var id: String { "\(kind.rawValue)|\(title)|\(dogName ?? "")|\(dueDate.timeIntervalSince1970)" }
+
+    /// Where tapping this in the widget should go.
+    var deepLink: PawprintDeepLink {
+        switch kind {
+        case .routine: return .routines
+        case .health: return .health
+        }
+    }
+
     let kind: UpcomingTaskKind
 
     init(title: String, dueDate: Date, dogName: String? = nil, kind: UpcomingTaskKind = .routine) {
@@ -75,3 +120,4 @@ nonisolated struct UpcomingTask: Codable, Hashable, Identifiable, Sendable {
         }
     }
 }
+

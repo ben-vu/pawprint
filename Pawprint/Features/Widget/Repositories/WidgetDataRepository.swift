@@ -29,6 +29,20 @@ final class SwiftDataWidgetDataRepository: WidgetDataRepository {
     }
 
     func fetchIncompleteTasks() throws -> [UpcomingTask] {
+        // A missed repeat already has its next occurrence lined up, so it is
+        // skipped here just like the Routines tab skips it.
+        let descriptor = FetchDescriptor<RoutineTask>(
+            predicate: #Predicate<RoutineTask> { !$0.isCompleted && !$0.hasNextOccurrence },
+            sortBy: [SortDescriptor(\.dueDate)]
+        )
+        return try context.fetch(descriptor).map { task in
+            UpcomingTask(
+                title: task.title,
+                dueDate: task.dueDate,
+                dogName: task.dog?.name,
+                category: task.categoryRaw,
+                kind: .routine
+            )
         let descriptor = FetchDescriptor<RoutineTask>(
             predicate: #Predicate<RoutineTask> { !$0.isCompleted },
             sortBy: [SortDescriptor(\.dueDate)]
@@ -55,6 +69,7 @@ final class SwiftDataWidgetDataRepository: WidgetDataRepository {
     }
 
     func fetchDogCount() throws -> Int {
+        try context.fetch(FetchDescriptor<Dog>()).count
         try context.fetchCount(FetchDescriptor<Dog>())
     }
 }

@@ -10,6 +10,7 @@
 
 import WidgetKit
 import SwiftUI
+import UIKit
 
 struct UpcomingTasksWidgetView: View {
     @Environment(\.widgetFamily) private var family
@@ -76,7 +77,11 @@ struct UpcomingTasksWidgetView: View {
         if let next = entry.tasks.first {
             let status = next.status(at: entry.date)
             VStack(alignment: .leading, spacing: 4) {
-                header
+                HStack(alignment: .top) {
+                    header
+                    Spacer(minLength: 0)
+                    TaskIcon(task: next, size: 44)
+                }
 
                 Label(next.dueLabel(at: entry.date), systemImage: next.kind.systemImage)
                     .font(.caption.weight(.semibold))
@@ -207,6 +212,7 @@ struct UpcomingTasksWidgetView: View {
         let isOverdue = task.status(at: entry.date) == .overdue
         return Link(destination: task.deepLink.url) {
             HStack(spacing: 6) {
+                TaskIcon(task: task, size: 26)
                 Image(systemName: isOverdue ? "exclamationmark.circle.fill" : task.kind.systemImage)
                     .font(.caption)
                     .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
@@ -244,5 +250,38 @@ struct UpcomingTasksWidgetView: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// The icon for a row. Health follow-ups use the health symbol. Routines use
+/// the pug illustration for their category, e.g. "TaskWalk" in the widget's
+/// asset catalog, and fall back to a paw print for "other" or when the image
+/// hasn't been added yet.
+struct TaskIcon: View {
+    let task: UpcomingTask
+    let size: CGFloat
+
+    private var imageName: String? {
+        guard task.kind == .routine, let category = task.category, category != "other" else { return nil }
+        let name = "Task" + category.capitalized
+        return UIImage(named: name) == nil ? nil : name
+    }
+
+    var body: some View {
+        Group {
+            if let imageName {
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image(systemName: task.kind == .routine ? "pawprint.fill" : task.kind.systemImage)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(size * 0.2)
+                    .foregroundStyle(WidgetPalette.accent)
+            }
+        }
+        .frame(width: size, height: size)
+        .accessibilityHidden(true)
     }
 }

@@ -11,6 +11,7 @@
 
 import Foundation
 import Testing
+import SwiftData
 @testable import Pawprint
 
 @MainActor
@@ -93,6 +94,16 @@ struct WidgetTests {
         LearnTip(contentID: id, title: id, category: .health, summary: "s", body: "b", sortOrder: order)
     }
 
+    }
+
+    private func healthItem(_ title: String, given: Date, due: Date?, dogID: UUID? = nil) -> HealthDueItem {
+        HealthDueItem(title: title, recordDate: given, nextDueDate: due, dogName: "Biscuit", dogID: dogID)
+    }
+
+    private func guide(_ id: String, order: Int) -> LearnTip {
+        LearnTip(contentID: id, title: id, category: .health, summary: "s", body: "b", sortOrder: order)
+    }
+
     // MARK: Routine rules
 
     @Test func snapshotSortsSoonestFirstWithOverdueAtTheTop() {
@@ -119,6 +130,47 @@ struct WidgetTests {
 
         #expect(snapshot.tasks.count == BuildWidgetSnapshotUseCase.maxTasks)
         #expect(snapshot.tasks.first?.title == "Task 0")
+    }
+
+    // MARK: Category
+
+    @Test func snapshotSavedBeforeCategoriesStillDecodes() throws {
+        let oldJSON = #"{"generatedAt":0,"tasks":[{"title":"Walk","dueDate":0,"dogName":"Biscuit"}]}"#
+
+        let snapshot = try JSONDecoder().decode(WidgetSnapshot.self, from: Data(oldJSON.utf8))
+
+        #expect(snapshot.tasks.first?.title == "Walk")
+        #expect(snapshot.tasks.first?.category == nil)
+    }
+
+    @Test func categoryRoundTripsThroughTheSnapshot() throws {
+        let original = WidgetSnapshot(
+            generatedAt: now,
+            tasks: [UpcomingTask(title: "Walk", dueDate: now, dogName: "Biscuit", category: "walk")]
+        )
+
+        let decoded = try JSONDecoder().decode(WidgetSnapshot.self, from: JSONEncoder().encode(original))
+
+        #expect(decoded.tasks.first?.category == "walk")
+    }
+
+    @Test func missedRepeatIsLeftOutOnceItsNextOccurrenceExists() throws {
+        let container = try ModelContainer(
+            for: RoutineTask.self, Dog.self, HealthRecord.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let context = container.mainContext
+        let missed = RoutineTask(title: "Dinner", dueDate: hours(-18), category: .meal, recurrence: .daily)
+        missed.hasNextOccurrence = true
+        let next = RoutineTask(title: "Dinner", dueDate: hours(6), category: .meal, recurrence: .daily)
+        context.insert(missed)
+        context.insert(next)
+        try context.save()
+
+        let tasks = try SwiftDataWidgetDataRepository(context: context).fetchIncompleteTasks()
+
+        #expect(tasks.map(\.dueDate) == [next.dueDate])
+        #expect(tasks.first?.category == "meal")
     }
 
     // MARK: Health rules
@@ -263,6 +315,24 @@ struct WidgetTests {
 
         #expect(store.saveCount == 1)
         #expect(reloader.reloadCount == 1)
+    }
+
+    @Test func completingTheLastTaskClearsTheWidget() throws {
+        let data = MockWidgetDataRepository()
+        data.tasks = [task("Walk", hoursFromNow: 1)]
+    @Test func addingAHealthRecordChangesTheWidget() throws {
+        let data = MockWidgetDataRepository()
+        let store = InMemoryWidgetSnapshotStore()
+        let reloader = MockWidgetReloader()
+        let useCase = makeUseCase(data, store, reloader)
+        try useCase.execute(now: now)
+
+        data.tasks = []
+        data.healthItems = [healthItem("Rabies vaccine", given: days(-300), due: days(3))]
+        try useCase.execute(now: now)
+
+        #expect(store.snapshot.tasks.first?.kind == .health)
+        #expect(reloader.reloadCount == 2)
     }
 
     @Test func addingAHealthRecordChangesTheWidget() throws {
