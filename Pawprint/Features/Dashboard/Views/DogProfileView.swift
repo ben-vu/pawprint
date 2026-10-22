@@ -18,6 +18,7 @@ struct DogProfileView: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: DogProfileViewModel?
     @State private var photoItem: PhotosPickerItem?
     @State private var confirmDelete = false
@@ -58,12 +59,13 @@ struct DogProfileView: View {
             .confirmationDialog("Remove \(dog.name)?", isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button("Remove profile", role: .destructive) {
                     if viewModel?.delete() == true {
-                        hasCompletedOnboarding = false
+                        selectedDogID = ""
+                        if viewModel?.hasNoDogsLeft == true { hasCompletedOnboarding = false }
                         dismiss()
                     }
                 }
             } message: {
-                Text("This deletes the profile from this phone. You can set up a new one straight away.")
+                Text("This deletes the profile, and its routines and health records, from this phone.")
             }
         }
         .task {

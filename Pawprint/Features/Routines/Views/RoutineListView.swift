@@ -1,6 +1,8 @@
 //
 //  RoutineListView.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Routines tab: overdue, today and upcoming tasks. Tap the circle to
 //  tick a task off (or untick it), tap the row to edit, swipe left to
@@ -12,10 +14,13 @@ import SwiftData
 
 struct RoutineListView: View {
     @Environment(\.modelContext) private var context
+    @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
     @State private var editing: RoutineTask?
     @State private var completeFeedback = 0
+    @State private var justAdded = false          // set by the add sheet, read when it closes
+    @State private var showCelebration = false
 
     var body: some View {
         NavigationStack {
@@ -31,6 +36,9 @@ struct RoutineListView: View {
             }
             .navigationTitle("Routines")
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    DogSwitcherMenu()
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showAdd = true
@@ -40,11 +48,25 @@ struct RoutineListView: View {
                     .accessibilityLabel("Add routine")
                 }
             }
-            .sheet(isPresented: $showAdd, onDismiss: { viewModel?.load() }) {
-                AddRoutineView()
+            .sheet(isPresented: $showAdd, onDismiss: {
+                viewModel?.load()
+                if justAdded {
+                    justAdded = false
+                    withAnimation { showCelebration = true }   // after the sheet has gone, so it isn't hidden
+                }
+            }) {
+                AddRoutineView(onAdded: { justAdded = true })
             }
             .sheet(item: $editing, onDismiss: { viewModel?.load() }) { task in
                 AddRoutineView(task: task)
+            }
+        }
+        .overlay {
+            if showCelebration {
+                RoutineAddedCelebration {
+                    withAnimation { showCelebration = false }
+                }
+                .transition(.opacity)
             }
         }
         .task {
@@ -56,6 +78,7 @@ struct RoutineListView: View {
             }
             viewModel?.load()
         }
+        .onChange(of: selectedDogID) { viewModel?.load() }
         .sensoryFeedback(.success, trigger: completeFeedback)
         .tint(PawprintTheme.accent)
     }
@@ -163,7 +186,7 @@ private struct RoutineRow: View {
                         if task.recurrence != .once {
                             HStack(spacing: 3) {
                                 Image(systemName: "repeat")
-                                Text(task.recurrence.name)
+                                Text(task.repeatSummary)
                             }
                         }
                         if task.remindMe {

@@ -1,6 +1,8 @@
 //
 //  CreateRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 
 import Foundation
@@ -16,12 +18,15 @@ struct CreateRoutineUseCase {
         category: RoutineCategory,
         dueDate: Date,
         recurrence: RoutineRecurrence,
+        weekdays: Set<Int> = [],
+        everyWeeks: Int = 2,
         remindMe: Bool,
         dog: Dog? = nil
     ) throws -> RoutineTask {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw RoutineError.emptyTitle }
         guard trimmed.count <= Self.maxTitleLength else { throw RoutineError.titleTooLong }
+        try Self.validateRepeat(recurrence: recurrence, weekdays: weekdays, everyWeeks: everyWeeks)
 
         let task = RoutineTask(
             title: trimmed,
@@ -31,8 +36,18 @@ struct CreateRoutineUseCase {
             recurrence: recurrence,
             remindMe: remindMe
         )
+        task.repeatWeekdays = weekdays
+        task.repeatEveryWeeks = everyWeeks
         try repository.save(task)
         notifications.scheduleReminder(for: task)
         return task
+    }
+
+    /// Checks the extra settings that some repeat rules need.
+    static func validateRepeat(recurrence: RoutineRecurrence, weekdays: Set<Int>, everyWeeks: Int) throws {
+        if recurrence == .weekdays && weekdays.isEmpty { throw RoutineError.noWeekdaysChosen }
+        if recurrence == .everyFewWeeks && !RoutineRecurrence.everyWeeksRange.contains(everyWeeks) {
+            throw RoutineError.invalidWeekGap
+        }
     }
 }

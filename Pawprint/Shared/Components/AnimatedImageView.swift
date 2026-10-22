@@ -46,7 +46,7 @@ private struct AnimatedImageRepresentable: UIViewRepresentable {
     }
 }
 
-private enum GIFDecoder {
+enum GIFDecoder {
     // Builds a UIImage that cycles through every frame of the GIF using the
     // delay stored in the file, so the speed matches the original.
     static func animatedImage(from data: Data) -> UIImage? {
@@ -64,7 +64,7 @@ private enum GIFDecoder {
         return UIImage.animatedImage(with: frames, duration: total)
     }
 
-    private static func delay(at index: Int, in source: CGImageSource) -> TimeInterval {
+    static func delay(at index: Int, in source: CGImageSource) -> TimeInterval {
         let fallback: TimeInterval = 0.1
         guard
             let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any],

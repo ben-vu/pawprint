@@ -14,12 +14,14 @@ nonisolated enum DogError: DomainError {
     case emptyName
     case invalidWeight
     case invalidAge
+    case duplicateName(String)
 
     var errorDescription: String? {
         switch self {
         case .emptyName: return "Please give your dog a name."
         case .invalidWeight: return "Weight must be between 0.1 and 150 kg."
         case .invalidAge: return "Age should be between 0 and 30 years."
+        case .duplicateName(let name): return "You already have a dog called \(name). Try a different name."
         }
     }
 }
@@ -33,6 +35,8 @@ struct CreateDogUseCase {
         guard !trimmed.isEmpty else { throw DogError.emptyName }
         guard (0.1...150).contains(weightKg) else { throw DogError.invalidWeight }   // heaviest breeds top out around 100 kg
         guard (0...30).contains(ageYears) else { throw DogError.invalidAge }
+        let alreadyHasName = try repository.fetchAll().contains { $0.name.caseInsensitiveCompare(trimmed) == .orderedSame }
+        guard !alreadyHasName else { throw DogError.duplicateName(trimmed) }
 
         let dog = Dog(name: trimmed, breed: breed.trimmingCharacters(in: .whitespaces), ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
         try repository.save(dog)

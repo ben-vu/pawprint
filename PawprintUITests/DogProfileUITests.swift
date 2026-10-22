@@ -42,6 +42,9 @@ final class DogProfileUITests: XCTestCase {
         let avatar = app.buttons["Dog profile"]
         XCTAssertTrue(avatar.waitForExistence(timeout: 8), "Home did not appear")
         avatar.tap()
+        let editProfile = app.buttons["Edit profile"]
+        XCTAssertTrue(editProfile.waitForExistence(timeout: 3), "Dog menu did not open")
+        editProfile.tap()
 
         let title = app.navigationBars["Dog profile"]
         XCTAssertTrue(title.waitForExistence(timeout: 5), "Profile sheet did not open")
@@ -63,5 +66,31 @@ final class DogProfileUITests: XCTestCase {
         // Sheet should close and Home should be back
         XCTAssertTrue(avatar.waitForExistence(timeout: 5), "Sheet did not dismiss after Save")
         XCTAssertFalse(title.exists)
+    }
+
+    @MainActor
+    func testAddAnotherDogFromTheSwitcher() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let avatar = app.buttons["Dog profile"]
+        guard avatar.waitForExistence(timeout: 8) else {
+            throw XCTSkip("Finish onboarding first, then run this test.")
+        }
+        avatar.tap()
+        let addDog = app.buttons["Add another dog"]
+        XCTAssertTrue(addDog.waitForExistence(timeout: 3))
+        addDog.tap()
+
+        let name = app.textFields["Name"]
+        XCTAssertTrue(name.waitForExistence(timeout: 3))
+        name.tap()
+        name.typeText("Milo \(Int.random(in: 100...999))")
+        let weight = app.textFields["Weight (kg)"]
+        weight.tap()
+        weight.typeText("9")
+        app.navigationBars["Add another dog"].buttons["Save"].tap()
+
+        XCTAssertTrue(avatar.waitForExistence(timeout: 5), "Sheet did not close after saving the new dog")
     }
 }

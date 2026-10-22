@@ -2,7 +2,7 @@
 //  DashboardTests.swift
 //  PawprintTests
 //
-//  Created by Natalie Michael on 21/10/2026.
+//  Created by Natalie Michael on 20/10/2026.
 //
 //  All tests run against mock repositories, never SwiftData.
 //
@@ -215,5 +215,75 @@ struct DashboardTests {
         vm.load()
 
         #expect(vm.errorMessage != nil)
+    }
+
+    // MARK: More than one dog
+
+    @Test func secondDogWithTheSameNameIsRejected() throws {
+        let repo = MockDogRepository()
+        _ = try CreateDogUseCase(repository: repo).execute(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+
+        #expect(throws: DogError.duplicateName("bella")) {
+            try CreateDogUseCase(repository: repo).execute(name: "bella", breed: "Pug", ageYears: 2, weightKg: 8)
+        }
+        #expect(repo.items.count == 1)
+    }
+
+    @Test func aSecondDogWithADifferentNameIsSaved() throws {
+        let repo = MockDogRepository()
+        _ = try CreateDogUseCase(repository: repo).execute(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+        _ = try CreateDogUseCase(repository: repo).execute(name: "Milo", breed: "Pug", ageYears: 2, weightKg: 8)
+
+        #expect(repo.items.map(\.name) == ["Bella", "Milo"])
+    }
+
+    @Test func renamingADogToAnotherDogsNameIsRejected() throws {
+        let repo = MockDogRepository()
+        _ = try CreateDogUseCase(repository: repo).execute(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+        let milo = try CreateDogUseCase(repository: repo).execute(name: "Milo", breed: "Pug", ageYears: 2, weightKg: 8)
+
+        #expect(throws: DogError.duplicateName("Bella")) {
+            try UpdateDogUseCase(repository: repo).execute(milo, name: "Bella", breed: "Pug", ageYears: 2, weightKg: 8, photoData: nil)
+        }
+    }
+
+    @Test func activeDogIsTheSelectedOneOrTheFirstWhenNoneIsSelected() {
+        let bella = Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+        let milo = Dog(name: "Milo", breed: "Pug", ageYears: 2, weightKg: 8)
+        let useCase = ActiveDogUseCase()
+
+        #expect(useCase.activeDog(in: [bella, milo], selectedID: milo.id) === milo)
+        #expect(useCase.activeDog(in: [bella, milo], selectedID: nil) === bella)
+        #expect(useCase.activeDog(in: [bella, milo], selectedID: UUID()) === bella)
+        #expect(useCase.activeDog(in: [], selectedID: nil) == nil)
+    }
+
+    @Test func routinesWithNoDogShowForEveryDog() {
+        let dogID = UUID()
+
+        #expect(ActiveDogUseCase.shows(taskDogID: nil, activeDogID: dogID))
+        #expect(ActiveDogUseCase.shows(taskDogID: dogID, activeDogID: dogID))
+        #expect(ActiveDogUseCase.shows(taskDogID: UUID(), activeDogID: dogID) == false)
+    }
+
+    @Test func dashboardOnlyShowsTheSelectedDogsTasks() {
+        let bella = Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+        let milo = Dog(name: "Milo", breed: "Pug", ageYears: 2, weightKg: 8)
+        let dogs = MockDogRepository()
+        dogs.items = [bella, milo]
+        let routines = MockRoutineRepositoryForDashboard()
+        routines.items = [
+            RoutineTask(title: "Bella walk", dueDate: .now, dog: bella),
+            RoutineTask(title: "Milo dinner", dueDate: .now, dog: milo),
+            RoutineTask(title: "Shared task", dueDate: .now)
+        ]
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines)
+        vm.load(selectedDogID: milo.id)
+
+        #expect(vm.dog === milo)
+        #expect(vm.dogCount == 2)
+        #expect(Set(vm.todaysTasks.map(\.title)) == ["Milo dinner", "Shared task"])
+        #expect(vm.progress.total == 2)
     }
 }

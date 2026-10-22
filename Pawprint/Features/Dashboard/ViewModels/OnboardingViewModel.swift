@@ -52,6 +52,7 @@ final class OnboardingViewModel {
     func saveDog() -> Bool {
         do {
             savedDog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
+            if let savedDog { ActiveDogSelection.store(savedDog.id) }
             errorMessage = nil
             return true
         } catch {

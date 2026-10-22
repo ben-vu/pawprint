@@ -1,6 +1,8 @@
 //
 //  NotificationService.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Local reminders through UserNotifications. Use cases only see the
 //  protocol, so tests can record calls instead of touching the system.

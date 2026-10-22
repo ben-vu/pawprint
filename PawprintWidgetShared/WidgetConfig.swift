@@ -14,4 +14,5 @@ import Foundation
 nonisolated enum WidgetConfig {
     static let appGroupID = "group.com.nootnoot.pawprint"
     static let widgetKind = "PawprintUpcomingTasksWidget"
+    static let tipWidgetKind = "PawprintTipWidget"
 }
