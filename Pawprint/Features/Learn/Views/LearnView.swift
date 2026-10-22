@@ -13,10 +13,12 @@ import SwiftData
 
 struct LearnView: View {
     @Environment(\.modelContext) private var context
+    @Environment(AppRouter.self) private var router: AppRouter?
     @State private var viewModel: LearnViewModel?
+    @State private var path: [LearnTip] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 PawprintTheme.background.ignoresSafeArea()
                 if let viewModel {
@@ -37,6 +39,20 @@ struct LearnView: View {
             let model = LearnViewModel(repository: SwiftDataTipRepository(context: context))
             model.load()
             viewModel = model
+            openPendingGuide()
+        }
+        .onChange(of: router?.pendingTipID) { openPendingGuide() }
+    }
+
+    /// Opens the guide a widget or the Health tab asked for.
+    private func openPendingGuide() {
+        guard let router, let id = router.pendingTipID, let viewModel else { return }
+        router.pendingTipID = nil
+        if let tip = viewModel.tip(withContentID: id) {
+            viewModel.selectedFilter = .all
+            viewModel.searchText = ""
+            viewModel.refresh()
+            path = [tip]
         }
     }
 }

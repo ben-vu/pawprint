@@ -1,6 +1,8 @@
 //
 //  UncompleteRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Unticks a task that was ticked by mistake. For a repeating routine the
 //  next task that ticking created is removed again, unless it has already

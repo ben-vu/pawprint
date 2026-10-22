@@ -6,7 +6,9 @@
 //
 //  Keeps the widget in step with the app. It listens for every SwiftData
 //  save, so ticking off a task, adding a routine or deleting one updates
-//  the widget without the Routines feature having to know the widget exists.
+//  the widgets without the Routines or Health features knowing they exist.
+//  It also makes sure the Learn guides are in the database, because the
+//  tip of the day widget needs them even if Learn was never opened.
 //
 
 import Foundation
@@ -17,27 +19,34 @@ import os
 @MainActor
 final class WidgetCenterReloader: WidgetReloading {
     func reloadTimelines() {
-        WidgetCenter.shared.reloadTimelines(ofKind: WidgetConfig.widgetKind)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 }
 
 @MainActor
 final class WidgetSyncService {
     private let refreshWidget: RefreshWidgetUseCase
+    private let seedTips: SeedTipsUseCase
     private let logger = Logger(subsystem: "com.nootnoot.pawprint", category: "widget")
     private var observer: NSObjectProtocol?
 
     init(container: ModelContainer) {
         refreshWidget = RefreshWidgetUseCase(
-            tasks: SwiftDataUpcomingTaskRepository(context: container.mainContext),
+            data: SwiftDataWidgetDataRepository(context: container.mainContext),
             store: AppGroupWidgetSnapshotStore(),
             reloader: WidgetCenterReloader()
         )
+        seedTips = SeedTipsUseCase(repository: SwiftDataTipRepository(context: container.mainContext))
     }
 
     /// Refreshes once now, then again after every save.
     func start() {
         guard observer == nil else { return }
+        do {
+            try seedTips.execute()
+        } catch {
+            logger.error("Could not prepare Learn guides: \(error.localizedDescription)")
+        }
         refresh()
         observer = NotificationCenter.default.addObserver(
             forName: ModelContext.didSave,

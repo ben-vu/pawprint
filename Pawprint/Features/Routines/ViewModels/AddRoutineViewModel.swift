@@ -1,6 +1,8 @@
 //
 //  AddRoutineViewModel.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Form state for the routine sheet. Creates a new routine, or edits an
 //  existing one when given a task.
@@ -15,6 +17,8 @@ final class AddRoutineViewModel {
     var category: RoutineCategory = .walk
     var dueDate: Date
     var recurrence: RoutineRecurrence = .daily
+    var weekdays: Set<Int> = []
+    var everyWeeks = 2
     var remindMe = false
     var notificationsDenied = false
     var errorMessage: String?
@@ -37,6 +41,8 @@ final class AddRoutineViewModel {
             category = task.category
             dueDate = task.dueDate
             recurrence = task.recurrence
+            weekdays = task.repeatWeekdays
+            everyWeeks = task.repeatEveryWeeks
             remindMe = task.remindMe
         } else {
             // Default to the next whole hour, a sensible time for most routines.
@@ -44,12 +50,16 @@ final class AddRoutineViewModel {
             let hourStart = calendar.dateInterval(of: .hour, for: now)?.start ?? now
             dueDate = calendar.date(byAdding: .hour, value: 1, to: hourStart) ?? now
         }
+        // Start "Certain days" on the day it's due, so the first pick isn't empty.
+        if weekdays.isEmpty {
+            weekdays = [Calendar.current.component(.weekday, from: dueDate)]
+        }
     }
 
-    /// Looks up which dog new routines belong to. There is only one dog for
-    /// now; this is the place to use the selected dog once there are several.
+    /// New routines belong to the dog selected in the dog switcher.
     convenience init(repository: RoutineRepository, notifications: NotificationService, dogs: DogRepository, editing: RoutineTask? = nil) {
-        let dog = try? dogs.fetchAll().first
+        let allDogs = (try? dogs.fetchAll()) ?? []
+        let dog = ActiveDogUseCase().activeDog(in: allDogs, selectedID: ActiveDogSelection.storedID)
         self.init(repository: repository, notifications: notifications, dog: dog, editing: editing)
     }
 
@@ -61,14 +71,22 @@ final class AddRoutineViewModel {
         if !allowed { remindMe = false }
     }
 
+    func toggleWeekday(_ weekday: Int) {
+        if weekdays.contains(weekday) {
+            weekdays.remove(weekday)
+        } else {
+            weekdays.insert(weekday)
+        }
+    }
+
     func save() -> Bool {
         do {
             if let task = editing {
                 try UpdateRoutineUseCase(repository: repository, notifications: notifications)
-                    .execute(task, title: title, category: category, dueDate: dueDate, recurrence: recurrence, remindMe: remindMe)
+                    .execute(task, title: title, category: category, dueDate: dueDate, recurrence: recurrence, weekdays: weekdays, everyWeeks: everyWeeks, remindMe: remindMe)
             } else {
                 _ = try CreateRoutineUseCase(repository: repository, notifications: notifications)
-                    .execute(title: title, category: category, dueDate: dueDate, recurrence: recurrence, remindMe: remindMe, dog: dog)
+                    .execute(title: title, category: category, dueDate: dueDate, recurrence: recurrence, weekdays: weekdays, everyWeeks: everyWeeks, remindMe: remindMe, dog: dog)
             }
             errorMessage = nil
             return true

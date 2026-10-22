@@ -4,9 +4,10 @@
 //
 //  Created by Benjamin Vu on 21/10/2026.
 //
-//  Reads the open tasks, builds a snapshot, saves it to the App Group and
-//  asks WidgetKit to redraw. Skips all of that when nothing the widget shows
-//  has changed, because WidgetKit limits how often a widget may reload.
+//  Reads routines, health records, Learn guides and dogs, builds a
+//  snapshot, saves it to the App Group and asks WidgetKit to redraw. Skips
+//  the save and reload when nothing the widgets show has changed, because
+//  WidgetKit limits how often a widget may reload.
 //
 
 import Foundation
@@ -18,21 +19,26 @@ protocol WidgetReloading {
 
 @MainActor
 struct RefreshWidgetUseCase {
-    let tasks: UpcomingTaskRepository
+    let data: WidgetDataRepository
     let store: WidgetSnapshotStore
     let reloader: WidgetReloading
     var buildSnapshot = BuildWidgetSnapshotUseCase()
 
     func execute(now: Date = .now) throws {
-        let upcoming: [UpcomingTask]
+        let snapshot: WidgetSnapshot
         do {
-            upcoming = try tasks.fetchIncompleteTasks()
+            snapshot = buildSnapshot.execute(
+                tasks: try data.fetchIncompleteTasks(),
+                healthItems: try data.fetchHealthRecords(),
+                tips: try data.fetchTips(),
+                dogCount: try data.fetchDogCount(),
+                now: now
+            )
         } catch {
             throw WidgetSyncError.couldNotReadTasks
         }
 
-        let snapshot = buildSnapshot.execute(tasks: upcoming, now: now)
-        guard snapshot.tasks != store.load().tasks else { return }
+        guard !snapshot.hasSameContent(as: store.load()) else { return }
 
         do {
             try store.save(snapshot)

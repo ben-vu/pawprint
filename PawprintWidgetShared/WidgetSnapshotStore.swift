@@ -34,7 +34,7 @@ nonisolated protocol WidgetSnapshotStore {
 
 nonisolated struct AppGroupWidgetSnapshotStore: WidgetSnapshotStore {
     private let appGroupID: String
-    private let key = "widget.upcomingTasks.v1"
+    private let key = "widget.snapshot.v2"
 
     init(appGroupID: String = WidgetConfig.appGroupID) {
         self.appGroupID = appGroupID
