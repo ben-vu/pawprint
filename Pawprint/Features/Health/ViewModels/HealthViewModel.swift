@@ -12,17 +12,21 @@ class HealthViewModel {
     private(set) var records: [HealthRecord] = []
     var errorMessage: String?
     let dog: Dog
+    private(set) var overdueRecords: [HealthRecord] = []
+    let overdueUseCase: OverdueTreatmentsUseCase
 
     private let repository: HealthRepository
 
     init(repository: HealthRepository, dog: Dog) {
         self.repository = repository
         self.dog = dog
+        self.overdueUseCase = OverdueTreatmentsUseCase(repository: repository)
     }
 
     func load() {
         do {
             records = try repository.fetchRecords(for: dog)
+            overdueRecords = try overdueUseCase.execute(for: dog)
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -44,6 +48,15 @@ class HealthViewModel {
         
         do {
             try repository.save(newHealthRecord)
+            load()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
+    func deleteRecord(_ record: HealthRecord) {
+        do {
+            try repository.delete(record)
             load()
         } catch {
             errorMessage = error.localizedDescription

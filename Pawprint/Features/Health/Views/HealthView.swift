@@ -29,22 +29,41 @@ struct HealthView: View {
                     )
                 } else {
                     List {
-                        ForEach(viewModel.records) { record in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(record.title)
-                                    .font(.headline)
-                                
-                                Text(record.date, style: .date)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                
-                                if let dueDate = record.nextDueDate {
-                                    Text("Due: \(dueDate, style: .date)")
-                                        .font(.caption)
-                                        .foregroundStyle(dueDate < Date() ? .red : .blue)
+                        if !viewModel.overdueRecords.isEmpty {
+                            Section("Overdue Treatments") {
+                                ForEach(viewModel.overdueRecords) { record in
+                                    Text(record.title)
+                                        .foregroundStyle(.red)
+                                        .fontWeight(.semibold)
                                 }
                             }
-                            .padding(.vertical, 4)
+                        }
+                        
+                        Section("History") {
+                            ForEach(viewModel.records) { record in
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(record.title)
+                                        .font(.headline)
+                                    
+                                    Text(record.date, style: .date)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                    
+                                    if let dueDate = record.nextDueDate {
+                                        Text("Due: \(dueDate, style: .date)")
+                                            .font(.caption)
+                                            .foregroundStyle(dueDate < Date() ? .red : PawprintTheme.accent)
+                                    }
+                                }
+                                .padding(.vertical, 4)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteRecord(record)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                            }
                         }
                     }
                     .scrollContentBackground(.hidden)
