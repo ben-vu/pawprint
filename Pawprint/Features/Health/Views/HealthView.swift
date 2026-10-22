@@ -93,8 +93,24 @@ struct HealthView: View {
     }
 
     private func list(_ vm: HealthViewModel) -> some View {
-        List {
-            ForEach(vm.records) { record in
+        @Bindable var vm = vm
+        return List {
+            if vm.availableKinds.count > 1 {
+                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                Section {
+                    FilterChipBar(
+                        items: [nil] + vm.availableKinds.map { Optional($0) },
+                        selection: $vm.kindFilter,
+                        title: { $0?.name ?? "All" },
+                        systemImage: { $0?.systemImage ?? "list.bullet" }
+                    )
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+                    .listRowSeparator(.hidden)
+                }
+            }
+            Section {
+            ForEach(vm.shownRecords) { record in
                 row(record)
                     .listRowBackground(PawprintTheme.surface)
                     .swipeActions(edge: .trailing) {
@@ -105,8 +121,12 @@ struct HealthView: View {
                         }
                     }
             }
+            }
         }
+        .listSectionSpacing(14)                                // 14 = Learn's gap to its first card
         .scrollContentBackground(.hidden)
+        .contentMargins(.top, 0, for: .scrollContent)          // list starts right under the title bar, like Learn
+        .contentMargins(.horizontal, 16, for: .scrollContent)  // same side inset as Learn's cards
     }
 
     private func row(_ record: HealthRecord) -> some View {

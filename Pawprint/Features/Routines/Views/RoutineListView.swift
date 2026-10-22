@@ -100,7 +100,20 @@ struct RoutineListView: View {
     }
 
     private func list(_ vm: RoutineViewModel) -> some View {
-        List {
+        @Bindable var vm = vm
+        return List {
+            if vm.availableCategories.count > 1 {
+                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                FilterChipBar(
+                    items: [nil] + vm.availableCategories.map { Optional($0) },
+                    selection: $vm.categoryFilter,
+                    title: { $0?.name ?? "All" },
+                    systemImage: { $0?.systemImage ?? "list.bullet" }
+                )
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0))   // 14 = Learn's gap to its first card
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+            }
             if let error = vm.errorMessage {
                 Label(error, systemImage: "exclamationmark.circle.fill")
                     .font(PawprintTheme.font(.footnote, weight: .semibold))
@@ -114,6 +127,7 @@ struct RoutineListView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
+        .contentMargins(.top, 0, for: .scrollContent)   // list starts right under the chips, like Learn
         .refreshable { vm.load() }
     }
 
@@ -135,7 +149,7 @@ struct RoutineListView: View {
                     .accessibilityAction(named: "Edit") { editing = task }
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))   // same side inset as Learn's cards
                     .swipeActions {
                         Button(role: .destructive) {
                             vm.delete(task)

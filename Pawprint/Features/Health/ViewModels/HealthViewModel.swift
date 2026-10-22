@@ -14,7 +14,22 @@ import Observation
 class HealthViewModel {
     private(set) var records: [HealthRecord] = []
     var errorMessage: String?
+    var kindFilter: HealthRecordKind? = nil   // nil shows every kind
     let dog: Dog
+
+    /// Records matching the chosen kind, or all of them.
+    var shownRecords: [HealthRecord] {
+        // A filter for a kind with no records left falls back to showing everything.
+        guard let kindFilter, availableKinds.contains(kindFilter) else { return records }
+        return records.filter { $0.kind == kindFilter }
+    }
+
+    /// Kinds that have at least one record, in the usual order. The filter
+    /// bar only shows when there is more than one.
+    var availableKinds: [HealthRecordKind] {
+        let used = Set(records.map(\.kind))
+        return HealthRecordKind.allCases.filter { used.contains($0) }
+    }
 
     private let repository: HealthRepository
 
