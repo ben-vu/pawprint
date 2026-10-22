@@ -19,7 +19,13 @@ struct RepeatRoutineUseCase {
     @discardableResult
     func execute(_ task: RoutineTask, today: Date = .now) throws -> RoutineTask? {
         guard !task.hasNextOccurrence,
-              let nextDate = nextOccurrence.execute(after: task.dueDate, recurrence: task.recurrence, today: today)
+              let nextDate = nextOccurrence.execute(
+                after: task.dueDate,
+                recurrence: task.recurrence,
+                weekdays: task.repeatWeekdays,
+                everyWeeks: task.repeatEveryWeeks,
+                today: today
+              )
         else { return nil }
 
         let next = RoutineTask(
@@ -30,6 +36,8 @@ struct RepeatRoutineUseCase {
             recurrence: task.recurrence,
             remindMe: task.remindMe
         )
+        next.repeatWeekdays = task.repeatWeekdays
+        next.repeatEveryWeeks = task.repeatEveryWeeks
         try repository.save(next)
         task.hasNextOccurrence = true
         task.nextOccurrenceID = next.reminderID

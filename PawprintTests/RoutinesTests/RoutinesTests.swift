@@ -169,6 +169,99 @@ struct RoutinesTests {
         #expect(useCase.execute(after: date(3, 8), recurrence: .daily, today: date(3, 9)) == date(4, 8))
     }
 
+    // MARK: More repeat options
+
+    /// Calendar weekday numbers: 1 = Sunday, 2 = Monday ... 7 = Saturday.
+    private let mondayWednesdayFriday: Set<Int> = [2, 4, 6]
+
+    @Test func twiceDailyMorningTaskRepeatsThatEvening() {
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(21, 7), recurrence: .twiceDaily, today: date(21, 8)) == date(21, 19))
+    }
+
+    @Test func twiceDailyEveningTaskRepeatsNextMorning() {
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(21, 19, 30), recurrence: .twiceDaily, today: date(21, 20)) == date(22, 7, 30))
+    }
+
+    @Test func twiceDailyKeepsClockTimesAcrossDaylightSaving() {
+        // Clocks go forward overnight on the 3rd to the 4th; breakfast stays at 7am.
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(3, 19), recurrence: .twiceDaily, today: date(3, 20)) == date(4, 7))
+    }
+
+    @Test func certainDaysTaskSkipsToTheNextChosenDay() {
+        // Wednesday the 21st -> Friday the 23rd.
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(21, 8), recurrence: .weekdays, weekdays: mondayWednesdayFriday, today: date(21, 9)) == date(23, 8))
+    }
+
+    @Test func certainDaysTaskWrapsIntoNextWeek() {
+        // Friday the 23rd -> Monday the 26th.
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(23, 8), recurrence: .weekdays, weekdays: mondayWednesdayFriday, today: date(23, 9)) == date(26, 8))
+    }
+
+    @Test func certainDaysTaskMissedForDaysLandsOnTheNextChosenDayFromToday() {
+        // Due Monday the 12th, app not opened until Thursday the 22nd: next is Friday the 23rd, not a backlog.
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(12, 8), recurrence: .weekdays, weekdays: mondayWednesdayFriday, today: date(22, 12)) == date(23, 8))
+    }
+
+    @Test func certainDaysWithNoDaysChosenHasNoNextOccurrence() {
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        #expect(useCase.execute(after: date(21, 8), recurrence: .weekdays, weekdays: [], today: date(21, 9)) == nil)
+    }
+
+    @Test func everyFewWeeksTaskJumpsTheGapAcrossAMonthEnd() {
+        let useCase = NextOccurrenceUseCase(calendar: calendar)
+        let november18 = calendar.date(from: DateComponents(year: 2026, month: 11, day: 18, hour: 9))!
+        #expect(useCase.execute(after: date(21, 9), recurrence: .everyFewWeeks, everyWeeks: 4, today: date(21, 10)) == november18)
+    }
+
+    @Test func creatingCertainDaysRoutineWithNoDaysThrows() {
+        #expect(throws: RoutineError.noWeekdaysChosen) {
+            _ = try CreateRoutineUseCase(repository: MockRoutineRepository(), notifications: MockNotificationService())
+                .execute(title: "Walk", category: .walk, dueDate: date(21, 8), recurrence: .weekdays, weekdays: [], remindMe: false)
+        }
+    }
+
+    @Test(arguments: [1, 13])
+    func creatingEveryFewWeeksRoutineWithGapOutOfRangeThrows(weeks: Int) {
+        #expect(throws: RoutineError.invalidWeekGap) {
+            _ = try CreateRoutineUseCase(repository: MockRoutineRepository(), notifications: MockNotificationService())
+                .execute(title: "Flea treatment", category: .medication, dueDate: date(21, 9), recurrence: .everyFewWeeks, everyWeeks: weeks, remindMe: false)
+        }
+    }
+
+    @Test func editingIntoCertainDaysWithNoDaysThrowsAndLeavesTaskUnchanged() throws {
+        let repository = MockRoutineRepository()
+        let task = RoutineTask(title: "Walk", dueDate: date(21, 8), recurrence: .daily)
+        try repository.save(task)
+
+        #expect(throws: RoutineError.noWeekdaysChosen) {
+            try UpdateRoutineUseCase(repository: repository, notifications: MockNotificationService())
+                .execute(task, title: "Walk", category: .walk, dueDate: date(21, 8), recurrence: .weekdays, weekdays: [], remindMe: false)
+        }
+        #expect(task.recurrence == .daily)
+    }
+
+    @Test func completingCertainDaysTaskCarriesTheChosenDaysToTheNextOne() throws {
+        let repository = MockRoutineRepository()
+        let task = try CreateRoutineUseCase(repository: repository, notifications: MockNotificationService())
+            .execute(title: "Walk", category: .walk, dueDate: date(21, 8), recurrence: .weekdays, weekdays: mondayWednesdayFriday, remindMe: false)
+
+        let next = try CompleteRoutineUseCase(
+            repository: repository,
+            notifications: MockNotificationService(),
+            nextOccurrence: NextOccurrenceUseCase(calendar: calendar)
+        ).execute(task, now: date(21, 8, 5))
+
+        #expect(next?.dueDate == date(23, 8))
+        #expect(next?.repeatWeekdays == mondayWednesdayFriday)
+        #expect(next?.recurrence == .weekdays)
+    }
+
     // MARK: Creating and deleting
 
     @Test func creatingARoutineTrimsTheTitleAndSchedulesAReminder() throws {

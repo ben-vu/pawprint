@@ -186,7 +186,7 @@ private struct RoutineRow: View {
                         if task.recurrence != .once {
                             HStack(spacing: 3) {
                                 Image(systemName: "repeat")
-                                Text(task.recurrence.name)
+                                Text(task.repeatSummary)
                             }
                         }
                         if task.remindMe {

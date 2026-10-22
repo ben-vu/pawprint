@@ -15,6 +15,8 @@ nonisolated enum RoutineError: DomainError {
     case notCompleted
     case emptyTitle
     case titleTooLong
+    case noWeekdaysChosen
+    case invalidWeekGap
 
     var errorDescription: String? {
         switch self {
@@ -22,6 +24,8 @@ nonisolated enum RoutineError: DomainError {
         case .notCompleted: return "This task isn't done yet."
         case .emptyTitle: return "Please give the routine a name."
         case .titleTooLong: return "Keep the name under 60 characters."
+        case .noWeekdaysChosen: return "Pick at least one day for this routine."
+        case .invalidWeekGap: return "Choose between 2 and 12 weeks."
         }
     }
 }

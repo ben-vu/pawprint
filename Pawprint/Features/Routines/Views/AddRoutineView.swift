@@ -86,12 +86,21 @@ struct AddRoutineView: View {
                         fieldLabel("When")
                         DatePicker("Date", selection: $form.dueDate, displayedComponents: .date)
                         DatePicker("Time", selection: $form.dueDate, displayedComponents: .hourAndMinute)
-                        fieldLabel("Repeat")
-                            .padding(.top, 4)
-                        Picker("Repeat", selection: $form.recurrence) {
-                            ForEach(RoutineRecurrence.allCases) { Text($0.name).tag($0) }
+                        HStack {
+                            fieldLabel("Repeat")
+                            Spacer()
+                            Picker("Repeat", selection: $form.recurrence) {
+                                ForEach(RoutineRecurrence.allCases) { Text($0.name).tag($0) }
+                            }
+                            .pickerStyle(.menu)
                         }
-                        .pickerStyle(.segmented)
+                        .padding(.top, 4)
+                        if vm.recurrence == .weekdays {
+                            weekdayPicker(vm)
+                        }
+                        if vm.recurrence == .everyFewWeeks {
+                            Stepper("Every \(vm.everyWeeks) weeks", value: $form.everyWeeks, in: RoutineRecurrence.everyWeeksRange)
+                        }
                     }
                     .foregroundStyle(PawprintTheme.textPrimary)
                 }
@@ -151,6 +160,28 @@ struct AddRoutineView: View {
             .font(PawprintTheme.font(.caption, weight: .bold))
             .foregroundStyle(PawprintTheme.textSecondary)
             .textCase(.uppercase)
+    }
+
+    /// One round button per weekday, Monday first. Each is at least 44pt tall.
+    private func weekdayPicker(_ vm: AddRoutineViewModel) -> some View {
+        let calendar = Calendar.current
+        return HStack(spacing: 4) {
+            ForEach(RoutineRecurrence.weekdayOrder, id: \.self) { weekday in
+                let isSelected = vm.weekdays.contains(weekday)
+                Button {
+                    vm.toggleWeekday(weekday)
+                } label: {
+                    Text(calendar.veryShortWeekdaySymbols[weekday - 1])
+                        .font(PawprintTheme.font(.subheadline, weight: .semibold))
+                        .frame(maxWidth: .infinity, minHeight: 44)
+                        .foregroundStyle(isSelected ? PawprintTheme.onAccent : PawprintTheme.textPrimary)
+                        .background(isSelected ? PawprintTheme.accent : PawprintTheme.surfaceRaised, in: Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(calendar.weekdaySymbols[weekday - 1])
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+            }
+        }
     }
 
     private func categoryGrid(selection: Binding<RoutineCategory>) -> some View {

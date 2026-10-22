@@ -19,16 +19,21 @@ struct UpdateRoutineUseCase {
         category: RoutineCategory,
         dueDate: Date,
         recurrence: RoutineRecurrence,
+        weekdays: Set<Int> = [],
+        everyWeeks: Int = 2,
         remindMe: Bool
     ) throws {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw RoutineError.emptyTitle }
         guard trimmed.count <= CreateRoutineUseCase.maxTitleLength else { throw RoutineError.titleTooLong }
+        try CreateRoutineUseCase.validateRepeat(recurrence: recurrence, weekdays: weekdays, everyWeeks: everyWeeks)
 
         task.title = trimmed
         task.category = category
         task.dueDate = dueDate
         task.recurrence = recurrence
+        task.repeatWeekdays = weekdays
+        task.repeatEveryWeeks = everyWeeks
         task.remindMe = remindMe
         try repository.save(task)
 
