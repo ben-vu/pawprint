@@ -18,6 +18,7 @@ final class OnboardingViewModel {
     var step: Step = .welcome
     var name = "" { didSet { errorMessage = nil } }          // typing clears the red message
     var breed = ""
+    var isMixedBreed = false
     var ageYears = 1
     var weightText = "" { didSet { errorMessage = nil } }
     var photoData: Data?
@@ -47,7 +48,7 @@ final class OnboardingViewModel {
     /// Returns true when the dog saved and we can move on.
     func saveDog() -> Bool {
         do {
-            savedDog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData)
+            savedDog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
             errorMessage = nil
             return true
         } catch {

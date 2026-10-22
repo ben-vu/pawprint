@@ -75,7 +75,7 @@ struct HomeView: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
                 if let dog = vm.dog {
-                    Text(dog.breed.isEmpty ? "Good dog" : dog.breed)
+                    Text(dog.breedDescription)
                         .font(PawprintTheme.font(.subheadline, weight: .semibold))
                         .foregroundStyle(PawprintTheme.textSecondary)
                 }

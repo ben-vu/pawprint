@@ -116,6 +116,7 @@ struct DogFormField<Field: Hashable>: View {
                 .textCase(.uppercase)
             TextField(placeholder, text: $text)
                 .keyboardType(keyboard)
+                .autocorrectionDisabled()   // names and breeds get mangled otherwise (Staffy -> Staff)
                 .focused(focus, equals: field)
                 .padding(.horizontal, 14)
                 .frame(minHeight: 48)
@@ -123,6 +124,26 @@ struct DogFormField<Field: Hashable>: View {
                 .foregroundStyle(PawprintTheme.textPrimary)
                 .accessibilityLabel(label)
         }
+    }
+}
+
+/// "Mixed breed" switch shown under the Breed field on both dog forms.
+struct MixedBreedToggle: View {
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Mixed breed")
+                    .font(PawprintTheme.font(.subheadline, weight: .semibold))
+                    .foregroundStyle(PawprintTheme.textPrimary)
+                Text("Not sure, or a bit of everything? Breed becomes optional.")
+                    .font(PawprintTheme.font(.footnote))
+                    .foregroundStyle(PawprintTheme.textSecondary)
+            }
+        }
+        .tint(PawprintTheme.accent)
+        .frame(minHeight: 44)
     }
 }
 

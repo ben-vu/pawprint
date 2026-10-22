@@ -96,7 +96,8 @@ struct DogProfileView: View {
                 PawprintCard {
                     VStack(spacing: 16) {
                         DogFormField(label: "Name", placeholder: "Bella", text: $form.name, focus: $focusedField, field: .name)
-                        DogFormField(label: "Breed", placeholder: "Border Collie", text: $form.breed, focus: $focusedField, field: .breed)
+                        DogFormField(label: "Breed", placeholder: vm.isMixedBreed ? "Kelpie x Border Collie (optional)" : "Border Collie", text: $form.breed, focus: $focusedField, field: .breed)
+                        MixedBreedToggle(isOn: $form.isMixedBreed)
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Age")
                                 .font(PawprintTheme.font(.caption, weight: .bold))
