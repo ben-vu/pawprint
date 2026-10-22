@@ -23,6 +23,17 @@ final class Dog {
     var createdAt: Date
     var isMixedBreed: Bool = false   // default so profiles saved before this field migrate on their own
 
+    // Care details for sharing with a sitter. All default to empty so existing
+    // stores migrate without help. Edited in the dog profile.
+    var ownerName: String = ""
+    var ownerPhone: String = ""
+    var vetName: String = ""
+    var vetPhone: String = ""
+    var microchipNumber: String = ""
+    var feedingNotes: String = ""
+    var medicalNotes: String = ""
+    var behaviourNotes: String = ""
+
     /// Removing a dog removes its routines and health records too, so nothing is left orphaned.
     @Relationship(deleteRule: .cascade, inverse: \RoutineTask.dog) var routineTasks: [RoutineTask] = []
     @Relationship(deleteRule: .cascade, inverse: \HealthRecord.dog) var healthRecords: [HealthRecord] = []
@@ -44,6 +55,32 @@ final class Dog {
         case (true, false): return "\(breed) mix"
         case (false, true): return "Good dog"
         case (false, false): return breed
+        }
+    }
+
+    /// The sitter-facing details as one plain value, so forms and use cases don't touch eight properties.
+    var careDetails: DogCareDetails {
+        get {
+            DogCareDetails(
+                ownerName: ownerName,
+                ownerPhone: ownerPhone,
+                vetName: vetName,
+                vetPhone: vetPhone,
+                microchipNumber: microchipNumber,
+                feedingNotes: feedingNotes,
+                medicalNotes: medicalNotes,
+                behaviourNotes: behaviourNotes
+            )
+        }
+        set {
+            ownerName = newValue.ownerName
+            ownerPhone = newValue.ownerPhone
+            vetName = newValue.vetName
+            vetPhone = newValue.vetPhone
+            microchipNumber = newValue.microchipNumber
+            feedingNotes = newValue.feedingNotes
+            medicalNotes = newValue.medicalNotes
+            behaviourNotes = newValue.behaviourNotes
         }
     }
 }

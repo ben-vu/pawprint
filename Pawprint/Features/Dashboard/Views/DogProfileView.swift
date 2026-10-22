@@ -25,7 +25,7 @@ struct DogProfileView: View {
     @State private var saveFeedback = 0
     @FocusState private var focusedField: Field?
 
-    enum Field { case name, breed, weight }
+    enum Field { case name, breed, weight, ownerName, ownerPhone, vetName, vetPhone, microchip, feeding, medical, behaviour }
 
     var body: some View {
         NavigationStack {
@@ -121,6 +121,8 @@ struct DogProfileView: View {
                     }
                 }
 
+                careDetailsSection($form.careDetails)
+
                 if let error = vm.errorMessage {
                     Label(error, systemImage: "exclamationmark.circle.fill")
                         .font(PawprintTheme.font(.footnote, weight: .semibold))
@@ -144,7 +146,36 @@ struct DogProfileView: View {
         }
         .scrollDismissesKeyboard(.interactively)
     }
+
+    /// Contact, vet and care notes a sitter needs. Only ever shared from "Share with a sitter".
+    private func careDetailsSection(_ details: Binding<DogCareDetails>) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("FOR SITTERS")
+                .font(PawprintTheme.font(.caption, weight: .heavy))
+                .tracking(1)
+                .foregroundStyle(PawprintTheme.textSecondary)
+                .padding(.horizontal, 4)
+            Text("Kept on this phone. You choose what to send from the dog menu, under Share with a sitter.")
+                .font(PawprintTheme.font(.footnote))
+                .foregroundStyle(PawprintTheme.textSecondary)
+                .padding(.horizontal, 4)
+
+            PawprintCard {
+                VStack(spacing: 16) {
+                    DogFormField(label: "Your name", placeholder: "Sam", text: details.ownerName, focus: $focusedField, field: .ownerName)
+                    DogFormField(label: "Your phone", placeholder: "0400 000 000", text: details.ownerPhone, keyboard: .phonePad, focus: $focusedField, field: .ownerPhone)
+                    DogFormField(label: "Vet name", placeholder: "Harbourside Vet Clinic", text: details.vetName, focus: $focusedField, field: .vetName)
+                    DogFormField(label: "Vet phone", placeholder: "02 0000 0000", text: details.vetPhone, keyboard: .phonePad, focus: $focusedField, field: .vetPhone)
+                    DogFormField(label: "Microchip number", placeholder: "15 digits", text: details.microchipNumber, keyboard: .numbersAndPunctuation, focus: $focusedField, field: .microchip)
+                    DogNotesField(label: "Feeding notes", placeholder: "1 cup at 7am and 5pm. No table scraps.", text: details.feedingNotes, focus: $focusedField, field: .feeding)
+                    DogNotesField(label: "Medical notes", placeholder: "Allergies, conditions, medication and doses", text: details.medicalNotes, focus: $focusedField, field: .medical)
+                    DogNotesField(label: "Behaviour and house rules", placeholder: "Nervous around other dogs. Not allowed on the couch.", text: details.behaviourNotes, focus: $focusedField, field: .behaviour)
+                }
+            }
+        }
+    }
 }
+
 
 #Preview {
     DogProfileView(dog: Dog(name: "Bella", breed: "Border Collie", ageYears: 3, weightKg: 18.5))

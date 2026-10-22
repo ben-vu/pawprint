@@ -15,6 +15,7 @@ nonisolated enum DogError: DomainError {
     case invalidWeight
     case invalidAge
     case duplicateName(String)
+    case detailTooLong
 
     var errorDescription: String? {
         switch self {
@@ -22,6 +23,7 @@ nonisolated enum DogError: DomainError {
         case .invalidWeight: return "Weight must be between 0.1 and 150 kg."
         case .invalidAge: return "Age should be between 0 and 30 years."
         case .duplicateName(let name): return "You already have a dog called \(name). Try a different name."
+        case .detailTooLong: return "Care details are limited to \(DogCareDetails.maxLength) characters per box."
         }
     }
 }

@@ -17,6 +17,7 @@ final class DogProfileViewModel {
     var ageYears: Int
     var weightText: String
     var photoData: Data?
+    var careDetails: DogCareDetails
     var errorMessage: String?
     var didSave = false
 
@@ -35,6 +36,7 @@ final class DogProfileViewModel {
         self.ageYears = dog.ageYears
         self.weightText = dog.weightKg.formatted(.number.precision(.fractionLength(0...1)).grouping(.never))  // no 1,200 style commas, they break parsing
         self.photoData = dog.photoData
+        self.careDetails = dog.careDetails
         self.update = UpdateDogUseCase(repository: repository)
         self.remove = DeleteDogUseCase(repository: repository)
         self.dogs = repository
@@ -46,7 +48,7 @@ final class DogProfileViewModel {
 
     func save() -> Bool {
         do {
-            try update.execute(dog, name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
+            try update.execute(dog, name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed, careDetails: careDetails)
             errorMessage = nil
             didSave = true
             return true

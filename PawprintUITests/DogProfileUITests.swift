@@ -93,4 +93,23 @@ final class DogProfileUITests: XCTestCase {
 
         XCTAssertTrue(avatar.waitForExistence(timeout: 5), "Sheet did not close after saving the new dog")
     }
+
+    @MainActor
+    func testShareWithASitterSheetOpensAndCloses() throws {
+        let app = XCUIApplication()
+        app.launch()
+
+        let avatar = app.buttons["Dog profile"]
+        guard avatar.waitForExistence(timeout: 8) else {
+            throw XCTSkip("Finish onboarding first, then run this test.")
+        }
+        avatar.tap()
+        let share = app.buttons["Share with a sitter"]
+        XCTAssertTrue(share.waitForExistence(timeout: 3), "Dog menu has no share option")
+        share.tap()
+
+        XCTAssertTrue(app.navigationBars["Share with a sitter"].waitForExistence(timeout: 5), "Share sheet did not open")
+        app.buttons["Done"].tap()
+        XCTAssertTrue(avatar.waitForExistence(timeout: 5), "Share sheet did not close")
+    }
 }
