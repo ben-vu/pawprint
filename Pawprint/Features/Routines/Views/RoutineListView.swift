@@ -85,6 +85,8 @@ struct RoutineListView: View {
 
     private var emptyState: some View {
         ScrollView {
+            TitlePugRow(image: "PugRoutine")
+                .padding(.leading, 20)   // lines up with the card
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
@@ -104,18 +106,29 @@ struct RoutineListView: View {
         @Bindable var vm = vm
         return PugAtBottom { pugInList in
             List {
-                if vm.availableCategories.count > 1 {
-                    // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
-                    FilterChipBar(
-                        items: [nil] + vm.availableCategories.map { Optional($0) },
-                        selection: $vm.categoryFilter,
-                        title: { $0?.name ?? "All" },
-                        systemImage: { $0?.systemImage ?? "list.bullet" }
-                    )
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 14, trailing: 0))   // 14 = Learn's gap to its first card
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+                let hasChips = vm.availableCategories.count > 1
+                // Without chips the first heading sits beside the pug instead, so its section leaves it out.
+                let headingBesidePug = hasChips ? nil : firstSectionTitle(vm)
+                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                TitlePugRow(image: "PugRoutine") {
+                    if hasChips {
+                        FilterChipBar(
+                            items: [nil] + vm.availableCategories.map { Optional($0) },
+                            selection: $vm.categoryFilter,
+                            title: { $0?.name ?? "All" },
+                            systemImage: { $0?.systemImage ?? "list.bullet" }
+                        )
+                    } else if let headingBesidePug {
+                        sectionHeader(headingBesidePug)
+                            .padding(.leading, 12)
+                            .padding(.bottom, 10)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                    }
                 }
+                .padding(.leading, 16)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: hasChips ? 14 : 4, trailing: 0))   // 14 = Learn's gap to its first card
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
                 if let error = vm.errorMessage {
                     Label(error, systemImage: "exclamationmark.circle.fill")
                         .font(PawprintTheme.font(.footnote, weight: .semibold))
@@ -123,9 +136,9 @@ struct RoutineListView: View {
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                 }
-                section("Overdue", tasks: vm.overdue, showsDate: true, vm: vm)
-                section("Today", tasks: vm.todays, showsDate: false, vm: vm)
-                section("Upcoming", tasks: vm.upcoming, showsDate: true, vm: vm)
+                section("Overdue", tasks: vm.overdue, showsDate: true, showsHeader: headingBesidePug != "Overdue", vm: vm)
+                section("Today", tasks: vm.todays, showsDate: false, showsHeader: headingBesidePug != "Today", vm: vm)
+                section("Upcoming", tasks: vm.upcoming, showsDate: true, showsHeader: headingBesidePug != "Upcoming", vm: vm)
                 if pugInList {
                     BottomPug()
                         .listRowInsets(EdgeInsets())
@@ -141,7 +154,7 @@ struct RoutineListView: View {
     }
 
     @ViewBuilder
-    private func section(_ title: String, tasks: [RoutineTask], showsDate: Bool, vm: RoutineViewModel) -> some View {
+    private func section(_ title: String, tasks: [RoutineTask], showsDate: Bool, showsHeader: Bool, vm: RoutineViewModel) -> some View {
         if !tasks.isEmpty {
             Section {
                 ForEach(tasks) { task in
@@ -168,12 +181,24 @@ struct RoutineListView: View {
                     }
                 }
             } header: {
-                Text(title.uppercased())
-                    .font(PawprintTheme.font(.caption, weight: .heavy))
-                    .tracking(1)
-                    .foregroundStyle(title == "Overdue" ? PawprintTheme.danger : PawprintTheme.textSecondary)
+                if showsHeader {
+                    sectionHeader(title)
+                }
             }
         }
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title.uppercased())
+            .font(PawprintTheme.font(.caption, weight: .heavy))
+            .tracking(1)
+            .foregroundStyle(title == "Overdue" ? PawprintTheme.danger : PawprintTheme.textSecondary)
+    }
+
+    /// The heading of the first section that has tasks, in list order.
+    private func firstSectionTitle(_ vm: RoutineViewModel) -> String? {
+        [("Overdue", vm.overdue), ("Today", vm.todays), ("Upcoming", vm.upcoming)]
+            .first { !$0.1.isEmpty }?.0
     }
 }
 
