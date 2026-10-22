@@ -21,6 +21,7 @@ struct RoutineListView: View {
     @State private var completeFeedback = 0
     @State private var justAdded = false          // set by the add sheet, read when it closes
     @State private var showCelebration = false
+    @State private var listScrollOffset: CGFloat = 0
 
     var body: some View {
         NavigationStack {
@@ -85,6 +86,8 @@ struct RoutineListView: View {
 
     private var emptyState: some View {
         ScrollView {
+            titlePug
+                .padding(.horizontal, 20)
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
@@ -115,6 +118,28 @@ struct RoutineListView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .refreshable { vm.load() }
+        // List rows clip their content, so the pug floats over the list and follows the scroll instead.
+        .onScrollGeometryChange(for: CGFloat.self) { $0.contentOffset.y + $0.contentInsets.top } action: { _, y in
+            listScrollOffset = y
+        }
+        .overlay(alignment: .topTrailing) {
+            titlePug
+                .padding(.trailing, 20)
+                .offset(y: 12 - listScrollOffset)
+                .allowsHitTesting(false)
+        }
+    }
+
+    /// Sits beside the large "Routines" title and scrolls away with the content.
+    private var titlePug: some View {
+        Image("PugRoutine")
+            .resizable()
+            .scaledToFit()
+            .frame(height: 80)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .padding(.top, -76)
+            .padding(.bottom, -14)
+            .accessibilityHidden(true)
     }
 
     @ViewBuilder
