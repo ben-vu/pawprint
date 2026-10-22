@@ -22,6 +22,9 @@ final class DogProfileViewModel {
 
     private let update: UpdateDogUseCase
     private let remove: DeleteDogUseCase
+    private let suggestBreeds = SuggestBreedsUseCase()
+
+    var breedSuggestions: [String] { suggestBreeds.execute(query: breed) }
 
     init(dog: Dog, repository: DogRepository) {
         self.dog = dog

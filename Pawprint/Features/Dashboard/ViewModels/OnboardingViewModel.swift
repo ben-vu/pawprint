@@ -26,10 +26,13 @@ final class OnboardingViewModel {
     private(set) var savedDog: Dog?
 
     private let createDog: CreateDogUseCase
+    private let suggestBreeds = SuggestBreedsUseCase()
 
     init(repository: DogRepository) {
         self.createDog = CreateDogUseCase(repository: repository)
     }
+
+    var breedSuggestions: [String] { suggestBreeds.execute(query: breed) }
 
     var weightKg: Double {
         Double(weightText.replacingOccurrences(of: ",", with: ".")) ?? 0

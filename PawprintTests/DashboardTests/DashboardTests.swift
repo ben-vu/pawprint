@@ -105,6 +105,29 @@ struct DashboardTests {
         #expect(repo.items.first?.breedDescription == "Collie mix")
     }
 
+    // MARK: Breed suggestions
+
+    @Test func typingTheStartOfABreedSuggestsIt() {
+        let suggestions = SuggestBreedsUseCase().execute(query: "sta")
+        #expect(suggestions == ["Staffy"])
+    }
+
+    @Test func suggestionsMatchAnyWordInTheBreedName() {
+        let suggestions = SuggestBreedsUseCase().execute(query: "Collie")
+        #expect(suggestions == ["Border Collie"])
+    }
+
+    @Test func suggestionsAreCappedAndCaseInsensitive() {
+        let suggestions = SuggestBreedsUseCase(breeds: ["Alpha", "Alder", "Almond", "Alpine"], limit: 3).execute(query: "AL")
+        #expect(suggestions.count == 3)
+    }
+
+    @Test func noSuggestionsWhenBlankOrAlreadyExact() {
+        let useCase = SuggestBreedsUseCase()
+        #expect(useCase.execute(query: "   ").isEmpty)
+        #expect(useCase.execute(query: "Kelpie").isEmpty)
+    }
+
     // MARK: Editing and deleting
 
     @Test func updateChangesTheExistingDog() throws {

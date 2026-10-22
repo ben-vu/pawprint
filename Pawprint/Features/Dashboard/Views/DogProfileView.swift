@@ -97,6 +97,12 @@ struct DogProfileView: View {
                     VStack(spacing: 16) {
                         DogFormField(label: "Name", placeholder: "Bella", text: $form.name, focus: $focusedField, field: .name)
                         DogFormField(label: "Breed", placeholder: vm.isMixedBreed ? "Kelpie x Border Collie (optional)" : "Border Collie", text: $form.breed, focus: $focusedField, field: .breed)
+                        if focusedField == .breed {
+                            BreedSuggestionChips(suggestions: vm.breedSuggestions) { picked in
+                                vm.breed = picked
+                                focusedField = nil
+                            }
+                        }
                         MixedBreedToggle(isOn: $form.isMixedBreed)
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Age")
