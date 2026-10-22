@@ -77,6 +77,57 @@ struct DashboardTests {
         }
     }
 
+    // MARK: Mixed breed
+
+    @Test func mixedBreedWithBlankBreedIsSaved() throws {
+        let repo = MockDogRepository()
+        let dog = try CreateDogUseCase(repository: repo).execute(name: "Max", breed: "", ageYears: 2, weightKg: 8, isMixedBreed: true)
+
+        #expect(dog.isMixedBreed)
+        #expect(dog.breedDescription == "Mixed breed")
+        #expect(repo.items.count == 1)
+    }
+
+    @Test func breedDescriptionCoversEveryCase() {
+        #expect(Dog(name: "A", breed: "Pug", ageYears: 1, weightKg: 8).breedDescription == "Pug")
+        #expect(Dog(name: "B", breed: "", ageYears: 1, weightKg: 8).breedDescription == "Good dog")
+        #expect(Dog(name: "C", breed: "Kelpie", ageYears: 1, weightKg: 8, isMixedBreed: true).breedDescription == "Kelpie mix")
+        #expect(Dog(name: "D", breed: "", ageYears: 1, weightKg: 8, isMixedBreed: true).breedDescription == "Mixed breed")
+    }
+
+    @Test func updateCanTurnMixedBreedOn() throws {
+        let repo = MockDogRepository()
+        let dog = try CreateDogUseCase(repository: repo).execute(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+
+        try UpdateDogUseCase(repository: repo).execute(dog, name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18, photoData: nil, isMixedBreed: true)
+
+        #expect(repo.items.first?.isMixedBreed == true)
+        #expect(repo.items.first?.breedDescription == "Collie mix")
+    }
+
+    // MARK: Breed suggestions
+
+    @Test func typingTheStartOfABreedSuggestsIt() {
+        let suggestions = SuggestBreedsUseCase().execute(query: "sta")
+        #expect(suggestions == ["Staffy"])
+    }
+
+    @Test func suggestionsMatchAnyWordInTheBreedName() {
+        let suggestions = SuggestBreedsUseCase().execute(query: "Collie")
+        #expect(suggestions == ["Border Collie"])
+    }
+
+    @Test func suggestionsAreCappedAndCaseInsensitive() {
+        let suggestions = SuggestBreedsUseCase(breeds: ["Alpha", "Alder", "Almond", "Alpine"], limit: 3).execute(query: "AL")
+        #expect(suggestions.count == 3)
+    }
+
+    @Test func noSuggestionsWhenBlankOrAlreadyExact() {
+        let useCase = SuggestBreedsUseCase()
+        #expect(useCase.execute(query: "   ").isEmpty)
+        #expect(useCase.execute(query: "Kelpie").isEmpty)
+    }
+
     // MARK: Editing and deleting
 
     @Test func updateChangesTheExistingDog() throws {

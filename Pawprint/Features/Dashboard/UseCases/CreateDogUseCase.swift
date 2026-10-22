@@ -32,7 +32,7 @@ nonisolated enum DogError: DomainError {
 struct CreateDogUseCase {
     let repository: DogRepository
 
-    func execute(name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data? = nil) throws -> Dog {
+    func execute(name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data? = nil, isMixedBreed: Bool = false) throws -> Dog {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { throw DogError.emptyName }
         guard (0.1...150).contains(weightKg) else { throw DogError.invalidWeight }   // heaviest breeds top out around 100 kg
@@ -40,7 +40,7 @@ struct CreateDogUseCase {
         let alreadyHasName = try repository.fetchAll().contains { $0.name.caseInsensitiveCompare(trimmed) == .orderedSame }
         guard !alreadyHasName else { throw DogError.duplicateName(trimmed) }
 
-        let dog = Dog(name: trimmed, breed: breed.trimmingCharacters(in: .whitespaces), ageYears: ageYears, weightKg: weightKg, photoData: photoData)
+        let dog = Dog(name: trimmed, breed: breed.trimmingCharacters(in: .whitespaces), ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
         try repository.save(dog)
         return dog
     }

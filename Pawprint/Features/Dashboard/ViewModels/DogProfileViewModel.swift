@@ -13,6 +13,7 @@ final class DogProfileViewModel {
     let dog: Dog
     var name: String
     var breed: String
+    var isMixedBreed: Bool
     var ageYears: Int
     var weightText: String
     var photoData: Data?
@@ -23,11 +24,15 @@ final class DogProfileViewModel {
     private let update: UpdateDogUseCase
     private let remove: DeleteDogUseCase
     private let dogs: DogRepository
+    private let suggestBreeds = SuggestBreedsUseCase()
+
+    var breedSuggestions: [String] { suggestBreeds.execute(query: breed) }
 
     init(dog: Dog, repository: DogRepository) {
         self.dog = dog
         self.name = dog.name
         self.breed = dog.breed
+        self.isMixedBreed = dog.isMixedBreed
         self.ageYears = dog.ageYears
         self.weightText = dog.weightKg.formatted(.number.precision(.fractionLength(0...1)).grouping(.never))  // no 1,200 style commas, they break parsing
         self.photoData = dog.photoData
@@ -43,7 +48,7 @@ final class DogProfileViewModel {
 
     func save() -> Bool {
         do {
-            try update.execute(dog, name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, careDetails: careDetails)
+            try update.execute(dog, name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed, careDetails: careDetails)
             errorMessage = nil
             didSave = true
             return true

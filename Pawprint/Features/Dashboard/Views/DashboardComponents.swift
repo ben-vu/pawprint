@@ -67,17 +67,25 @@ struct ProgressRingView: View {
 
 /// Friendly empty state with a pug.
 struct PugEmptyState: View {
-    let image: String
+    let image: String                 // still pug, also the Reduce Motion fallback
+    var animation: String? = nil      // Lottie file name in Resources/Animations, plays on loop
     let title: String
     let message: String
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(spacing: 10) {
-            Image(image)
-                .resizable()
-                .scaledToFit()
-                .frame(height: 110)
-                .accessibilityHidden(true)
+            if let animation, !reduceMotion {
+                LottieView(name: animation)
+                    .frame(height: 150)
+            } else {
+                Image(image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 110)
+                    .accessibilityHidden(true)
+            }
             Text(title)
                 .font(PawprintTheme.font(.headline, weight: .semibold))
                 .foregroundStyle(PawprintTheme.textPrimary)
@@ -108,6 +116,7 @@ struct DogFormField<Field: Hashable>: View {
                 .textCase(.uppercase)
             TextField(placeholder, text: $text)
                 .keyboardType(keyboard)
+                .autocorrectionDisabled()   // names and breeds get mangled otherwise (Staffy -> Staff)
                 .focused(focus, equals: field)
                 .padding(.horizontal, 14)
                 .frame(minHeight: 48)
@@ -115,6 +124,46 @@ struct DogFormField<Field: Hashable>: View {
                 .foregroundStyle(PawprintTheme.textPrimary)
                 .accessibilityLabel(label)
         }
+    }
+}
+
+/// Tappable breed matches shown under the Breed field while typing.
+struct BreedSuggestionChips: View {
+    let suggestions: [String]
+    let onPick: (String) -> Void
+
+    var body: some View {
+        if !suggestions.isEmpty {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(suggestions, id: \.self) { breed in
+                        Button(breed) { onPick(breed) }
+                            .font(PawprintTheme.font(.footnote, weight: .semibold))
+                            .foregroundStyle(PawprintTheme.accentDeep)
+                            .padding(.horizontal, 14)
+                            .frame(minHeight: 44)
+                            .background(PawprintTheme.surfaceRaised, in: Capsule())
+                            .accessibilityHint("Fills in the breed")
+                    }
+                }
+            }
+            .transition(.opacity)
+        }
+    }
+}
+
+/// "Mixed breed" switch shown under the Breed field on both dog forms.
+struct MixedBreedToggle: View {
+    @Binding var isOn: Bool
+
+    var body: some View {
+        Toggle(isOn: $isOn) {
+            Text("Mixed breed")
+                .font(PawprintTheme.font(.subheadline, weight: .semibold))
+                .foregroundStyle(PawprintTheme.textPrimary)
+        }
+        .tint(PawprintTheme.accent)
+        .frame(minHeight: 44)
     }
 }
 

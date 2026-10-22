@@ -16,19 +16,23 @@ final class OnboardingViewModel {
     enum Step: Int, CaseIterable { case welcome, details, done }
 
     var step: Step = .welcome
-    var name = ""
+    var name = "" { didSet { errorMessage = nil } }          // typing clears the red message
     var breed = ""
+    var isMixedBreed = false
     var ageYears = 1
-    var weightText = ""
+    var weightText = "" { didSet { errorMessage = nil } }
     var photoData: Data?
     var errorMessage: String?
     private(set) var savedDog: Dog?
 
     private let createDog: CreateDogUseCase
+    private let suggestBreeds = SuggestBreedsUseCase()
 
     init(repository: DogRepository) {
         self.createDog = CreateDogUseCase(repository: repository)
     }
+
+    var breedSuggestions: [String] { suggestBreeds.execute(query: breed) }
 
     var weightKg: Double {
         Double(weightText.replacingOccurrences(of: ",", with: ".")) ?? 0
@@ -47,7 +51,7 @@ final class OnboardingViewModel {
     /// Returns true when the dog saved and we can move on.
     func saveDog() -> Bool {
         do {
-            savedDog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData)
+            savedDog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
             if let savedDog { ActiveDogSelection.store(savedDog.id) }
             errorMessage = nil
             return true

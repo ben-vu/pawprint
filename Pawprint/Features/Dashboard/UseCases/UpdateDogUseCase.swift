@@ -13,7 +13,7 @@ import Foundation
 struct UpdateDogUseCase {
     let repository: DogRepository
 
-    func execute(_ dog: Dog, name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data?, careDetails: DogCareDetails? = nil) throws {
+    func execute(_ dog: Dog, name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data?, isMixedBreed: Bool = false, careDetails: DogCareDetails? = nil) throws {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { throw DogError.emptyName }
         guard (0.1...150).contains(weightKg) else { throw DogError.invalidWeight }   // heaviest breeds top out around 100 kg
@@ -27,6 +27,7 @@ struct UpdateDogUseCase {
         dog.ageYears = ageYears
         dog.weightKg = weightKg
         dog.photoData = photoData
+        dog.isMixedBreed = isMixedBreed
         if let careDetails { dog.careDetails = careDetails.trimmed }
         try repository.save(dog)
     }

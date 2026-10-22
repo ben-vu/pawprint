@@ -40,6 +40,20 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
         self.dogCount = dogCount
     }
 
+    // Snapshots saved before tips and dogCount existed have neither key, so
+    // they fall back to defaults instead of failing to decode.
+    private enum CodingKeys: String, CodingKey {
+        case generatedAt, tasks, tips, dogCount
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        generatedAt = try container.decode(Date.self, forKey: .generatedAt)
+        tasks = try container.decode([UpcomingTask].self, forKey: .tasks)
+        tips = try container.decodeIfPresent([WidgetTip].self, forKey: .tips) ?? []
+        dogCount = try container.decodeIfPresent(Int.self, forKey: .dogCount) ?? 1
+    }
+
     static let empty = WidgetSnapshot(generatedAt: .distantPast, tasks: [])
 
     var showsDogNames: Bool { dogCount > 1 }
