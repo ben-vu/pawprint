@@ -264,6 +264,18 @@ struct RoutinesTests {
         #expect(!viewModel.remindMe)
         #expect(viewModel.notificationsDenied)
     }
+
+    @Test func newRoutineBelongsToTheDogFromTheDogRepository() {
+        let repository = MockRoutineRepository()
+        let dogs = MockDogRepository()
+        let dog = Dog(name: "Rosie", breed: "Pug", ageYears: 2, weightKg: 8)
+        dogs.items = [dog]
+        let viewModel = AddRoutineViewModel(repository: repository, notifications: MockNotificationService(), dogs: dogs)
+        viewModel.title = "Walk"
+
+        #expect(viewModel.save())
+        #expect(repository.items.first?.dog === dog)
+    }
     // MARK: Unticking a task
 
     @Test func untickingATaskMarksItNotDoneAndRestoresItsReminder() throws {

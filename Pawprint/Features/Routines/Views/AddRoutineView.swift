@@ -14,6 +14,7 @@ struct AddRoutineView: View {
 
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @State private var viewModel: AddRoutineViewModel?
     @State private var confirmDelete = false
     @FocusState private var focusedField: Field?
@@ -50,11 +51,10 @@ struct AddRoutineView: View {
         }
         .task {
             if viewModel == nil {
-                let dog = try? SwiftDataDogRepository(context: context).fetchAll().first
                 viewModel = AddRoutineViewModel(
                     repository: SwiftDataRoutineRepository(context: context),
                     notifications: UserNotificationService.shared,
-                    dog: dog,
+                    dogs: SwiftDataDogRepository(context: context),
                     editing: task
                 )
             }
@@ -102,6 +102,14 @@ struct AddRoutineView: View {
                             Text("Notifications are turned off for Pawprint. You can allow them in Settings.")
                                 .font(PawprintTheme.font(.footnote))
                                 .foregroundStyle(PawprintTheme.textSecondary)
+                            // Goes straight to Pawprint's notification settings.
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openNotificationSettingsURLString) {
+                                    openURL(url)
+                                }
+                            }
+                            .font(PawprintTheme.font(.footnote, weight: .semibold))
+                            .foregroundStyle(PawprintTheme.accent)
                         }
                     }
                 }

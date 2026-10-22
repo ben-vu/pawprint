@@ -10,9 +10,10 @@
 //
 
 import SwiftUI
-import _SwiftData_SwiftUI
+import SwiftData
 
 struct MainTabView: View {
+    @Query var dogs: [Dog]
     var body: some View {
         TabView {
             Tab("Home", systemImage: "house.fill") {
@@ -22,7 +23,13 @@ struct MainTabView: View {
                 RoutineListView()
             }
             Tab("Health", systemImage: "cross.case.fill") {
-                HealthView()
+                if let firstDog = dogs.first {
+                    NavigationStack {
+                        HealthView(dog: firstDog)
+                    }
+                } else {
+                    Text("No dog record found")
+                }
             }
             Tab("Learn", systemImage: "book.fill") {
                 LearnView()
