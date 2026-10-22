@@ -1,6 +1,9 @@
 //
 //  HealthRepository.swift
-//  Health feature (Alik)
+//  Pawprint
+//
+//  Created by Alik Orgun on 21/10/2026.
+//
 //
 
 import Foundation

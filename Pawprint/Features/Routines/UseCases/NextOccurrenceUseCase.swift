@@ -1,6 +1,8 @@
 //
 //  NextOccurrenceUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Works out when a repeating task is due next. Steps forward by whole
 //  days so the time of day stays the same across daylight saving, and

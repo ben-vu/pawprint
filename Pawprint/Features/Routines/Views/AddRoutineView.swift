@@ -1,6 +1,8 @@
 //
 //  AddRoutineView.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Sheet for creating or editing a routine: name, category, when, how
 //  often and whether to send a reminder. Pass a task to edit it.

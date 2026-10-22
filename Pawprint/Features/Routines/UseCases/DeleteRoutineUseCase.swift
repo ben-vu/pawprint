@@ -1,6 +1,8 @@
 //
 //  DeleteRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 
 import Foundation

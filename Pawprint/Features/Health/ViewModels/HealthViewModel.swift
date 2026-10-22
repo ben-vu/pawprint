@@ -1,6 +1,9 @@
 //
 //  HealthViewModel.swift
-//  Health feature (Alik)
+//  Pawprint
+//
+//  Created by Alik Orgun on 21/10/2026.
+//
 //
 
 import Foundation
@@ -12,49 +15,38 @@ class HealthViewModel {
     private(set) var records: [HealthRecord] = []
     var errorMessage: String?
     let dog: Dog
-    private(set) var overdueRecords: [HealthRecord] = []
-    let overdueUseCase: OverdueTreatmentsUseCase
 
     private let repository: HealthRepository
 
     init(repository: HealthRepository, dog: Dog) {
         self.repository = repository
         self.dog = dog
-        self.overdueUseCase = OverdueTreatmentsUseCase(repository: repository)
     }
 
     func load() {
         do {
             records = try repository.fetchRecords(for: dog)
-            overdueRecords = try overdueUseCase.execute(for: dog)
         } catch {
             errorMessage = error.localizedDescription
         }
     }
     
-    func addAHealthRecord(title: String, date: Date, nextDueDate: Date?, notes: String) {
-        if date > Date() {
-            self.errorMessage = HealthError.dateInFuture.errorDescription
-            return
-        }
-        
-        let newHealthRecord = HealthRecord(
-            title: title,
-            date: date,
-            nextDueDate: nextDueDate,
-            notes: notes,
-            dog: dog
-        )
-        
+    /// Returns true when the record saved, so the form only closes on success.
+    @discardableResult
+    func addAHealthRecord(title: String, date: Date, nextDueDate: Date?, notes: String, kind: HealthRecordKind = .other) -> Bool {
         do {
-            try repository.save(newHealthRecord)
+            try AddHealthRecordUseCase(repository: repository)
+                .execute(title: title, date: date, nextDueDate: nextDueDate, notes: notes, kind: kind, dog: dog)
+            errorMessage = nil
             load()
+            return true
         } catch {
             errorMessage = error.localizedDescription
+            return false
         }
     }
-    
-    func deleteRecord(_ record: HealthRecord) {
+
+    func delete(_ record: HealthRecord) {
         do {
             try repository.delete(record)
             load()

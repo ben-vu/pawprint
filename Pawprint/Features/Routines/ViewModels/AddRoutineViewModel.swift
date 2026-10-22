@@ -1,6 +1,8 @@
 //
 //  AddRoutineViewModel.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Form state for the routine sheet. Creates a new routine, or edits an
 //  existing one when given a task.
@@ -46,10 +48,10 @@ final class AddRoutineViewModel {
         }
     }
 
-    /// Looks up which dog new routines belong to. There is only one dog for
-    /// now; this is the place to use the selected dog once there are several.
+    /// New routines belong to the dog selected in the dog switcher.
     convenience init(repository: RoutineRepository, notifications: NotificationService, dogs: DogRepository, editing: RoutineTask? = nil) {
-        let dog = try? dogs.fetchAll().first
+        let allDogs = (try? dogs.fetchAll()) ?? []
+        let dog = ActiveDogUseCase().activeDog(in: allDogs, selectedID: ActiveDogSelection.storedID)
         self.init(repository: repository, notifications: notifications, dog: dog, editing: editing)
     }
 

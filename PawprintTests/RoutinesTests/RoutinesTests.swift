@@ -370,4 +370,32 @@ struct RoutinesTests {
         #expect(viewModel.recurrence == .weekly)
         #expect(viewModel.remindMe)
     }
+
+    // MARK: More than one dog
+
+    @Test func routinesTabOnlyShowsTheSelectedDogsTasks() throws {
+        let bella = Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+        let milo = Dog(name: "Milo", breed: "Pug", ageYears: 2, weightKg: 8)
+        let repository = MockRoutineRepository()
+        try repository.save(RoutineTask(title: "Bella walk", dueDate: .now, dog: bella))
+        try repository.save(RoutineTask(title: "Milo dinner", dueDate: .now, dog: milo))
+        try repository.save(RoutineTask(title: "Shared", dueDate: .now))
+
+        let viewModel = RoutineViewModel(repository: repository, notifications: MockNotificationService(), selectedDogID: { milo.id })
+        viewModel.load()
+
+        #expect(Set(viewModel.tasks.map(\.title)) == ["Milo dinner", "Shared"])
+    }
+
+    @Test func nextOccurrenceKeepsTheSameDog() throws {
+        let bella = Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+        let repository = MockRoutineRepository()
+        let task = RoutineTask(title: "Morning walk", dueDate: date(21, 8), dog: bella, category: .walk, recurrence: .daily)
+        try repository.save(task)
+
+        let useCase = CompleteRoutineUseCase(repository: repository, notifications: MockNotificationService(), nextOccurrence: NextOccurrenceUseCase(calendar: calendar))
+        let next = try #require(try useCase.execute(task, now: date(21, 8, 15)))
+
+        #expect(next.dog === bella)
+    }
 }

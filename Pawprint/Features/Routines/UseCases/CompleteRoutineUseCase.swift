@@ -1,6 +1,8 @@
 //
 //  CompleteRoutineUseCase.swift
-//  Routines feature (Sana)
+//  Pawprint
+//
+//  Created by Sana Yousefi on 22/10/2026.
 //
 //  Ticks a task off, clears its reminder and, for a repeating routine,
 //  lines up the next one.

@@ -17,6 +17,8 @@ struct UpdateDogUseCase {
         guard !trimmed.isEmpty else { throw DogError.emptyName }
         guard (0.1...150).contains(weightKg) else { throw DogError.invalidWeight }   // heaviest breeds top out around 100 kg
         guard (0...30).contains(ageYears) else { throw DogError.invalidAge }
+        let nameTaken = try repository.fetchAll().contains { $0 !== dog && $0.name.caseInsensitiveCompare(trimmed) == .orderedSame }
+        guard !nameTaken else { throw DogError.duplicateName(trimmed) }
 
         dog.name = trimmed
         dog.breed = breed.trimmingCharacters(in: .whitespaces)

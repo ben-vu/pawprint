@@ -13,6 +13,7 @@ import Observation
 @Observable
 final class DashboardViewModel {
     private(set) var dog: Dog?
+    private(set) var dogCount = 0
     private(set) var todaysTasks: [RoutineTask] = []
     private(set) var progress = TodayProgress(completed: 0, total: 0)
     var errorMessage: String?
@@ -27,10 +28,15 @@ final class DashboardViewModel {
         self.progressUseCase = progressUseCase
     }
 
-    func load(on day: Date = .now) {
+    /// Loads the active dog and only that dog's routines (routines with no dog show for everyone).
+    func load(on day: Date = .now, selectedDogID: UUID? = ActiveDogSelection.storedID) {
         do {
-            dog = try dogs.fetchAll().first
-            let all = try routines.fetchAll()
+            let allDogs = try dogs.fetchAll()
+            dogCount = allDogs.count
+            dog = ActiveDogUseCase().activeDog(in: allDogs, selectedID: selectedDogID)
+            let all = try routines.fetchAll().filter {
+                ActiveDogUseCase.shows(taskDogID: $0.dog?.id, activeDogID: dog?.id)
+            }
             todaysTasks = all
                 .filter { Calendar.current.isDate($0.dueDate, inSameDayAs: day) }
                 .sorted { $0.dueDate < $1.dueDate }
