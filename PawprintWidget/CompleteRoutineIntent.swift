@@ -13,10 +13,10 @@
 import AppIntents
 import WidgetKit
 
-nonisolated struct CompleteRoutineIntent: AppIntent {
-    static let title: LocalizedStringResource = "Mark routine as done"
-    static let description = IntentDescription("Ticks a routine off from the Pawprint widget.")
-    static let isDiscoverable = false   // only meant for the widget's buttons, not Shortcuts
+struct CompleteRoutineIntent: AppIntent {
+    nonisolated static let title: LocalizedStringResource = "Mark routine as done"
+    nonisolated static let description = IntentDescription("Ticks a routine off from the Pawprint widget.")
+    nonisolated static let isDiscoverable = false   // only meant for the widget's buttons, not Shortcuts
 
     @Parameter(title: "Task")
     var taskID: String
@@ -27,7 +27,7 @@ nonisolated struct CompleteRoutineIntent: AppIntent {
         self.taskID = taskID
     }
 
-    func perform() async throws -> some IntentResult {
+    nonisolated func perform() async throws -> some IntentResult {
         try AppGroupPendingCompletionStore().add(PendingCompletion(taskID: taskID, completedAt: .now))
 
         let store = AppGroupWidgetSnapshotStore()
