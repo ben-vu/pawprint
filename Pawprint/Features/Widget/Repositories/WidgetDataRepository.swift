@@ -41,7 +41,8 @@ final class SwiftDataWidgetDataRepository: WidgetDataRepository {
                 dueDate: task.dueDate,
                 dogName: task.dog?.name,
                 category: task.categoryRaw,
-                kind: .routine
+                kind: .routine,
+                taskID: task.reminderID
             )
         }
     }

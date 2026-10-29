@@ -5,12 +5,14 @@
 //  Created by Benjamin Vu on 22/10/2026.
 //
 //  Layouts for each size of the Upcoming widget. The same entry drives
-//  every size.
+//  every size. Routine tasks have a circle that ticks them off without
+//  opening the app (see CompleteRoutineIntent).
 //
 
 import WidgetKit
 import SwiftUI
 import UIKit
+import AppIntents
 
 struct UpcomingTasksWidgetView: View {
     @Environment(\.widgetFamily) private var family
@@ -45,29 +47,35 @@ struct UpcomingTasksWidgetView: View {
 
     @ViewBuilder
     private var rectangular: some View {
-        VStack(alignment: .leading, spacing: 1) {
-            Text("NEXT UP")
-                .font(.caption2)
-                .bold()
-                .widgetAccentable()
-            if let next = entry.tasks.first {
-                Text(next.title)
-                    .font(.headline)
-                    .lineLimit(1)
-                Text(next.dueLabel(at: entry.date))
-                    .font(.caption)
-                if entry.showsDogNames, let dogName = next.dogName {
-                    Text(dogName)
-                        .font(.caption2)
+        HStack(spacing: 6) {
+            VStack(alignment: .leading, spacing: 1) {
+                Text("NEXT UP")
+                    .font(.caption2)
+                    .bold()
+                    .widgetAccentable()
+                if let next = entry.tasks.first {
+                    Text(next.title)
+                        .font(.headline)
+                        .lineLimit(1)
+                    Text(next.dueLabel(at: entry.date))
+                        .font(.caption)
+                    if entry.showsDogNames, let dogName = next.dogName {
+                        Text(dogName)
+                            .font(.caption2)
+                    }
+                } else {
+                    Text("All caught up")
+                        .font(.headline)
+                    Text("Nothing due soon")
+                        .font(.caption)
                 }
-            } else {
-                Text("All caught up")
-                    .font(.headline)
-                Text("Nothing due soon")
-                    .font(.caption)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if let next = entry.tasks.first {
+                CompleteTaskButton(task: next, size: 30, tint: nil)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: Home Screen
@@ -100,7 +108,11 @@ struct UpcomingTasksWidgetView: View {
 
                 Spacer(minLength: 0)
 
-                footer
+                HStack(alignment: .bottom) {
+                    footer
+                    Spacer(minLength: 0)
+                    CompleteTaskButton(task: next, size: 32)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .widgetURL(next.deepLink.url)
@@ -210,28 +222,32 @@ struct UpcomingTasksWidgetView: View {
 
     private func row(_ task: UpcomingTask) -> some View {
         let isOverdue = task.status(at: entry.date) == .overdue
-        return Link(destination: task.deepLink.url) {
-            HStack(spacing: 6) {
-                TaskIcon(task: task, size: 26)
-                Image(systemName: isOverdue ? "exclamationmark.circle.fill" : task.kind.systemImage)
-                    .font(.caption)
-                    .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(task.title)
-                        .font(.caption.weight(.semibold))
-                        .foregroundStyle(WidgetPalette.textPrimary)
-                        .lineLimit(1)
-                    if entry.showsDogNames, let dogName = task.dogName {
-                        Text(dogName)
-                            .font(.caption2)
-                            .foregroundStyle(WidgetPalette.textSecondary)
+        return HStack(spacing: 6) {
+            // Health follow-ups can't be ticked off here, but keep their rows lined up.
+            CompleteTaskButton(task: task, size: 26, reservesSpace: true)
+            Link(destination: task.deepLink.url) {
+                HStack(spacing: 6) {
+                    TaskIcon(task: task, size: 26)
+                    Image(systemName: isOverdue ? "exclamationmark.circle.fill" : task.kind.systemImage)
+                        .font(.caption)
+                        .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.accent)
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(task.title)
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(WidgetPalette.textPrimary)
                             .lineLimit(1)
+                        if entry.showsDogNames, let dogName = task.dogName {
+                            Text(dogName)
+                                .font(.caption2)
+                                .foregroundStyle(WidgetPalette.textSecondary)
+                                .lineLimit(1)
+                        }
                     }
+                    Spacer(minLength: 4)
+                    Text(task.dueLabel(at: entry.date))
+                        .font(.caption2)
+                        .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.textSecondary)
                 }
-                Spacer(minLength: 4)
-                Text(task.dueLabel(at: entry.date))
-                    .font(.caption2)
-                    .foregroundStyle(isOverdue ? WidgetPalette.danger : WidgetPalette.textSecondary)
             }
         }
     }
@@ -250,6 +266,33 @@ struct UpcomingTasksWidgetView: View {
             Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+}
+
+/// The tick circle next to a routine. Tapping it runs CompleteRoutineIntent,
+/// which queues the completion for the app and hides the task right away.
+/// Health follow-ups get nothing (or just blank space, so rows stay aligned).
+struct CompleteTaskButton: View {
+    let task: UpcomingTask
+    var size: CGFloat = 26
+    var reservesSpace = false
+    /// Pass nil on the Lock Screen, where the system picks the colour.
+    var tint: Color? = WidgetPalette.accent
+
+    var body: some View {
+        if task.canBeCompletedFromWidget, let taskID = task.taskID {
+            Button(intent: CompleteRoutineIntent(taskID: taskID)) {
+                Image(systemName: "circle")
+                    .font(.system(size: size * 0.8, weight: .regular))
+                    .foregroundStyle(tint ?? .primary)
+                    .frame(width: size, height: size)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Mark \(task.title) as done")
+        } else if reservesSpace {
+            Color.clear.frame(width: size, height: size)
+        }
     }
 }
 

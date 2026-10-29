@@ -65,6 +65,21 @@ final class MockWidgetReloader: WidgetReloading {
     func reloadTimelines() { reloadCount += 1 }
 }
 
+nonisolated final class InMemoryPendingCompletionStore: PendingCompletionStore {
+    var completions: [PendingCompletion] = []
+
+    func pending() -> [PendingCompletion] { completions }
+
+    func add(_ completion: PendingCompletion) throws {
+        guard !completions.contains(where: { $0.taskID == completion.taskID }) else { return }
+        completions.append(completion)
+    }
+
+    func remove(taskIDs: Set<String>) {
+        completions.removeAll { taskIDs.contains($0.taskID) }
+    }
+}
+
 @MainActor
 struct WidgetTests {
 
@@ -358,5 +373,128 @@ struct WidgetTests {
             try makeUseCase(data, store, reloader).execute(now: now)
         }
         #expect(reloader.reloadCount == 0)
+    }
+
+    // MARK: Ticking tasks off in the widget
+
+    @Test func snapshotSavedBeforeTaskIDsStillDecodes() throws {
+        let json = #"{"title":"Walk","dueDate":780000000,"category":"walk"}"#.data(using: .utf8)!
+
+        let decoded = try JSONDecoder().decode(UpcomingTask.self, from: json)
+
+        #expect(decoded.title == "Walk")
+        #expect(decoded.taskID == nil)
+        #expect(decoded.canBeCompletedFromWidget == false)   // no button until the app refreshes the snapshot
+    }
+
+    @Test func onlyRoutinesWithAnIDCanBeTickedOffInTheWidget() {
+        let routine = UpcomingTask(title: "Walk", dueDate: now, taskID: "abc")
+        let health = UpcomingTask(title: "Vaccine", dueDate: now, kind: .health)
+
+        #expect(routine.canBeCompletedFromWidget)
+        #expect(health.canBeCompletedFromWidget == false)
+    }
+
+    @Test func tickedOffTasksAreRemovedFromTheSnapshot() {
+        let snapshot = WidgetSnapshot(generatedAt: now, tasks: [
+            UpcomingTask(title: "Walk", dueDate: now, taskID: "a"),
+            UpcomingTask(title: "Dinner", dueDate: now, taskID: "b"),
+            UpcomingTask(title: "Vaccine", dueDate: now, kind: .health)
+        ])
+
+        let trimmed = snapshot.removing(taskIDs: ["a"])
+
+        #expect(trimmed.tasks.map(\.title) == ["Dinner", "Vaccine"])
+        #expect(snapshot.removing(taskIDs: []) == snapshot)
+    }
+
+    @Test func widgetCompletionMarksTheTaskDoneAndClearsItsReminder() throws {
+        let repo = MockRoutineRepository()
+        let task = RoutineTask(title: "Walk", dueDate: RoutineFixtures.date(20, 9), remindMe: true)
+        repo.items = [task]
+        let notifications = MockNotificationService()
+        let queue = InMemoryPendingCompletionStore()
+        let tappedAt = RoutineFixtures.date(20, 9, 5)
+        try queue.add(PendingCompletion(taskID: task.reminderID, completedAt: tappedAt))
+
+        let applied = try ApplyWidgetCompletionsUseCase(pending: queue, repository: repo, notifications: notifications).execute()
+
+        #expect(applied == 1)
+        #expect(task.isCompleted)
+        #expect(task.completedAt == tappedAt)
+        #expect(notifications.cancelled == [task.reminderID])
+        #expect(queue.completions.isEmpty)
+    }
+
+    @Test func widgetCompletionOfARepeatingRoutineLinesUpTheNextOne() throws {
+        let repo = MockRoutineRepository()
+        let task = RoutineTask(title: "Breakfast", dueDate: RoutineFixtures.date(20, 8), recurrence: .daily)
+        repo.items = [task]
+        let queue = InMemoryPendingCompletionStore()
+        try queue.add(PendingCompletion(taskID: task.reminderID, completedAt: RoutineFixtures.date(20, 8, 10)))
+
+        try ApplyWidgetCompletionsUseCase(
+            pending: queue,
+            repository: repo,
+            notifications: MockNotificationService(),
+            nextOccurrence: NextOccurrenceUseCase(calendar: RoutineFixtures.calendar)
+        ).execute()
+
+        #expect(repo.items.count == 2)
+        #expect(task.hasNextOccurrence)
+    }
+
+    @Test func widgetCompletionsForMissingOrAlreadyDoneTasksAreDropped() throws {
+        let repo = MockRoutineRepository()
+        let done = RoutineTask(title: "Walk", dueDate: now, isCompleted: true)
+        repo.items = [done]
+        let notifications = MockNotificationService()
+        let queue = InMemoryPendingCompletionStore()
+        try queue.add(PendingCompletion(taskID: done.reminderID, completedAt: now))
+        try queue.add(PendingCompletion(taskID: "deleted-task", completedAt: now))
+
+        let applied = try ApplyWidgetCompletionsUseCase(pending: queue, repository: repo, notifications: notifications).execute()
+
+        #expect(applied == 0)
+        #expect(notifications.cancelled.isEmpty)
+        #expect(queue.completions.isEmpty)   // nothing left to retry
+    }
+
+    @Test func widgetCompletionsStayQueuedIfTheAppCantReadItsTasks() throws {
+        let repo = MockRoutineRepository()
+        repo.shouldFail = true
+        let queue = InMemoryPendingCompletionStore()
+        try queue.add(PendingCompletion(taskID: "abc", completedAt: now))
+
+        #expect(throws: MockRoutineRepository.MockFailure.self) {
+            try ApplyWidgetCompletionsUseCase(pending: queue, repository: repo, notifications: MockNotificationService()).execute()
+        }
+        #expect(queue.completions.count == 1)
+    }
+
+    @Test func nothingQueuedMeansNothingToDo() throws {
+        let repo = MockRoutineRepository()
+        let applied = try ApplyWidgetCompletionsUseCase(
+            pending: InMemoryPendingCompletionStore(),
+            repository: repo,
+            notifications: MockNotificationService()
+        ).execute()
+
+        #expect(applied == 0)
+    }
+
+    @Test func routineTaskIDReachesTheWidgetSnapshot() throws {
+        let container = try ModelContainer(
+            for: Schema([Dog.self, RoutineTask.self, HealthRecord.self, LearnTip.self]),
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let context = container.mainContext
+        let task = RoutineTask(title: "Walk", dueDate: now)
+        context.insert(task)
+        try context.save()
+
+        let tasks = try SwiftDataWidgetDataRepository(context: context).fetchIncompleteTasks()
+
+        #expect(tasks.first?.taskID == task.reminderID)
     }
 }

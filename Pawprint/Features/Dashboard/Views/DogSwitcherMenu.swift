@@ -15,6 +15,7 @@ import SwiftData
 struct DogSwitcherMenu: View {
     @Environment(\.modelContext) private var context
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
+    @AppStorage(AppearanceSetting.storageKey) private var appearanceRaw = AppearanceSetting.system.rawValue
     @State private var viewModel: DogSwitcherViewModel?
     @State private var showAddDog = false
     @State private var profileDog: Dog?
@@ -43,6 +44,13 @@ struct DogSwitcherMenu: View {
                         Button("Share with a sitter", systemImage: "square.and.arrow.up") { shareDog = active }
                     }
                     Button("Add another dog", systemImage: "plus") { showAddDog = true }
+                }
+                Section {
+                    Picker("Appearance", systemImage: "circle.lefthalf.filled", selection: $appearanceRaw) {
+                        ForEach(AppearanceSetting.allCases) { option in
+                            Label(option.title, systemImage: option.systemImage).tag(option.rawValue)
+                        }
+                    }
                 }
             }
         } label: {

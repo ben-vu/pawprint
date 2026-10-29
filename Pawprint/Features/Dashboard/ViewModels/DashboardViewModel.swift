@@ -4,7 +4,8 @@
 //
 //  Created by Natalie Michael on 21/10/2026.
 //
-//  State for the Home screen: the dog, today's tasks and progress.
+//  State for the Home screen: the dog, today's tasks and progress, plus
+//  ticking those tasks off (or unticking them).
 //
 
 import Foundation
@@ -20,11 +21,18 @@ final class DashboardViewModel {
 
     private let dogs: DogRepository
     private let routines: RoutineRepository
+    private let notifications: NotificationService
     private let progressUseCase: TodayProgressUseCase
 
-    init(dogs: DogRepository, routines: RoutineRepository, progressUseCase: TodayProgressUseCase = TodayProgressUseCase()) {
+    init(
+        dogs: DogRepository,
+        routines: RoutineRepository,
+        notifications: NotificationService,
+        progressUseCase: TodayProgressUseCase = TodayProgressUseCase()
+    ) {
         self.dogs = dogs
         self.routines = routines
+        self.notifications = notifications
         self.progressUseCase = progressUseCase
     }
 
@@ -42,6 +50,26 @@ final class DashboardViewModel {
                 .sorted { $0.dueDate < $1.dueDate }
             progress = progressUseCase.execute(tasks: all, on: day)
             errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    /// Ticks a task off. A repeating routine gets its next occurrence, just
+    /// like ticking it in the Routines tab.
+    func complete(_ task: RoutineTask) {
+        do {
+            try CompleteRoutineUseCase(repository: routines, notifications: notifications).execute(task)
+            load()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func uncomplete(_ task: RoutineTask) {
+        do {
+            try UncompleteRoutineUseCase(repository: routines, notifications: notifications).execute(task)
+            load()
         } catch {
             errorMessage = error.localizedDescription
         }

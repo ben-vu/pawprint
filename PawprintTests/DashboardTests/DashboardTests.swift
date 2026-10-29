@@ -198,7 +198,7 @@ struct DashboardTests {
         let routines = MockRoutineRepositoryForDashboard()
         routines.items = [RoutineTask(title: "Walk", dueDate: .now, isCompleted: true)]
 
-        let vm = DashboardViewModel(dogs: dogs, routines: routines)
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
         vm.load()
 
         #expect(vm.dog?.name == "Bella")
@@ -211,7 +211,7 @@ struct DashboardTests {
         let dogs = MockDogRepository()
         dogs.shouldFail = true
 
-        let vm = DashboardViewModel(dogs: dogs, routines: MockRoutineRepositoryForDashboard())
+        let vm = DashboardViewModel(dogs: dogs, routines: MockRoutineRepositoryForDashboard(), notifications: MockNotificationService())
         vm.load()
 
         #expect(vm.errorMessage != nil)
@@ -278,7 +278,7 @@ struct DashboardTests {
             RoutineTask(title: "Shared task", dueDate: .now)
         ]
 
-        let vm = DashboardViewModel(dogs: dogs, routines: routines)
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
         vm.load(selectedDogID: milo.id)
 
         #expect(vm.dog === milo)
@@ -309,5 +309,54 @@ struct DashboardTests {
         vm.breed = "kel"
 
         #expect(vm.breedSuggestions.contains("Kelpie"))
+    }
+
+    // MARK: Ticking tasks off on Home
+
+    @Test func tickingATaskOnHomeCompletesItAndUpdatesProgress() {
+        let dogs = MockDogRepository()
+        dogs.items = [Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)]
+        let routines = MockRoutineRepositoryForDashboard()
+        let task = RoutineTask(title: "Walk", dueDate: .now, remindMe: true)
+        routines.items = [task]
+        let notifications = MockNotificationService()
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: notifications)
+        vm.load()
+        #expect(vm.progress == TodayProgress(completed: 0, total: 1))
+
+        vm.complete(task)
+
+        #expect(task.isCompleted)
+        #expect(notifications.cancelled == [task.reminderID])
+        #expect(vm.progress == TodayProgress(completed: 1, total: 1))
+        #expect(vm.errorMessage == nil)
+    }
+
+    @Test func untickingATaskOnHomeBringsItBack() {
+        let dogs = MockDogRepository()
+        dogs.items = [Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)]
+        let routines = MockRoutineRepositoryForDashboard()
+        let task = RoutineTask(title: "Walk", dueDate: .now, isCompleted: true)
+        routines.items = [task]
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
+        vm.load()
+        vm.uncomplete(task)
+
+        #expect(task.isCompleted == false)
+        #expect(vm.progress == TodayProgress(completed: 0, total: 1))
+    }
+
+    @Test func tickingAnAlreadyDoneTaskReportsAnError() {
+        let dogs = MockDogRepository()
+        let routines = MockRoutineRepositoryForDashboard()
+        let task = RoutineTask(title: "Walk", dueDate: .now, isCompleted: true)
+        routines.items = [task]
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
+        vm.complete(task)
+
+        #expect(vm.errorMessage == RoutineError.alreadyCompleted.errorDescription)
     }
 }

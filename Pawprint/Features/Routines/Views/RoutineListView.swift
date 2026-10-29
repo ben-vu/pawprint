@@ -74,6 +74,10 @@ struct RoutineListView: View {
             viewModel?.load()
         }
         .onChange(of: selectedDogID) { viewModel?.load() }
+        // Tasks ticked off in the widget while the app was closed.
+        .onReceive(NotificationCenter.default.publisher(for: .widgetCompletionsApplied)) { _ in
+            viewModel?.load()
+        }
         .sensoryFeedback(.success, trigger: completeFeedback)
         .tint(PawprintTheme.accent)
     }

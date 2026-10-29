@@ -78,12 +78,12 @@ struct OnboardingView: View {
                 .frame(height: 180)
 
             VStack(spacing: 4) {
-                Text("Welcome to PawPrint")
+                Text("Welcome to Pawprint")
                     .font(PawprintTheme.displayFont(.title))
                     .foregroundStyle(PawprintTheme.accentDeep)
                     .multilineTextAlignment(.center)
 
-                Text("Your dog's digital pawprint")
+                Text("Your dog's digital footprint")
                     .font(PawprintTheme.font(.headline, weight: .semibold))
                     .foregroundStyle(PawprintTheme.textSecondary)
                     .multilineTextAlignment(.center)

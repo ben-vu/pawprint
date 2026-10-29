@@ -5,7 +5,8 @@
 //  Created by Natalie Michael on 21/10/2026.
 //
 //  Home tab: greeting card with the dog, today's progress ring and
-//  today's routine tasks.
+//  today's routine tasks. Tap the circle on a task to tick it off (or
+//  untick it).
 //
 
 import SwiftUI
@@ -15,6 +16,7 @@ struct HomeView: View {
     @Environment(\.modelContext) private var context
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: DashboardViewModel?
+    @State private var completeFeedback = 0
 
     var body: some View {
         NavigationStack {
@@ -50,11 +52,17 @@ struct HomeView: View {
             if viewModel == nil {
                 viewModel = DashboardViewModel(
                     dogs: SwiftDataDogRepository(context: context),
-                    routines: SwiftDataRoutineRepository(context: context)
+                    routines: SwiftDataRoutineRepository(context: context),
+                    notifications: UserNotificationService.shared
                 )
             }
             viewModel?.load()
         }
+        // Tasks ticked off in the widget while the app was closed.
+        .onReceive(NotificationCenter.default.publisher(for: .widgetCompletionsApplied)) { _ in
+            viewModel?.load()
+        }
+        .sensoryFeedback(.success, trigger: completeFeedback)
     }
 
     private func heroCard(_ vm: DashboardViewModel) -> some View {
@@ -123,6 +131,13 @@ struct HomeView: View {
                 .foregroundStyle(PawprintTheme.textSecondary)
                 .padding(.horizontal, 4)
 
+            if let error = vm.errorMessage {
+                Label(error, systemImage: "exclamationmark.circle.fill")
+                    .font(PawprintTheme.font(.footnote, weight: .semibold))
+                    .foregroundStyle(PawprintTheme.danger)
+                    .padding(.horizontal, 4)
+            }
+
             if vm.todaysTasks.isEmpty {
                 PawprintCard {
                     PugEmptyState(
@@ -135,20 +150,33 @@ struct HomeView: View {
             } else {
                 VStack(spacing: 10) {
                     ForEach(vm.todaysTasks) { task in
-                        taskRow(task)
+                        taskRow(task, vm: vm)
                     }
                 }
             }
         }
     }
 
-    private func taskRow(_ task: RoutineTask) -> some View {
+    private func taskRow(_ task: RoutineTask, vm: DashboardViewModel) -> some View {
         PawprintCard {
             HStack(spacing: 14) {
-                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                    .font(PawprintTheme.font(.title3))
-                    .foregroundStyle(task.isCompleted ? PawprintTheme.success : PawprintTheme.border)
-                    .accessibilityHidden(true)
+                Button {
+                    if task.isCompleted {
+                        vm.uncomplete(task)
+                    } else {
+                        vm.complete(task)
+                        completeFeedback += 1
+                    }
+                } label: {
+                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                        .font(PawprintTheme.font(.title2))
+                        .foregroundStyle(task.isCompleted ? PawprintTheme.success : PawprintTheme.border)
+                        .frame(width: 44, height: 44)   // full-size tap target, same as the Routines tab
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(task.isCompleted ? "Mark \(task.title) as not done" : "Mark \(task.title) as done")
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text(task.title)
                         .font(PawprintTheme.font(.body, weight: .semibold))
@@ -161,8 +189,7 @@ struct HomeView: View {
                 Spacer(minLength: 0)
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityValue(task.isCompleted ? "Done" : "Not done yet")
+        .opacity(task.isCompleted ? 0.7 : 1)
     }
 
     private func progressMessage(_ p: TodayProgress) -> String {

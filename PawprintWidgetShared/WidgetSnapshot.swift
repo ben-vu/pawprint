@@ -67,6 +67,18 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
         tips.first { calendar.isDate($0.day, inSameDayAs: date) } ?? tips.first
     }
 
+    /// A copy without the routine tasks with these ids. Used to hide a task the
+    /// moment it is ticked off in the widget, before the app has caught up.
+    func removing(taskIDs: Set<String>) -> WidgetSnapshot {
+        guard !taskIDs.isEmpty else { return self }
+        var copy = self
+        copy.tasks.removeAll { task in
+            guard let id = task.taskID else { return false }
+            return taskIDs.contains(id)
+        }
+        return copy
+    }
+
     /// Ignores `generatedAt`, so a refresh that changes nothing visible can be skipped.
     func hasSameContent(as other: WidgetSnapshot) -> Bool {
         tasks == other.tasks && tips == other.tips && dogCount == other.dogCount
