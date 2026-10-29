@@ -77,6 +77,57 @@ struct DashboardTests {
         }
     }
 
+    // MARK: Mixed breed
+
+    @Test func mixedBreedWithBlankBreedIsSaved() throws {
+        let repo = MockDogRepository()
+        let dog = try CreateDogUseCase(repository: repo).execute(name: "Max", breed: "", ageYears: 2, weightKg: 8, isMixedBreed: true)
+
+        #expect(dog.isMixedBreed)
+        #expect(dog.breedDescription == "Mixed breed")
+        #expect(repo.items.count == 1)
+    }
+
+    @Test func breedDescriptionCoversEveryCase() {
+        #expect(Dog(name: "A", breed: "Pug", ageYears: 1, weightKg: 8).breedDescription == "Pug")
+        #expect(Dog(name: "B", breed: "", ageYears: 1, weightKg: 8).breedDescription == "Good dog")
+        #expect(Dog(name: "C", breed: "Kelpie", ageYears: 1, weightKg: 8, isMixedBreed: true).breedDescription == "Kelpie mix")
+        #expect(Dog(name: "D", breed: "", ageYears: 1, weightKg: 8, isMixedBreed: true).breedDescription == "Mixed breed")
+    }
+
+    @Test func updateCanTurnMixedBreedOn() throws {
+        let repo = MockDogRepository()
+        let dog = try CreateDogUseCase(repository: repo).execute(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)
+
+        try UpdateDogUseCase(repository: repo).execute(dog, name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18, photoData: nil, isMixedBreed: true)
+
+        #expect(repo.items.first?.isMixedBreed == true)
+        #expect(repo.items.first?.breedDescription == "Collie mix")
+    }
+
+    // MARK: Breed suggestions
+
+    @Test func typingTheStartOfABreedSuggestsIt() {
+        let suggestions = SuggestBreedsUseCase().execute(query: "sta")
+        #expect(suggestions == ["Staffy"])
+    }
+
+    @Test func suggestionsMatchAnyWordInTheBreedName() {
+        let suggestions = SuggestBreedsUseCase().execute(query: "Collie")
+        #expect(suggestions == ["Border Collie"])
+    }
+
+    @Test func suggestionsAreCappedAndCaseInsensitive() {
+        let suggestions = SuggestBreedsUseCase(breeds: ["Alpha", "Alder", "Almond", "Alpine"], limit: 3).execute(query: "AL")
+        #expect(suggestions.count == 3)
+    }
+
+    @Test func noSuggestionsWhenBlankOrAlreadyExact() {
+        let useCase = SuggestBreedsUseCase()
+        #expect(useCase.execute(query: "   ").isEmpty)
+        #expect(useCase.execute(query: "Kelpie").isEmpty)
+    }
+
     // MARK: Editing and deleting
 
     @Test func updateChangesTheExistingDog() throws {
@@ -147,7 +198,7 @@ struct DashboardTests {
         let routines = MockRoutineRepositoryForDashboard()
         routines.items = [RoutineTask(title: "Walk", dueDate: .now, isCompleted: true)]
 
-        let vm = DashboardViewModel(dogs: dogs, routines: routines)
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
         vm.load()
 
         #expect(vm.dog?.name == "Bella")
@@ -160,7 +211,7 @@ struct DashboardTests {
         let dogs = MockDogRepository()
         dogs.shouldFail = true
 
-        let vm = DashboardViewModel(dogs: dogs, routines: MockRoutineRepositoryForDashboard())
+        let vm = DashboardViewModel(dogs: dogs, routines: MockRoutineRepositoryForDashboard(), notifications: MockNotificationService())
         vm.load()
 
         #expect(vm.errorMessage != nil)
@@ -227,12 +278,85 @@ struct DashboardTests {
             RoutineTask(title: "Shared task", dueDate: .now)
         ]
 
-        let vm = DashboardViewModel(dogs: dogs, routines: routines)
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
         vm.load(selectedDogID: milo.id)
 
         #expect(vm.dog === milo)
         #expect(vm.dogCount == 2)
         #expect(Set(vm.todaysTasks.map(\.title)) == ["Milo dinner", "Shared task"])
         #expect(vm.progress.total == 2)
+    }
+
+    // MARK: Add another dog
+
+    @Test func addDogSavesTheMixedBreedFlag() throws {
+        let repo = MockDogRepository()
+        let vm = AddDogViewModel(repository: repo)
+        vm.name = "Milo"
+        vm.breed = "Kelpie"
+        vm.isMixedBreed = true
+        vm.weightText = "14"
+
+        let dog = try #require(vm.save())
+
+        #expect(dog.isMixedBreed)
+        #expect(dog.breedDescription == "Kelpie mix")
+        #expect(repo.items.count == 1)
+    }
+
+    @Test func addDogOffersBreedSuggestionsLikeOnboarding() {
+        let vm = AddDogViewModel(repository: MockDogRepository())
+        vm.breed = "kel"
+
+        #expect(vm.breedSuggestions.contains("Kelpie"))
+    }
+
+    // MARK: Ticking tasks off on Home
+
+    @Test func tickingATaskOnHomeCompletesItAndUpdatesProgress() {
+        let dogs = MockDogRepository()
+        dogs.items = [Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)]
+        let routines = MockRoutineRepositoryForDashboard()
+        let task = RoutineTask(title: "Walk", dueDate: .now, remindMe: true)
+        routines.items = [task]
+        let notifications = MockNotificationService()
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: notifications)
+        vm.load()
+        #expect(vm.progress == TodayProgress(completed: 0, total: 1))
+
+        vm.complete(task)
+
+        #expect(task.isCompleted)
+        #expect(notifications.cancelled == [task.reminderID])
+        #expect(vm.progress == TodayProgress(completed: 1, total: 1))
+        #expect(vm.errorMessage == nil)
+    }
+
+    @Test func untickingATaskOnHomeBringsItBack() {
+        let dogs = MockDogRepository()
+        dogs.items = [Dog(name: "Bella", breed: "Collie", ageYears: 3, weightKg: 18)]
+        let routines = MockRoutineRepositoryForDashboard()
+        let task = RoutineTask(title: "Walk", dueDate: .now, isCompleted: true)
+        routines.items = [task]
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
+        vm.load()
+        vm.uncomplete(task)
+
+        #expect(task.isCompleted == false)
+        #expect(vm.progress == TodayProgress(completed: 0, total: 1))
+    }
+
+    @Test func tickingAnAlreadyDoneTaskReportsAnError() {
+        let dogs = MockDogRepository()
+        let routines = MockRoutineRepositoryForDashboard()
+        let task = RoutineTask(title: "Walk", dueDate: .now, isCompleted: true)
+        routines.items = [task]
+
+        let vm = DashboardViewModel(dogs: dogs, routines: routines, notifications: MockNotificationService())
+        vm.complete(task)
+
+        #expect(vm.errorMessage == RoutineError.alreadyCompleted.errorDescription)
     }
 }

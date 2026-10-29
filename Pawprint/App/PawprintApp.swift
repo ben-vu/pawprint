@@ -17,6 +17,8 @@ import UserNotifications
 struct PawprintApp: App {
     let container: ModelContainer
     private let widgetSync: WidgetSyncService
+    @Environment(\.scenePhase) private var scenePhase
+    @AppStorage(AppearanceSetting.storageKey) private var appearanceRaw = AppearanceSetting.system.rawValue
 
     init() {
         PawprintFonts.registerAll()       // load Nunito before any view draws
@@ -42,6 +44,11 @@ struct PawprintApp: App {
         WindowGroup {
             RootView()
                 .environment(\.font, PawprintTheme.font(.body))   // default for any Text without its own font
+                .preferredColorScheme((AppearanceSetting(rawValue: appearanceRaw) ?? .system).colorScheme)
+                .onChange(of: scenePhase) { _, phase in
+                    // Tasks ticked off in the widget while the app was closed.
+                    if phase == .active { widgetSync.applyPendingCompletions() }
+                }
         }
         .modelContainer(container)
     }

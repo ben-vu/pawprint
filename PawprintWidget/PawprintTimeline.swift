@@ -31,10 +31,10 @@ struct PawprintEntry: TimelineEntry {
             snapshot: WidgetSnapshot(
                 generatedAt: now,
                 tasks: [
-                    UpcomingTask(title: "Brush coat", dueDate: now.addingTimeInterval(-60 * 60), dogName: "Biscuit"),
-                    UpcomingTask(title: "Evening walk", dueDate: now.addingTimeInterval(45 * 60), dogName: "Biscuit"),
+                    UpcomingTask(title: "Brush coat", dueDate: now.addingTimeInterval(-60 * 60), dogName: "Biscuit", taskID: "sample-1"),
+                    UpcomingTask(title: "Evening walk", dueDate: now.addingTimeInterval(45 * 60), dogName: "Biscuit", taskID: "sample-2"),
                     UpcomingTask(title: "Rabies booster", dueDate: now.addingTimeInterval(26 * 60 * 60), dogName: "Milo", kind: .health),
-                    UpcomingTask(title: "Dinner", dueDate: now.addingTimeInterval(3 * 60 * 60), dogName: "Milo")
+                    UpcomingTask(title: "Dinner", dueDate: now.addingTimeInterval(3 * 60 * 60), dogName: "Milo", taskID: "sample-3")
                 ].sorted { $0.dueDate < $1.dueDate },
                 tips: [
                     WidgetTip(
@@ -54,13 +54,20 @@ struct PawprintEntry: TimelineEntry {
 
 struct PawprintProvider: TimelineProvider {
     private let store: WidgetSnapshotStore = AppGroupWidgetSnapshotStore()
+    private let pendingStore: PendingCompletionStore = AppGroupPendingCompletionStore()
+
+    /// The saved snapshot minus anything ticked off in the widget that the
+    /// app hasn't applied yet, so a done task never flashes back.
+    private func currentSnapshot() -> WidgetSnapshot {
+        store.load().removing(taskIDs: Set(pendingStore.pending().map(\.taskID)))
+    }
 
     func placeholder(in context: Context) -> PawprintEntry {
         .sample
     }
 
     func getSnapshot(in context: Context, completion: @escaping (PawprintEntry) -> Void) {
-        let snapshot = store.load()
+        let snapshot = currentSnapshot()
         if context.isPreview && snapshot.tasks.isEmpty && snapshot.tips.isEmpty {
             completion(.sample)
         } else {
@@ -69,7 +76,7 @@ struct PawprintProvider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<PawprintEntry>) -> Void) {
-        let snapshot = store.load()
+        let snapshot = currentSnapshot()
         let now = Date()
 
         // One entry now, one just after each future due date (so "due" flips to

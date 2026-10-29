@@ -38,25 +38,32 @@ nonisolated struct UpcomingTask: Codable, Hashable, Identifiable, Sendable {
     /// it existed.
     let category: String?
     let kind: UpcomingTaskKind
+    /// The routine's `reminderID`, which identifies it across the app and the
+    /// widget so the widget can tick it off. Nil for health follow-ups (they
+    /// are completed by adding a new record in the app) and for snapshots
+    /// saved before it existed.
+    let taskID: String?
 
     init(
         title: String,
         dueDate: Date,
         dogName: String? = nil,
         category: String? = nil,
-        kind: UpcomingTaskKind = .routine
+        kind: UpcomingTaskKind = .routine,
+        taskID: String? = nil
     ) {
         self.title = title
         self.dueDate = dueDate
         self.dogName = dogName
         self.category = category
         self.kind = kind
+        self.taskID = taskID
     }
 
-    // Snapshots saved by older versions have no `category` or `kind`, so
-    // both fall back to defaults instead of failing to decode.
+    // Snapshots saved by older versions have no `category`, `kind` or
+    // `taskID`, so they fall back to defaults instead of failing to decode.
     private enum CodingKeys: String, CodingKey {
-        case title, dueDate, dogName, category, kind
+        case title, dueDate, dogName, category, kind, taskID
     }
 
     init(from decoder: Decoder) throws {
@@ -66,7 +73,11 @@ nonisolated struct UpcomingTask: Codable, Hashable, Identifiable, Sendable {
         dogName = try container.decodeIfPresent(String.self, forKey: .dogName)
         category = try container.decodeIfPresent(String.self, forKey: .category)
         kind = try container.decodeIfPresent(UpcomingTaskKind.self, forKey: .kind) ?? .routine
+        taskID = try container.decodeIfPresent(String.self, forKey: .taskID)
     }
+
+    /// True when the widget can show a tick button for this row.
+    var canBeCompletedFromWidget: Bool { kind == .routine && taskID != nil }
 
     var id: String { "\(kind.rawValue)|\(title)|\(dogName ?? "")|\(dueDate.timeIntervalSince1970)" }
 

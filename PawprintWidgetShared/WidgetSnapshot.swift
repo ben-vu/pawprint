@@ -40,6 +40,20 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
         self.dogCount = dogCount
     }
 
+    // Snapshots saved before tips and dogCount existed have neither key, so
+    // they fall back to defaults instead of failing to decode.
+    private enum CodingKeys: String, CodingKey {
+        case generatedAt, tasks, tips, dogCount
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        generatedAt = try container.decode(Date.self, forKey: .generatedAt)
+        tasks = try container.decode([UpcomingTask].self, forKey: .tasks)
+        tips = try container.decodeIfPresent([WidgetTip].self, forKey: .tips) ?? []
+        dogCount = try container.decodeIfPresent(Int.self, forKey: .dogCount) ?? 1
+    }
+
     static let empty = WidgetSnapshot(generatedAt: .distantPast, tasks: [])
 
     var showsDogNames: Bool { dogCount > 1 }
@@ -51,6 +65,18 @@ nonisolated struct WidgetSnapshot: Codable, Equatable, Sendable {
     /// The tip planned for the day of `date`, or the first one if that day isn't planned.
     func tip(on date: Date, calendar: Calendar = .current) -> WidgetTip? {
         tips.first { calendar.isDate($0.day, inSameDayAs: date) } ?? tips.first
+    }
+
+    /// A copy without the routine tasks with these ids. Used to hide a task the
+    /// moment it is ticked off in the widget, before the app has caught up.
+    func removing(taskIDs: Set<String>) -> WidgetSnapshot {
+        guard !taskIDs.isEmpty else { return self }
+        var copy = self
+        copy.tasks.removeAll { task in
+            guard let id = task.taskID else { return false }
+            return taskIDs.contains(id)
+        }
+        return copy
     }
 
     /// Ignores `generatedAt`, so a refresh that changes nothing visible can be skipped.

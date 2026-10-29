@@ -4,8 +4,9 @@
 //
 //  Created by Benjamin Vu on 22/10/2026.
 //
-//  The dog's photo in the navigation bar. Tap it to switch dog, edit the
-//  current profile, share the dog's care sheet with a sitter or add another dog.
+//  The dog's photo in the Home tab's navigation bar, the one place to switch
+//  dog. Tap it to switch dog, edit the current profile, share the dog's care
+//  sheet with a sitter or add another dog. The other tabs follow the choice.
 //
 
 import SwiftUI
@@ -14,6 +15,7 @@ import SwiftData
 struct DogSwitcherMenu: View {
     @Environment(\.modelContext) private var context
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
+    @AppStorage(AppearanceSetting.storageKey) private var appearanceRaw = AppearanceSetting.system.rawValue
     @State private var viewModel: DogSwitcherViewModel?
     @State private var showAddDog = false
     @State private var profileDog: Dog?
@@ -43,11 +45,19 @@ struct DogSwitcherMenu: View {
                     }
                     Button("Add another dog", systemImage: "plus") { showAddDog = true }
                 }
+                Section {
+                    Picker("Appearance", systemImage: "circle.lefthalf.filled", selection: $appearanceRaw) {
+                        ForEach(AppearanceSetting.allCases) { option in
+                            Label(option.title, systemImage: option.systemImage).tag(option.rawValue)
+                        }
+                    }
+                }
             }
         } label: {
-            DogAvatarView(photoData: viewModel?.activeDog?.photoData, size: 34)
-                .frame(minWidth: 44, minHeight: 44)
+            DogAvatarView(photoData: viewModel?.activeDog?.photoData, size: 44)
         }
+        .menuStyle(.button)
+        .buttonStyle(.plain)   // no glass bubble, the photo is the button
         .accessibilityLabel("Dog profile")
         .accessibilityValue(viewModel?.activeDog?.name ?? "")
         .accessibilityHint("Switch dog, edit the profile, share with a sitter or add another dog")
