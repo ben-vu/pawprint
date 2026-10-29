@@ -8,11 +8,10 @@
 //
 
 import SwiftUI
-import SwiftData
 import PhotosUI
 
 struct AddDogView: View {
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @Environment(\.dismiss) private var dismiss
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: AddDogViewModel?
@@ -55,7 +54,7 @@ struct AddDogView: View {
         }
         .task {
             if viewModel == nil {
-                viewModel = AddDogViewModel(repository: SwiftDataDogRepository(context: context))
+                viewModel = AddDogViewModel(repository: repositories.dogs)
             }
         }
         .sensoryFeedback(.success, trigger: saveFeedback)
@@ -122,5 +121,5 @@ struct AddDogView: View {
 
 #Preview {
     AddDogView()
-        .modelContainer(for: Dog.self, inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

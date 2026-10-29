@@ -9,14 +9,13 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct AddRoutineView: View {
     var task: RoutineTask? = nil
     /// Called after a new routine (not an edit) is saved.
     var onAdded: () -> Void = {}
 
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @State private var viewModel: AddRoutineViewModel?
@@ -59,9 +58,9 @@ struct AddRoutineView: View {
         .task {
             if viewModel == nil {
                 viewModel = AddRoutineViewModel(
-                    repository: SwiftDataRoutineRepository(context: context),
+                    repository: repositories.routines,
                     notifications: UserNotificationService.shared,
-                    dogs: SwiftDataDogRepository(context: context),
+                    dogs: repositories.dogs,
                     editing: task
                 )
             }
@@ -211,5 +210,5 @@ struct AddRoutineView: View {
 
 #Preview {
     AddRoutineView()
-        .modelContainer(for: [Dog.self, RoutineTask.self], inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

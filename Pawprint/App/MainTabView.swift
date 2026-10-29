@@ -10,10 +10,11 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct MainTabView: View {
-    @Query(sort: \Dog.createdAt) var dogs: [Dog]
+    @Environment(PawprintRepositories.self) private var repositories
+    @State private var dogs: [Dog] = []
+    @State private var loadError: String?
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var router = AppRouter()
 
@@ -46,9 +47,24 @@ struct MainTabView: View {
         .tint(PawprintTheme.accent)
         .environment(router)
         .onOpenURL { router.handle(url: $0) }
+        .task { reloadDogs() }
+        .onChange(of: selectedDogID) { reloadDogs() }
+        .onChange(of: router.selectedTab) { reloadDogs() }
+        .onReceive(NotificationCenter.default.publisher(for: .pawprintDogsDidChange)) { _ in reloadDogs() }
+        .alert("Unable to load dogs", isPresented: Binding(get: { loadError != nil }, set: { if !$0 { loadError = nil } })) {
+            Button("OK", role: .cancel) {}
+        } message: { Text(loadError ?? "") }
+    }
+    private func reloadDogs() {
+        do {
+            dogs = try repositories.dogs.fetchAll()
+            loadError = nil
+        } catch {
+            loadError = error.localizedDescription
+        }
     }
 }
 
 #Preview {
-    MainTabView()
+    MainTabView().environment(PawprintRepositories.preview())
 }

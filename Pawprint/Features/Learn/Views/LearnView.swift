@@ -9,10 +9,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct LearnView: View {
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @Environment(AppRouter.self) private var router: AppRouter?
     @State private var viewModel: LearnViewModel?
     @State private var path: [LearnTip] = []
@@ -37,7 +36,7 @@ struct LearnView: View {
         }
         .task {
             guard viewModel == nil else { return }
-            let model = LearnViewModel(repository: SwiftDataTipRepository(context: context))
+            let model = LearnViewModel(repository: repositories.tips)
             model.load()
             viewModel = model
             openPendingGuide()
@@ -124,5 +123,5 @@ private struct LearnContentView: View {
 
 #Preview {
     LearnView()
-        .modelContainer(for: LearnTip.self, inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

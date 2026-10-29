@@ -10,7 +10,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct AddHealthRecordView: View {
     @Environment(\.dismiss) private var dismiss
@@ -170,12 +169,9 @@ struct AddHealthRecordView: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Dog.self, HealthRecord.self, RoutineTask.self, configurations: config)
-    let repo = SwiftDataHealthRepository(context: container.mainContext)
+    let repositories = PawprintRepositories.preview()
     let sampleDog = Dog(name: "Buddy", breed: "Labrador", ageYears: 3, weightKg: 25.0)
-    let viewModel = HealthViewModel(repository: repo, dog: sampleDog)
-
+    let viewModel = HealthViewModel(repository: repositories.health, dog: sampleDog)
     return AddHealthRecordView(viewModel: viewModel)
-        .modelContainer(container)
+        .environment(repositories)
 }

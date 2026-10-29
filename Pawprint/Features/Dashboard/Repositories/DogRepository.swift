@@ -27,16 +27,23 @@ final class SwiftDataDogRepository: DogRepository {
     }
 
     func fetchAll() throws -> [Dog] {
-        try context.fetch(FetchDescriptor<Dog>(sortBy: [SortDescriptor(\.createdAt)]))
+        do { return try context.fetch(FetchDescriptor<Dog>(sortBy: [SortDescriptor(\.createdAt)])) }
+        catch { throw RepositoryStorageError.readFailed }
     }
 
     func save(_ dog: Dog) throws {
-        context.insert(dog)
-        try context.save()
+        do {
+            context.insert(dog)
+            try context.save()
+        } catch { throw RepositoryStorageError.saveFailed }
+        NotificationCenter.default.post(name: .pawprintDogsDidChange, object: nil)
     }
 
     func delete(_ dog: Dog) throws {
-        context.delete(dog)
-        try context.save()
+        do {
+            context.delete(dog)
+            try context.save()
+        } catch { throw RepositoryStorageError.deleteFailed }
+        NotificationCenter.default.post(name: .pawprintDogsDidChange, object: nil)
     }
 }

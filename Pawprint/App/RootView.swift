@@ -9,7 +9,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct RootView: View {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
@@ -37,5 +36,5 @@ struct RootView: View {
 
 #Preview {
     RootView()
-        .modelContainer(for: [Dog.self, RoutineTask.self, HealthRecord.self, LearnTip.self], inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

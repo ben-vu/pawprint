@@ -10,10 +10,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct HealthView: View {
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @Environment(AppRouter.self) private var router: AppRouter?
     @State private var viewModel: HealthViewModel?
     @State private var showingAddSheet = false
@@ -46,7 +45,7 @@ struct HealthView: View {
         }
         .task {
             if viewModel == nil {
-                viewModel = HealthViewModel(repository: SwiftDataHealthRepository(context: context), dog: dog)
+                viewModel = HealthViewModel(repository: repositories.health, dog: dog)
             }
             viewModel?.load()
         }
@@ -200,14 +199,10 @@ struct HealthView: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: Dog.self, HealthRecord.self, RoutineTask.self, configurations: config)
+    let repositories = PawprintRepositories.preview()
     let sampleDog = Dog(name: "Buddy", breed: "Labrador", ageYears: 3, weightKg: 25.0)
-    container.mainContext.insert(sampleDog)
-    container.mainContext.insert(HealthRecord(title: "Rabies vaccine", date: .now.addingTimeInterval(-86400 * 300), nextDueDate: .now.addingTimeInterval(86400 * 5), dog: sampleDog, kind: .vaccination))
-
-    return NavigationStack {
-        HealthView(dog: sampleDog)
-    }
-    .modelContainer(container)
+    try? repositories.dogs.save(sampleDog)
+    try? repositories.health.save(HealthRecord(title: "Rabies vaccine", date: .now.addingTimeInterval(-86400 * 300), nextDueDate: .now.addingTimeInterval(86400 * 5), dog: sampleDog, kind: .vaccination))
+    return NavigationStack { HealthView(dog: sampleDog) }
+        .environment(repositories)
 }

@@ -24,16 +24,21 @@ final class SwiftDataRoutineRepository: RoutineRepository {
     }
 
     func fetchAll() throws -> [RoutineTask] {
-        try context.fetch(FetchDescriptor<RoutineTask>(sortBy: [SortDescriptor(\.dueDate)]))
+        do { return try context.fetch(FetchDescriptor<RoutineTask>(sortBy: [SortDescriptor(\.dueDate)])) }
+        catch { throw RepositoryStorageError.readFailed }
     }
 
     func save(_ task: RoutineTask) throws {
-        context.insert(task)
-        try context.save()
+        do {
+            context.insert(task)
+            try context.save()
+        } catch { throw RepositoryStorageError.saveFailed }
     }
 
     func delete(_ task: RoutineTask) throws {
-        context.delete(task)
-        try context.save()
+        do {
+            context.delete(task)
+            try context.save()
+        } catch { throw RepositoryStorageError.deleteFailed }
     }
 }

@@ -10,10 +10,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct DogSwitcherMenu: View {
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @AppStorage(AppearanceSetting.storageKey) private var appearanceRaw = AppearanceSetting.system.rawValue
     @State private var viewModel: DogSwitcherViewModel?
@@ -63,7 +62,7 @@ struct DogSwitcherMenu: View {
         .accessibilityHint("Switch dog, edit the profile, share with a sitter or add another dog")
         .task {
             if viewModel == nil {
-                viewModel = DogSwitcherViewModel(repository: SwiftDataDogRepository(context: context))
+                viewModel = DogSwitcherViewModel(repository: repositories.dogs)
             }
             viewModel?.load()
         }

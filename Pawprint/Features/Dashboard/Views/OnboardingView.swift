@@ -9,13 +9,12 @@
 //
 
 import SwiftUI
-import SwiftData
 import PhotosUI
 
 struct OnboardingView: View {
     let onComplete: () -> Void
 
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @State private var viewModel: OnboardingViewModel?
     @State private var photoItem: PhotosPickerItem?
     @State private var saveFeedback = 0
@@ -32,7 +31,7 @@ struct OnboardingView: View {
         }
         .task {
             if viewModel == nil {
-                viewModel = OnboardingViewModel(repository: SwiftDataDogRepository(context: context))
+                viewModel = OnboardingViewModel(repository: repositories.dogs)
             }
         }
         .sensoryFeedback(.success, trigger: saveFeedback)
@@ -234,7 +233,7 @@ struct OnboardingView: View {
             Image(systemName: icon)
                 .font(PawprintTheme.font(.headline, weight: .semibold))
                 .foregroundStyle(PawprintTheme.onAccent)
-                .frame(width: 40, height: 40)
+                .frame(width: 44, height: 44)
                 .background(PawprintTheme.accent, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
@@ -250,5 +249,5 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView {}
-        .modelContainer(for: Dog.self, inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

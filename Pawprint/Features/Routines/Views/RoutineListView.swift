@@ -10,12 +10,11 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct RoutineListView: View {
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
-    @Query(sort: \Dog.createdAt) private var dogs: [Dog]
+    @State private var dogs: [Dog] = []
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
     @State private var editing: RoutineTask?
@@ -67,19 +66,29 @@ struct RoutineListView: View {
         .task {
             if viewModel == nil {
                 viewModel = RoutineViewModel(
-                    repository: SwiftDataRoutineRepository(context: context),
+                    repository: repositories.routines,
                     notifications: UserNotificationService.shared
                 )
             }
             viewModel?.load()
+            reloadDogs()
         }
-        .onChange(of: selectedDogID) { viewModel?.load() }
+        .onChange(of: selectedDogID) {
+            viewModel?.load()
+            reloadDogs()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .pawprintDogsDidChange)) { _ in reloadDogs() }
         // Tasks ticked off in the widget while the app was closed.
         .onReceive(NotificationCenter.default.publisher(for: .widgetCompletionsApplied)) { _ in
             viewModel?.load()
         }
         .sensoryFeedback(.success, trigger: completeFeedback)
         .tint(PawprintTheme.accent)
+    }
+
+    private func reloadDogs() {
+        do { dogs = try repositories.dogs.fetchAll() }
+        catch { viewModel?.errorMessage = error.localizedDescription }
     }
 
     /// Which dog's routines these are, for the empty state. Switch dogs from the Home tab.
@@ -255,7 +264,7 @@ private struct RoutineRow: View {
                 Image(systemName: task.category.systemImage)
                     .font(PawprintTheme.font(.subheadline, weight: .semibold))
                     .foregroundStyle(PawprintTheme.accent)
-                    .frame(width: 36, height: 36)
+                    .frame(minWidth: 44, minHeight: 44)
                     .background(PawprintTheme.surfaceRaised, in: Circle())
                     .accessibilityLabel(task.category.name)
             }
@@ -266,5 +275,5 @@ private struct RoutineRow: View {
 
 #Preview {
     RoutineListView()
-        .modelContainer(for: [Dog.self, RoutineTask.self], inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

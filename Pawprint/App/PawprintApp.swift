@@ -15,8 +15,9 @@ import UserNotifications
 
 @main
 struct PawprintApp: App {
-    let container: ModelContainer
-    private let widgetSync: WidgetSyncService
+    private let container: ModelContainer?
+    private let repositories: PawprintRepositories?
+    private let widgetSync: WidgetSyncService?
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage(AppearanceSetting.storageKey) private var appearanceRaw = AppearanceSetting.system.rawValue
 
@@ -32,24 +33,42 @@ struct PawprintApp: App {
             LearnTip.self       // Learn (Ben)
         ])
         do {
-            container = try ModelContainer(for: schema)
+            let loadedContainer = try ModelContainer(for: schema)
+            container = loadedContainer
+            repositories = PawprintRepositories(container: loadedContainer)
+            let sync = WidgetSyncService(container: loadedContainer)
+            widgetSync = sync
+            sync.start()
         } catch {
-            fatalError("Could not create the SwiftData container: \(error)")
+            // A persistent-store failure must not terminate the app with fatalError.
+            container = nil
+            repositories = nil
+            widgetSync = nil
+            NSLog("Pawprint persistent-store startup failed: %@", error.localizedDescription)
         }
-        widgetSync = WidgetSyncService(container: container)
-        widgetSync.start()
     }
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .environment(\.font, PawprintTheme.font(.body))   // default for any Text without its own font
-                .preferredColorScheme((AppearanceSetting(rawValue: appearanceRaw) ?? .system).colorScheme)
-                .onChange(of: scenePhase) { _, phase in
-                    // Tasks ticked off in the widget while the app was closed.
-                    if phase == .active { widgetSync.applyPendingCompletions() }
+            Group {
+                if let container, let repositories {
+                    RootView()
+                        .environment(repositories)
+                        .modelContainer(container)
+                } else {
+                    ContentUnavailableView {
+                        Label("Unable to open Pawprint", systemImage: "externaldrive.badge.exclamationmark")
+                    } description: {
+                        Text("Your local care records could not be opened. Please restart the app. If the problem continues, contact support before reinstalling; reinstalling may erase local data.")
+                    }
+                    .accessibilityIdentifier("persistenceErrorScreen")
                 }
+            }
+            .environment(\.font, PawprintTheme.font(.body))
+            .preferredColorScheme((AppearanceSetting(rawValue: appearanceRaw) ?? .system).colorScheme)
+            .onChange(of: scenePhase) { _, phase in
+                if phase == .active { widgetSync?.applyPendingCompletions() }
+            }
         }
-        .modelContainer(container)
     }
 }

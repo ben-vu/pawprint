@@ -11,14 +11,13 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct ShareDogView: View {
     let dog: Dog
     /// Called when the person taps "Add care details", just before this sheet closes.
     var onEditDetails: () -> Void = {}
 
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: ShareDogViewModel?
 
@@ -42,8 +41,8 @@ struct ShareDogView: View {
             if viewModel == nil {
                 viewModel = ShareDogViewModel(
                     dog: dog,
-                    routines: SwiftDataRoutineRepository(context: context),
-                    health: SwiftDataHealthRepository(context: context)
+                    routines: repositories.routines,
+                    health: repositories.health
                 )
             }
             viewModel?.load()
@@ -168,5 +167,5 @@ struct ShareDogView: View {
 
 #Preview {
     ShareDogView(dog: Dog(name: "Bella", breed: "Border Collie", ageYears: 3, weightKg: 18.5))
-        .modelContainer(for: [Dog.self, RoutineTask.self, HealthRecord.self], inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

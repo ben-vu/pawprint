@@ -10,10 +10,9 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct HomeView: View {
-    @Environment(\.modelContext) private var context
+    @Environment(PawprintRepositories.self) private var repositories
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
     @State private var viewModel: DashboardViewModel?
     @State private var completeFeedback = 0
@@ -51,8 +50,8 @@ struct HomeView: View {
         .task {
             if viewModel == nil {
                 viewModel = DashboardViewModel(
-                    dogs: SwiftDataDogRepository(context: context),
-                    routines: SwiftDataRoutineRepository(context: context),
+                    dogs: repositories.dogs,
+                    routines: repositories.routines,
                     notifications: UserNotificationService.shared
                 )
             }
@@ -203,5 +202,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .modelContainer(for: [Dog.self, RoutineTask.self], inMemory: true)
+        .environment(PawprintRepositories.preview())
 }

@@ -8,7 +8,6 @@
 //
 
 import SwiftUI
-import SwiftData
 
 struct TipDetailView: View {
     let tip: LearnTip
@@ -104,16 +103,14 @@ struct TipDetailView: View {
 }
 
 #Preview {
-    let container = try! ModelContainer(
-        for: LearnTip.self,
-        configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-    )
-    let viewModel = LearnViewModel(repository: SwiftDataTipRepository(context: container.mainContext))
+    let repositories = PawprintRepositories.preview()
+    try? SeedTipsUseCase(repository: repositories.tips).execute()
+    let viewModel = LearnViewModel(repository: repositories.tips)
     viewModel.load()
     return NavigationStack {
         if let tip = viewModel.tips.first {
             TipDetailView(tip: tip, viewModel: viewModel)
         }
     }
-    .modelContainer(container)
+    .environment(repositories)
 }
