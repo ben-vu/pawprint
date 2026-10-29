@@ -15,12 +15,16 @@ import Observation
 final class AddDogViewModel {
     var name = ""
     var breed = ""
+    var isMixedBreed = false
     var ageYears = 1
     var weightText = ""
     var photoData: Data?
     var errorMessage: String?
 
     private let createDog: CreateDogUseCase
+    private let suggestBreeds = SuggestBreedsUseCase()
+
+    var breedSuggestions: [String] { suggestBreeds.execute(query: breed) }
 
     init(repository: DogRepository) {
         self.createDog = CreateDogUseCase(repository: repository)
@@ -33,7 +37,7 @@ final class AddDogViewModel {
     /// Returns the new dog, or nil with `errorMessage` set.
     func save() -> Dog? {
         do {
-            let dog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData)
+            let dog = try createDog.execute(name: name, breed: breed, ageYears: ageYears, weightKg: weightKg, photoData: photoData, isMixedBreed: isMixedBreed)
             errorMessage = nil
             return dog
         } catch {

@@ -15,6 +15,7 @@ import SwiftData
 struct RoutineListView: View {
     @Environment(\.modelContext) private var context
     @AppStorage(ActiveDogSelection.storageKey) private var selectedDogID = ""
+    @Query(sort: \Dog.createdAt) private var dogs: [Dog]
     @State private var viewModel: RoutineViewModel?
     @State private var showAdd = false
     @State private var editing: RoutineTask?
@@ -35,18 +36,12 @@ struct RoutineListView: View {
                 }
             }
             .navigationTitle("Routines")
+            .toolbarTitleDisplayMode(.inlineLarge)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    DogSwitcherMenu()
-                }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showAdd = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                    .accessibilityLabel("Add routine")
+                    ToolbarCircleButton(systemImage: "plus", label: "Add routine") { showAdd = true }
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .sheet(isPresented: $showAdd, onDismiss: {
                 viewModel?.load()
@@ -87,13 +82,21 @@ struct RoutineListView: View {
         .tint(PawprintTheme.accent)
     }
 
+    /// Which dog's routines these are, for the empty state. Switch dogs from the Home tab.
+    private var activeDogName: String {
+        ActiveDogUseCase().activeDog(in: dogs, selectedID: UUID(uuidString: selectedDogID))?.name ?? ""
+    }
+
     private var emptyState: some View {
         ScrollView {
+            TitlePugRow(image: "PugRoutine")
+                .padding(.leading, 20)   // lines up with the card
             PawprintCard {
                 VStack(spacing: 14) {
                     PugEmptyState(
                         image: "PugLying",
-                        title: "No routines yet",
+                        animation: "SleepyPug",
+                        title: activeDogName.isEmpty ? "No routines yet" : "\(activeDogName) has no routines yet",
                         message: "Add walks, meals and medication so nothing gets forgotten."
                     )
                     PrimaryButton(title: "Add a routine") { showAdd = true }
@@ -104,25 +107,58 @@ struct RoutineListView: View {
     }
 
     private func list(_ vm: RoutineViewModel) -> some View {
-        List {
-            if let error = vm.errorMessage {
-                Label(error, systemImage: "exclamationmark.circle.fill")
-                    .font(PawprintTheme.font(.footnote, weight: .semibold))
-                    .foregroundStyle(PawprintTheme.danger)
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
+        @Bindable var vm = vm
+        return PugAtBottom { pugInList in
+            List {
+                let hasChips = vm.availableCategories.count > 1
+                // Without chips the first heading sits beside the pug instead, so its section leaves it out.
+                let headingBesidePug = hasChips ? nil : firstSectionTitle(vm)
+                // Scrolls with the list, like Learn's chips, so the title bar doesn't sit over it.
+                TitlePugRow(image: "PugRoutine") {
+                    if hasChips {
+                        FilterChipBar(
+                            items: [nil] + vm.availableCategories.map { Optional($0) },
+                            selection: $vm.categoryFilter,
+                            title: { $0?.name ?? "All" },
+                            systemImage: { $0?.systemImage ?? "list.bullet" }
+                        )
+                    } else if let headingBesidePug {
+                        sectionHeader(headingBesidePug)
+                            .padding(.leading, 12)
+                            .padding(.bottom, 10)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                    }
+                }
+                .padding(.leading, 16)
+                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: hasChips ? 14 : 4, trailing: 0))   // 14 = Learn's gap to its first card
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                if let error = vm.errorMessage {
+                    Label(error, systemImage: "exclamationmark.circle.fill")
+                        .font(PawprintTheme.font(.footnote, weight: .semibold))
+                        .foregroundStyle(PawprintTheme.danger)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
+                section("Overdue", tasks: vm.overdue, showsDate: true, showsHeader: headingBesidePug != "Overdue", vm: vm)
+                section("Today", tasks: vm.todays, showsDate: false, showsHeader: headingBesidePug != "Today", vm: vm)
+                section("Upcoming", tasks: vm.upcoming, showsDate: true, showsHeader: headingBesidePug != "Upcoming", vm: vm)
+                if pugInList {
+                    BottomPug()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
             }
-            section("Overdue", tasks: vm.overdue, showsDate: true, vm: vm)
-            section("Today", tasks: vm.todays, showsDate: false, vm: vm)
-            section("Upcoming", tasks: vm.upcoming, showsDate: true, vm: vm)
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .contentMargins(.top, 0, for: .scrollContent)   // list starts right under the chips, like Learn
+            .refreshable { vm.load() }
         }
-        .listStyle(.plain)
-        .scrollContentBackground(.hidden)
-        .refreshable { vm.load() }
     }
 
     @ViewBuilder
-    private func section(_ title: String, tasks: [RoutineTask], showsDate: Bool, vm: RoutineViewModel) -> some View {
+    private func section(_ title: String, tasks: [RoutineTask], showsDate: Bool, showsHeader: Bool, vm: RoutineViewModel) -> some View {
         if !tasks.isEmpty {
             Section {
                 ForEach(tasks) { task in
@@ -139,7 +175,7 @@ struct RoutineListView: View {
                     .accessibilityAction(named: "Edit") { editing = task }
                     .listRowBackground(Color.clear)
                     .listRowSeparator(.hidden)
-                    .listRowInsets(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                    .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))   // same side inset as Learn's cards
                     .swipeActions {
                         Button(role: .destructive) {
                             vm.delete(task)
@@ -149,12 +185,24 @@ struct RoutineListView: View {
                     }
                 }
             } header: {
-                Text(title.uppercased())
-                    .font(PawprintTheme.font(.caption, weight: .heavy))
-                    .tracking(1)
-                    .foregroundStyle(title == "Overdue" ? PawprintTheme.danger : PawprintTheme.textSecondary)
+                if showsHeader {
+                    sectionHeader(title)
+                }
             }
         }
+    }
+
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title.uppercased())
+            .font(PawprintTheme.font(.caption, weight: .heavy))
+            .tracking(1)
+            .foregroundStyle(title == "Overdue" ? PawprintTheme.danger : PawprintTheme.textSecondary)
+    }
+
+    /// The heading of the first section that has tasks, in list order.
+    private func firstSectionTitle(_ vm: RoutineViewModel) -> String? {
+        [("Overdue", vm.overdue), ("Today", vm.todays), ("Upcoming", vm.upcoming)]
+            .first { !$0.1.isEmpty }?.0
     }
 }
 

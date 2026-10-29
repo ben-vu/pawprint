@@ -21,6 +21,7 @@ final class Dog {
     var weightKg: Double
     @Attribute(.externalStorage) var photoData: Data?
     var createdAt: Date
+    var isMixedBreed: Bool = false   // default so profiles saved before this field migrate on their own
 
     // Care details for sharing with a sitter. All default to empty so existing
     // stores migrate without help. Edited in the dog profile.
@@ -37,13 +38,24 @@ final class Dog {
     @Relationship(deleteRule: .cascade, inverse: \RoutineTask.dog) var routineTasks: [RoutineTask] = []
     @Relationship(deleteRule: .cascade, inverse: \HealthRecord.dog) var healthRecords: [HealthRecord] = []
 
-    init(name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data? = nil) {
+    init(name: String, breed: String, ageYears: Int, weightKg: Double, photoData: Data? = nil, isMixedBreed: Bool = false) {
         self.name = name
         self.breed = breed
         self.ageYears = ageYears
         self.weightKg = weightKg
         self.photoData = photoData
+        self.isMixedBreed = isMixedBreed
         self.createdAt = .now
+    }
+
+    /// What to show under the dog's name. Breed is optional, so there is always a fallback.
+    var breedDescription: String {
+        switch (isMixedBreed, breed.isEmpty) {
+        case (true, true): return "Mixed breed"
+        case (true, false): return "\(breed) mix"
+        case (false, true): return "Good dog"
+        case (false, false): return breed
+        }
     }
 
     /// The sitter-facing details as one plain value, so forms and use cases don't touch eight properties.

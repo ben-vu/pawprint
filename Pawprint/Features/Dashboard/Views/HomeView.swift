@@ -23,23 +23,28 @@ struct HomeView: View {
             ZStack {
                 PawprintTheme.background.ignoresSafeArea()
                 if let viewModel {
-                    ScrollView {
-                        VStack(spacing: 18) {
-                            heroCard(viewModel)
-                            progressCard(viewModel)
-                            todaySection(viewModel)
+                    PugAtBottom { pugInList in
+                        ScrollView {
+                            VStack(spacing: 18) {
+                                heroCard(viewModel)
+                                progressCard(viewModel)
+                                todaySection(viewModel)
+                                if pugInList { BottomPug() }
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 12)
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                        .refreshable { viewModel.load() }
                     }
-                    .refreshable { viewModel.load() }
                 }
             }
             .navigationTitle("Home")
+            .toolbarTitleDisplayMode(.inlineLarge)   // title level with the toolbar, no empty band above it
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .topBarTrailing) {
                     DogSwitcherMenu()
                 }
+                .sharedBackgroundVisibility(.hidden)
             }
             .onChange(of: selectedDogID) { viewModel?.load() }
         }
@@ -73,7 +78,7 @@ struct HomeView: View {
                     .lineLimit(2)
                     .minimumScaleFactor(0.7)
                 if let dog = vm.dog {
-                    Text(dog.breed.isEmpty ? "Good dog" : dog.breed)
+                    Text(dog.breedDescription)
                         .font(PawprintTheme.font(.subheadline, weight: .semibold))
                         .foregroundStyle(PawprintTheme.textSecondary)
                 }
@@ -137,6 +142,7 @@ struct HomeView: View {
                 PawprintCard {
                     PugEmptyState(
                         image: "PugLying",
+                        animation: "SleepyPug",
                         title: "Nothing scheduled yet",
                         message: "Add a walk or a meal in the Routines tab and it will show up here."
                     )

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AAA10004308988A800F1B167 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = AAA10003308988A800F1B167 /* Lottie */; };
 		BE0000000000000000000003 /* PawprintWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BE0000000000000000000002 /* PawprintWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -98,6 +99,7 @@
 		AA5637F1308732AC00BF05E2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				AAA10004308988A800F1B167 /* Lottie in Frameworks */,
 			);
 		};
 		AA5637FE308732AD00BF05E2 /* Frameworks */ = {
@@ -163,6 +165,9 @@
 				BE0000000000000000000008 /* PawprintWidgetShared */,
 			);
 			name = Pawprint;
+			packageProductDependencies = (
+				AAA10003308988A800F1B167 /* Lottie */,
+			);
 			productName = Pawprint;
 			productReference = AA5637F4308732AC00BF05E2 /* Pawprint.app */;
 			productType = "com.apple.product-type.application";
@@ -263,6 +268,9 @@
 			);
 			mainGroup = AA5637EB308732AC00BF05E2;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AAA10002308988A800F1B167 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AA5637F5308732AC00BF05E2 /* Products */;
 			projectDirPath = "";
@@ -706,6 +714,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AAA10002308988A800F1B167 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AAA10003308988A800F1B167 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AAA10002308988A800F1B167 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AA5637EC308732AC00BF05E2 /* Project object */;
 	validationLevel = 1;
